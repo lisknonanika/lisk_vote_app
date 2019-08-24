@@ -42,7 +42,9 @@ export default class Home extends React.Component {
   }
 
   onPress_Next = () => {
-    console.log('YES!!!')
+    this.refs.account_modal.close();
+    const { navigation } = this.props;
+    navigation.navigate('Delegates', {net: this.state.swiperIdx, user: this.user_data});
   }
   
   _getUserData = async(address, isTestnet) => {
@@ -64,13 +66,13 @@ export default class Home extends React.Component {
     if (!userData.result) {
       this.user_data = {
         address: address,
-        balance: '-LSK',
+        balance: '0',
         votes: []
       };
     } else {
       this.user_data = {
         address: address,
-        balance: `${new BigNumber(userData.data.balance).dividedBy(new BigNumber('100000000')).toFixed()}LSK`,
+        balance: new BigNumber(userData.data.balance).dividedBy(new BigNumber('100000000')).toFixed(),
         votes: userData.data.votes
       };
     }
@@ -100,7 +102,7 @@ export default class Home extends React.Component {
 
   render() {
     return (
-      <View style={styles.content}>
+      <View style={styles.container}>
         <Spinner
             visible={this.state.isLoading}
             textContent="Now Loading.."
@@ -155,7 +157,7 @@ export default class Home extends React.Component {
           <Text style={styles.modal_label}>[address]</Text>
           <Text style={styles.modal_text}>{this.user_data.address}</Text>
           <Text style={styles.modal_label}>[balance]</Text>
-          <Text style={styles.modal_text}>{this.user_data.balance}</Text>
+          <Text style={styles.modal_text}>{this.user_data.balance} LSK</Text>
           <Button title={"OK"} buttonStyle={this.modal_box.ok_button_style} onPress={this.onPress_Next} />
           <Button title={"Cancel"} buttonStyle={this.modal_box.cancel_btn_style} onPress={() => {this.refs.account_modal.close()}} />
         </Modal>
@@ -165,20 +167,20 @@ export default class Home extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  content: {
+  container: {
     flex: 1
   },
   mainnet: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#67b8da',
+    backgroundColor: '#2475b9',
   },
   testnet: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#69c59f',
+    backgroundColor: '#149965',
   },
   text: {
     color: '#fff',
