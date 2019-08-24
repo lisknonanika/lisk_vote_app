@@ -11,6 +11,8 @@
     "@liskhq/lisk-client": "^2.3.0",
     "@tradle/react-native-http": "^2.0.1",
     "assert": "^1.5.0",
+    "axios": "^0.19.0",
+    "bignumber.js": "^9.0.0",
     "browserify-zlib": "^0.1.4",
     "console-browserify": "^1.1.0",
     "constants-browserify": "^1.0.0",
@@ -24,11 +26,16 @@
     "react": "16.8.6",
     "react-native": "0.60.5",
     "react-native-crypto": "^2.2.0",
+    "react-native-elements": "^1.1.0",
     "react-native-level-fs": "^3.0.1",
+    "react-native-loading-spinner-overlay": "^1.0.1",
+    "react-native-modalbox": "^1.7.1",
     "react-native-os": "^1.2.5",
     "react-native-randombytes": "^3.5.3",
+    "react-native-swiper": "^1.5.14",
     "react-native-tcp": "^3.3.1",
     "react-native-udp": "^2.6.1",
+    "react-native-vector-icons": "^6.6.0",
     "readable-stream": "^1.0.33",
     "stream-browserify": "^1.0.0",
     "string_decoder": "^0.10.31",
@@ -103,5 +110,10 @@
     "tty": "tty-browserify",
     "vm": "vm-browserify",
     "tls": false
+  },
+  "rnpm": {
+    "assets": [
+      "./assets/fonts/"
+    ]
   }
 }
