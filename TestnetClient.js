@@ -1,24 +1,8 @@
 const axios = require('axios');
 
-const nodes = {
-  main: [
-    "https://node01.lisk.io:443/api",
-    "https://node02.lisk.io:443/api",
-    "https://node03.lisk.io:443/api",
-    "https://node04.lisk.io:443/api",
-    "https://node05.lisk.io:443/api",
-    "https://node06.lisk.io:443/api",
-    "https://node07.lisk.io:443/api",
-    "https://node08.lisk.io:443/api"
-  ],
-  test: [
-    "https://testnet.lisk.io:443/api"
-  ]
-}
+const baseURL = "https://ik1-309-14844.vs.sakura.ne.jp/lva"
 
-exports.createClient = (isTestnet) => {
-  const ary = isTestnet? nodes.test: nodes.main;
-  const baseURL = ary[Math.floor(Math.random() * ary.length)];
+exports.createClient = () => {
   const client = axios.create({
     baseURL: baseURL,
     headers: {
@@ -30,14 +14,14 @@ exports.createClient = (isTestnet) => {
   return client;
 }
 
-exports.getAccountByAddress = async(address, isTestnet) => {
+exports.getAccountByAddress = async(address) => {
   try {
-    const client = exports.createClient(isTestnet);
-    const ret = await client.get(`/accounts?address=${address}`);
-    if (!ret || !ret.data || !ret.data.data || ret.data.data.length === 0) {
+    const client = exports.createClient();
+    const ret = await client.get(`/account?address=${address}`);
+    if (!ret.data.result) {
       return {result: false, data: 'Not Found'}
     }
-    return {result: true, data: ret.data.data[0]}
+    return {result: true, data: ret.data.data}
   } catch (err) {
     return {result: false, data: err}
   }

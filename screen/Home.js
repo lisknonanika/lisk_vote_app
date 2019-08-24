@@ -48,7 +48,7 @@ export default class Home extends React.Component {
   _getUserData = async(address, isTestnet) => {
     try {
       if (isTestnet) {
-        return {result: false};
+        return await TestnetClient.getAccountByAddress(address);
       }
       const client = APIClient.createMainnetAPIClient();
       const result = await client.votes.get({address: address, offset: 0, limit: 101});
@@ -130,7 +130,7 @@ export default class Home extends React.Component {
             </View>
           </View>
 
-          {/* <View style={styles.testnet}>
+          <View style={styles.testnet}>
             <Text style={styles.text}>Lisk Vote App</Text>
             <Text style={styles.text_small}>- Lisk Testnet -</Text>
             <View style={styles.input_field}>
@@ -140,11 +140,11 @@ export default class Home extends React.Component {
                 searchIcon={<Icon name="edit" size={20}/>}
                 containerStyle={styles.input_item}
                 inputContainerStyle={{backgroundColor: 'transparent', padding: 5}} 
-                inputStyle={{backgroundColor: 'transparent'}}
+                inputStyle={{backgroundColor: 'transparent', color: '#000'}}
                 onChangeText={this.onChangeText_Address} />
               <Button title={"Voteを開始する"} buttonStyle={styles.start_button} onPress={this.onPress_StartButton} />
             </View>
-          </View> */}
+          </View>
           
         </Swiper>
 
