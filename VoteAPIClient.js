@@ -14,6 +14,19 @@ exports.createClient = () => {
   return client;
 }
 
+exports.getDelegatesList = async(net) => {
+  try {
+    const client = exports.createClient();
+    const ret = await client.get(`/delegates?net=${net}`);
+    if (!ret.data.result) {
+      return {result: false, data: 'Not Found'}
+    }
+    return {result: true, data: ret.data.data}
+  } catch (err) {
+    return {result: false, data: err}
+  }
+}
+
 exports.getAccountByAddress = async(address) => {
   try {
     const client = exports.createClient();
@@ -26,3 +39,7 @@ exports.getAccountByAddress = async(address) => {
     return {result: false, data: err}
   }
 }
+
+(async() => {
+  console.log(await this.getDelegatesList(1))
+})()

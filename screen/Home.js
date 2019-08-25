@@ -7,7 +7,7 @@ import Modal from 'react-native-modalbox';
 import Spinner from 'react-native-loading-spinner-overlay';
 import BigNumber from 'bignumber.js';
 import {APIClient} from '@liskhq/lisk-api-client';
-import TestnetClient from '../TestnetClient';
+import VoteAPIClient from '../VoteAPIClient';
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -44,13 +44,13 @@ export default class Home extends React.Component {
   onPress_Next = () => {
     this.refs.account_modal.close();
     const { navigation } = this.props;
-    navigation.navigate('Delegates', {net: this.state.swiperIdx, user: this.user_data});
+    navigation.navigate('Delegates', {isTestnet: this.state.swiperIdx === 1, user: this.user_data});
   }
   
   _getUserData = async(address, isTestnet) => {
     try {
       if (isTestnet) {
-        return await TestnetClient.getAccountByAddress(address);
+        return await VoteAPIClient.getAccountByAddress(address);
       }
       const client = APIClient.createMainnetAPIClient();
       const result = await client.votes.get({address: address, offset: 0, limit: 101});
