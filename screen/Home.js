@@ -12,7 +12,7 @@ import VoteAPIClient from '../VoteAPIClient';
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, swiperIdx: 0, mainnet_address: '', testnet_address: ''};
+    this.state = {isLoading: false, swiperIdx: 0, mainnet_address: '', testnet_address: '5244341344295779314L'};
     this.user_data = {address: '', balance: '', votes: []};
     this.modal_box = {message: '', next_icon_style: {}, err_icon_style: {}, ok_button_style: {}, cancel_btn_style: {}};
   }
@@ -28,11 +28,13 @@ export default class Home extends React.Component {
   onPress_StartButton = async() => {
     this.setState({ isLoading: true });
     this.user_data = {address: '', balance: '', votes: []};
+    this.user_data.votes.length = 0;
     this.modal_box = {message: '', next_icon_style: {}, err_icon_style: {}, ok_button_style: {}, cancel_btn_style: {}};
     const isTestnet = this.state.swiperIdx === 1;
     const address = isTestnet? this.state.testnet_address: this.state.mainnet_address;
     if (address.length === 0) {
       this.setState({ isLoading: false });
+      this.props.navigation.navigate('Delegates', {isTestnet: this.state.swiperIdx === 1, user: this.user_data});
       return;
     }
     const ret = await this._getUserData(address, isTestnet);
@@ -43,15 +45,12 @@ export default class Home extends React.Component {
 
   onPress_Next = () => {
     this.refs.account_modal.close();
-    const { navigation } = this.props;
-    navigation.navigate('Delegates', {isTestnet: this.state.swiperIdx === 1, user: this.user_data});
+    this.props.navigation.navigate('Delegates', {isTestnet: this.state.swiperIdx === 1, user: this.user_data});
   }
   
   _getUserData = async(address, isTestnet) => {
     try {
-      if (isTestnet) {
-        return await VoteAPIClient.getAccountByAddress(address);
-      }
+      if (isTestnet) return await VoteAPIClient.getAccountByAddress(address);
       const client = APIClient.createMainnetAPIClient();
       const result = await client.votes.get({address: address, offset: 0, limit: 101});
       if (!result || !result.data) return {result: false};
@@ -63,18 +62,12 @@ export default class Home extends React.Component {
   }
 
   _setUserData = (address, userData) => {
-    if (!userData.result) {
-      this.user_data = {
-        address: address,
-        balance: '0',
-        votes: []
-      };
-    } else {
-      this.user_data = {
-        address: address,
-        balance: new BigNumber(userData.data.balance).dividedBy(new BigNumber('100000000')).toFixed(),
-        votes: userData.data.votes
-      };
+    this.user_data.address = address;
+    this.user_data.balance = '0';
+    this.user_data.votes.length = 0;
+    if (userData.result) {
+      this.user_data.balance = new BigNumber(userData.data.balance).dividedBy(new BigNumber('100000000')).toFixed();
+      this.user_data.votes = userData.data.votes;
     }
   }
 

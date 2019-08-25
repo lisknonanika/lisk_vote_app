@@ -9,8 +9,7 @@ export default class Welcome extends React.Component {
   }
 
   onPress_Button = () => {
-    const { navigation } = this.props;
-    navigation.navigate('Home');
+    this.props.navigation.navigate('Home');
   }
 
   render() {
