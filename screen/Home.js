@@ -132,6 +132,7 @@ export default class Home extends React.Component {
               <SearchBar
                 placeholder="Lisk Address"
                 value={this.state.testnet_address}
+                autoCapitalize={"none"}
                 searchIcon={<Icon name="edit" size={20}/>}
                 containerStyle={styles.input_item}
                 inputContainerStyle={{backgroundColor: 'transparent', padding: 5}} 
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
     fontSize: 50,
   },
   input_field: {
-    backgroundColor: 'rgba(255,255,255,0.3)',
+    backgroundColor: 'rgba(255,255,255,0.35)',
     borderRadius: 10,
     padding: 10,
     width: 280,

@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
-import { Header, Button, Text, ListItem } from 'react-native-elements';
+import { Header, Button, SearchBar, Text, ListItem } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modalbox';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -9,10 +9,11 @@ import VoteAPIClient from '../VoteAPIClient';
 export default class Delegates extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, isReady: false, currentPage: 0, selected: new Map()};
+    this.state = {isLoading: false, isReady: false, rerenderList: 0, search_text: "", currentPage: 0, selected: new Map()};
     this.errorMessage = "";
-    this.isTestnet = false;
-    this.user_data = {};
+    this.isRefMode = this.props.navigation.state.params.user.address.length === 0;
+    this.isTestnet = this.props.navigation.state.params.isTestnet;
+    this.user_data = this.props.navigation.state.params.user;
     this.delegatesList = [];
     this.delegatesGroup = [];
     this.currentVotes = new Map();
@@ -24,9 +25,6 @@ export default class Delegates extends React.Component {
   async componentDidMount() {
     this.setState({isLoading: true});
 
-    this.isTestnet = this.props.navigation.state.params.isTestnet;
-    this.user_data = this.props.navigation.state.params.user;
-
     const ret = await this._getDelegatesList();
     if (!ret.result) {
       this.errorMessage = "Delegate情報の取得に失敗しました。";
@@ -36,13 +34,21 @@ export default class Delegates extends React.Component {
     }
     this.delegatesList = ret.data;
     this._setDelegatesGroup();
-    if (this.user_data.address.length > 1) this._setVotes();
+    if (!this.isRefMode) this._setVotes();
     this._setViewDelegatesList("", "");
     this.setState({isLoading: false, isReady: true});
   }
 
+  onChangeText_Search = (value) => {
+    this.setState({search_text: value});
+    this._setViewDelegatesList(value, "");
+    if (Object.keys(this.viewDelegatesList).length > 0) {
+      this.setState({rerenderList: this.state.rerenderList+1});
+    }
+  }
+
   onPress_ListItem = (key) => {
-    if (this.user_data.address.length === 0) return;
+    if (this.isRefMode) return;
 
     if (this.removeVotes.has(key)) this.removeVotes.delete(key);
     else if (this.addVotes.has(key)) this.addVotes.delete(key);
@@ -54,6 +60,7 @@ export default class Delegates extends React.Component {
       this.state.selected.has(key)? selected.delete(key): selected.set(key, true);
       return {selected}
     })
+    this.setState({rerenderList: this.state.rerenderList+1});
   }
 
   onPress_MoveButton = (type) => {
@@ -66,6 +73,7 @@ export default class Delegates extends React.Component {
     } else {
       this.setState({currentPage: this.viewDelegatesList.size-1});
     }
+    this.setState({rerenderList: this.state.rerenderList+1});
   }
 
   _getNaviBackgroundColor = () => {
@@ -102,15 +110,23 @@ export default class Delegates extends React.Component {
 
   _setViewDelegatesList = (name, group) => {
     this.viewDelegatesList.clear();
-
     let page = 0;
     let cnt = 0;
     this.delegatesList.forEach((delegate) => {
-      page = Math.floor(cnt / 20);
-      if (!this.viewDelegatesList.has(page)) this.viewDelegatesList.set(page, []);
-      this.viewDelegatesList.get(page).push(delegate);
-      cnt += 1;
+      if ((name.length === 0 || delegate.username.toLowerCase().indexOf(name.toLowerCase()) >= 0) &&
+          (group.length === 0 || delegate.groups.indexOf(group) >= 0)) {
+        page = Math.floor(cnt / 100);
+        if (!this.viewDelegatesList.has(page)) this.viewDelegatesList.set(page, []);
+        this.viewDelegatesList.get(page).push(delegate);
+        cnt += 1;
+      }
     });
+  }
+
+  _getDisplayRank = () => {
+    const current = this.viewDelegatesList.get(this.state.currentPage);
+    if (current === undefined) return 'No Data';
+    return `${current[0].rank} - ${current[current.length-1].rank}`;
   }
 
   renderItem = ({ item }) => {
@@ -118,8 +134,8 @@ export default class Delegates extends React.Component {
       <ListItem
         title={
           <View style={{flexDirection:'row', alignItems: 'center'}}>
-            <Text style={{...styles.rank, backgroundColor: this.currentVotes.has(item.publicKey)? "#99fcba" : "#ddd"}}>{item.rank}</Text>
-            <View style={{flexDirection:'column', marginLeft:15, width:'65%'}}>
+            <Text style={{...styles.rank, backgroundColor: this.currentVotes.has(item.publicKey)? "#95ecba" : "#ccc"}}>{item.rank}</Text>
+            <View style={{flexDirection:'column', marginLeft:20, width:'65%'}}>
               <Text style={styles.username}>{item.username}</Text>
               <View style={{flexDirection:'row', paddingTop: 5}}>
                 <Text style={styles.productivity}>productivity: {item.productivity} %</Text>
@@ -130,7 +146,7 @@ export default class Delegates extends React.Component {
         containerStyle={{
           borderBottomColor: "#ccc",
           borderBottomWidth: 1,
-          backgroundColor: this.addVotes.has(item.publicKey)? "rgba(0,200,0,0.15)": this.removeVotes.has(item.publicKey)? "rgba(255,0,0,0.15)": "#fff" }}
+          backgroundColor: this.addVotes.has(item.publicKey)? "rgba(0,255,0,0.15)": this.removeVotes.has(item.publicKey)? "rgba(255,0,0,0.15)": "#fff" }}
         checkBox={
           {
             onPress: () => this.onPress_ListItem(item.publicKey),
@@ -177,7 +193,10 @@ export default class Delegates extends React.Component {
         <Header
           barStyle="light-content"
           leftComponent={{ icon: 'menu', color: '#fff', size: 30 }}
-          centerComponent={{ text: 'Delegates', style: { color: '#fff', fontFamily: 'Gilroy-ExtraBold', fontSize: 25 }}}
+          centerComponent={{
+            text: 'Delegates',
+            style: { color: '#fff', fontFamily: 'Gilroy-ExtraBold', fontSize: 25 }
+          }}
           rightComponent={{ icon: 'home', color: '#fff', size: 30, onPress: () => this.props.navigation.goBack() }}
           containerStyle={{
             justifyContent: 'space-around',
@@ -185,31 +204,45 @@ export default class Delegates extends React.Component {
           }}
         />
         <View style={{flex: 1}}>
-          <View style={{flexDirection:'row', justifyContent: 'flex-end', marginTop: 10}}>
-            <Text style={styles.sumcount}>voted: {this.currentVotes.size + this.addVotes.size - this.removeVotes.size}</Text>
-            <Text style={styles.addcount}>+ {this.addVotes.size}</Text>
-            <Text style={styles.removecount}>- {this.removeVotes.size}</Text>
+          <SearchBar
+            placeholder="Name (Min: 3 character)"
+            value={this.state.search_text}
+            autoCapitalize={"none"}
+            containerStyle={styles.input_item}
+            searchIcon={<Icon name="search" size={20}/>}
+            inputContainerStyle={{backgroundColor: '#fff', padding: 5}} 
+            inputStyle={{backgroundColor: 'transparent', color: '#000'}}
+            onChangeText={this.onChangeText_Search} />
+          <View style={{flexDirection:'row', justifyContent: 'space-between', margin: 10}}>
+            <View style={{flexDirection:'row'}}>
+              <Text style={styles.rank_length}>{this._getDisplayRank()}</Text>
+            </View>
+            <View style={{flexDirection:'row', justifyContent: 'flex-end'}}>
+              <Text style={[styles.sum_count, {display: this.isRefMode? "none": "flex"}]}>voted: {this.currentVotes.size + this.addVotes.size - this.removeVotes.size}</Text>
+              <Text style={[styles.add_count, {display: this.isRefMode? "none": "flex"}]}>+ {this.addVotes.size}</Text>
+              <Text style={[styles.remove_count, {display: this.isRefMode? "none": "flex"}]}>- {this.removeVotes.size}</Text>
+            </View>
           </View>
           <FlatList
-            style={{marginTop: 10}}
             data={this.viewDelegatesList.get(this.state.currentPage)}
+            extraData={this.state.rerenderList}
             keyExtractor={(item) => item.publicKey}
             renderItem={this.renderItem}
-            initialNumToRender={30}
+            initialNumToRender={100}
           />
         </View>
 
         <View style={{flexDirection:'row', justifyContent: 'space-between', marginTop: 10}}>
-          <TouchableOpacity style={{...styles.naviButton, borderLeftWidth:0}} onPress={() => this.onPress_MoveButton(0)} >
+          <TouchableOpacity style={[styles.navi_button, this._getNaviBackgroundColor(), {borderLeftWidth:0}]} onPress={() => this.onPress_MoveButton(0)} >
             <Icon name="angle-double-left" size={30} style={{color: "#fff"}}/>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.naviButton} onPress={() => this.onPress_MoveButton(1)} >
+          <TouchableOpacity style={[styles.navi_button, this._getNaviBackgroundColor()]} onPress={() => this.onPress_MoveButton(1)} >
             <Icon name="angle-left" size={30} style={{color: "#fff"}}/>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.naviButton} onPress={() => this.onPress_MoveButton(2)} >
+          <TouchableOpacity style={[styles.navi_button, this._getNaviBackgroundColor()]} onPress={() => this.onPress_MoveButton(2)} >
             <Icon name="angle-right" size={30} style={{color: "#fff"}}/>
           </TouchableOpacity>
-          <TouchableOpacity style={{...styles.naviButton, borderRightWidth:0}} onPress={() => this.onPress_MoveButton(3)} >
+          <TouchableOpacity style={[styles.navi_button, this._getNaviBackgroundColor(), {borderRightWidth:0}]} onPress={() => this.onPress_MoveButton(3)} >
             <Icon name="angle-double-right" size={30} style={{color: "#fff"}}/>
           </TouchableOpacity>
         </View>
@@ -234,7 +267,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  sumcount: {
+  input_item: {
+    backgroundColor: '#ccc',
+    borderTopWidth: 0,
+    borderBottomWidth: 0,
+    width: '100%'
+  },
+  rank_length: {
+    color: '#000',
+    fontSize: 20,
+    fontFamily: 'Gilroy-ExtraBold',
+    textAlign: 'left',
+    marginRight: 20,
+    padding: 5
+  },
+  sum_count: {
     color: '#000',
     fontSize: 20,
     fontFamily: 'Gilroy-ExtraBold',
@@ -244,7 +291,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.25)',
     borderRadius: 10
   },
-  addcount: {
+  add_count: {
     color: '#000',
     fontSize: 20,
     fontFamily: 'Gilroy-ExtraBold',
@@ -254,12 +301,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,255,0,0.25)',
     borderRadius: 10
   },
-  removecount: {
+  remove_count: {
     color: '#000',
     fontSize: 20,
     fontFamily: 'Gilroy-ExtraBold',
     textAlign: 'right',
-    marginRight: 10,
     padding: 5,
     backgroundColor: 'rgba(255,0,0,0.25)',
     borderRadius: 10
@@ -268,10 +314,12 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
     textAlignVertical: 'center',
-    width: 100,
-    fontSize: 30,
+    width: 85,
+    fontSize: 27,
     fontFamily: 'Gilroy-ExtraBold',
-    borderRadius: 50
+    borderRadius: 20,
+    paddingTop: 5,
+    paddingBottom: 5
   },
   username: {
     color: '#000',
@@ -282,16 +330,15 @@ const styles = StyleSheet.create({
     marginTop: 5,
     fontSize: 15,
     color: '#000',
-    backgroundColor: '#ddd',
+    backgroundColor: '#ccc',
     borderRadius: 5,
     padding: 5
   },
-  naviButton: {
+  navi_button: {
     flex:1,
     padding: 5,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: this.isTestnet? '#003e1a': '#001a3e',
     borderLeftWidth:1,
     borderRightWidth:1,
     borderColor: "rgba(255,255,255,0.5)"
