@@ -1,6 +1,6 @@
 import React from 'react';
-import { StyleSheet, View, FlatList} from 'react-native';
-import { Header, Button, CheckBox, Text, ListItem } from 'react-native-elements';
+import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
+import { Header, Button, Text, ListItem } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modalbox';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -9,7 +9,7 @@ import VoteAPIClient from '../VoteAPIClient';
 export default class Delegates extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, isReady: false, currentPage: 10, selected: new Map()};
+    this.state = {isLoading: false, isReady: false, currentPage: 0, selected: new Map()};
     this.errorMessage = "";
     this.isTestnet = false;
     this.user_data = {};
@@ -56,7 +56,19 @@ export default class Delegates extends React.Component {
     })
   }
 
-  _getHeaderBackgroundColor = () => {
+  onPress_MoveButton = (type) => {
+    if (type === 0) {
+      this.setState({currentPage: 0});
+    } else if (type === 1) {
+      this.setState({currentPage: this.state.currentPage-1 < 0? 0: this.state.currentPage-1});
+    } else if (type === 2) {
+      this.setState({currentPage: this.state.currentPage+1 > this.viewDelegatesList.size-1? this.state.currentPage: this.state.currentPage+1});
+    } else {
+      this.setState({currentPage: this.viewDelegatesList.size-1});
+    }
+  }
+
+  _getNaviBackgroundColor = () => {
     return this.isTestnet? {backgroundColor: '#003e1a'}: {backgroundColor: '#001a3e'};
   }
 
@@ -94,7 +106,7 @@ export default class Delegates extends React.Component {
     let page = 0;
     let cnt = 0;
     this.delegatesList.forEach((delegate) => {
-      page = Math.floor(cnt / 30);
+      page = Math.floor(cnt / 20);
       if (!this.viewDelegatesList.has(page)) this.viewDelegatesList.set(page, []);
       this.viewDelegatesList.get(page).push(delegate);
       cnt += 1;
@@ -169,7 +181,7 @@ export default class Delegates extends React.Component {
           rightComponent={{ icon: 'home', color: '#fff', size: 30, onPress: () => this.props.navigation.goBack() }}
           containerStyle={{
             justifyContent: 'space-around',
-            ...this._getHeaderBackgroundColor(),
+            ...this._getNaviBackgroundColor(),
           }}
         />
         <View style={{flex: 1}}>
@@ -185,6 +197,21 @@ export default class Delegates extends React.Component {
             renderItem={this.renderItem}
             initialNumToRender={30}
           />
+        </View>
+
+        <View style={{flexDirection:'row', justifyContent: 'space-between', marginTop: 10}}>
+          <TouchableOpacity style={{...styles.naviButton, borderLeftWidth:0}} onPress={() => this.onPress_MoveButton(0)} >
+            <Icon name="angle-double-left" size={30} style={{color: "#fff"}}/>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.naviButton} onPress={() => this.onPress_MoveButton(1)} >
+            <Icon name="angle-left" size={30} style={{color: "#fff"}}/>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.naviButton} onPress={() => this.onPress_MoveButton(2)} >
+            <Icon name="angle-right" size={30} style={{color: "#fff"}}/>
+          </TouchableOpacity>
+          <TouchableOpacity style={{...styles.naviButton, borderRightWidth:0}} onPress={() => this.onPress_MoveButton(3)} >
+            <Icon name="angle-double-right" size={30} style={{color: "#fff"}}/>
+          </TouchableOpacity>
         </View>
 
         <Modal style={styles.modal} position={"center"} ref={"error_modal"}>
@@ -258,6 +285,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#ddd',
     borderRadius: 5,
     padding: 5
+  },
+  naviButton: {
+    flex:1,
+    padding: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: this.isTestnet? '#003e1a': '#001a3e',
+    borderLeftWidth:1,
+    borderRightWidth:1,
+    borderColor: "rgba(255,255,255,0.5)"
   },
   modal: {
     justifyContent: 'center',

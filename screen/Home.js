@@ -152,7 +152,7 @@ export default class Home extends React.Component {
           <Text style={styles.modal_label}>balance</Text>
           <Text style={styles.modal_text}>{this.user_data.balance} LSK</Text>
           <Button title={"OK"} buttonStyle={this.modal_box.ok_button_style} onPress={this.onPress_Next} />
-          <Button title={"Cancel"} buttonStyle={this.modal_box.cancel_btn_style} onPress={() => {this.refs.account_modal.close()}} />
+          <Button title={"Cancel"} buttonStyle={this.modal_box.cancel_btn_style} onPress={() => this.refs.account_modal.close()} />
         </Modal>
       </View>
     );
