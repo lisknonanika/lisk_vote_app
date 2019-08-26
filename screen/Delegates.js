@@ -9,16 +9,16 @@ import VoteAPIClient from '../VoteAPIClient';
 export default class Delegates extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, isReady: false, listUpdate: 0};
+    this.state = {isLoading: false, isReady: false, currentPage: 10, selected: new Map()};
     this.errorMessage = "";
     this.isTestnet = false;
     this.user_data = {};
     this.delegatesList = [];
     this.delegatesGroup = [];
-    this.currentVotes = [];
-    this.addVotes = [];
-    this.removeVotes = [];
-    this.viewDelegatesList = [];
+    this.currentVotes = new Map();
+    this.addVotes = new Map();
+    this.removeVotes = new Map();
+    this.viewDelegatesList = new Map();
   }
 
   async componentDidMount() {
@@ -35,32 +35,25 @@ export default class Delegates extends React.Component {
       return;
     }
     this.delegatesList = ret.data;
-    this.viewDelegatesList.length = 0;
-    this.viewDelegatesList = ret.data;
     this._setDelegatesGroup();
     if (this.user_data.address.length > 1) this._setVotes();
+    this._setViewDelegatesList("", "");
     this.setState({isLoading: false, isReady: true});
   }
 
   onPress_ListItem = (key) => {
     if (this.user_data.address.length === 0) return;
 
-    if (this.removeVotes.indexOf(key) >= 0) {
-      var newArray = this.removeVotes.filter(function(item) {
-        return item !== key;
-      });
-      this.removeVotes = newArray;
-    } else if (this.addVotes.indexOf(key) >= 0) {
-      var newArray = this.addVotes.filter(function(item) {
-        return item !== key;
-      });
-      this.addVotes = newArray;
-    } else if (this.currentVotes.indexOf(key) >= 0) {
-      this.removeVotes.push(key);
-    } else {
-      this.addVotes.push(key);
-    }
-    this.setState({listUpdate: this.state.listUpdate+1});
+    if (this.removeVotes.has(key)) this.removeVotes.delete(key);
+    else if (this.addVotes.has(key)) this.addVotes.delete(key);
+    else if (this.currentVotes.has(key)) this.removeVotes.set(key, true);
+    else this.addVotes.set(key, true);
+
+    this.setState((state) => {
+      const selected = new Map(state.selected);
+      this.state.selected.has(key)? selected.delete(key): selected.set(key, true);
+      return {selected}
+    })
   }
 
   _getHeaderBackgroundColor = () => {
@@ -89,26 +82,56 @@ export default class Delegates extends React.Component {
   }
 
   _setVotes = () => {
-    this.currentVotes.length = 0;
     this.user_data.votes.forEach((item) => {
-      this.currentVotes.push(item.publicKey);
+      this.currentVotes.set(item.publicKey, true);
+    });
+    this.state.selected = new Map(this.currentVotes);
+  }
+
+  _setViewDelegatesList = (name, group) => {
+    this.viewDelegatesList.clear();
+
+    let page = 0;
+    let cnt = 0;
+    this.delegatesList.forEach((delegate) => {
+      page = Math.floor(cnt / 30);
+      if (!this.viewDelegatesList.has(page)) this.viewDelegatesList.set(page, []);
+      this.viewDelegatesList.get(page).push(delegate);
+      cnt += 1;
     });
   }
 
-  _getListColor = (key) => {
-    if (this.user_data.address.length === 0) return {backgroundColor: "rgba(255,255,255,0.3)"};
-    if (this.removeVotes.indexOf(key) >= 0) return {backgroundColor: "rgba(255,0,0,0.3)"};
-    if (this.addVotes.indexOf(key) >= 0) return {backgroundColor: "rgba(0,255,0,0.3)"};
-    if (this.currentVotes.indexOf(key) >= 0) return {backgroundColor: "rgba(255,255,255,0.3)"};
-    return {backgroundColor: "rgba(0,0,0,0.3)"};
-  }
-
-  _getListIcon = (key) => {
-    if (this.user_data.address.length === 0) return "minus-circle";
-    if (this.removeVotes.indexOf(key) >= 0) return "minus-circle";
-    if (this.addVotes.indexOf(key) >= 0) return "plus-circle";
-    if (this.currentVotes.indexOf(key) >= 0) return "plus-circle";
-    return "minus-circle";
+  renderItem = ({ item }) => {
+    return (
+      <ListItem
+        title={
+          <View style={{flexDirection:'row', alignItems: 'center'}}>
+            <Text style={{...styles.rank, backgroundColor: this.currentVotes.has(item.publicKey)? "#99fcba" : "#ddd"}}>{item.rank}</Text>
+            <View style={{flexDirection:'column', marginLeft:15, width:'65%'}}>
+              <Text style={styles.username}>{item.username}</Text>
+              <View style={{flexDirection:'row', paddingTop: 5}}>
+                <Text style={styles.productivity}>productivity: {item.productivity} %</Text>
+              </View>
+            </View>
+          </View>
+        }
+        containerStyle={{
+          borderBottomColor: "#ccc",
+          borderBottomWidth: 1,
+          backgroundColor: this.addVotes.has(item.publicKey)? "rgba(0,200,0,0.15)": this.removeVotes.has(item.publicKey)? "rgba(255,0,0,0.15)": "#fff" }}
+        checkBox={
+          {
+            onPress: () => this.onPress_ListItem(item.publicKey),
+            checked: !!this.state.selected.get(item.publicKey),
+            checkedIcon: "minus-circle",
+            checkedColor: "#cc0000",
+            uncheckedIcon: "plus-circle",
+            uncheckedColor: "#00cc00",
+            size: 50
+          }
+        }
+      />
+    );
   }
 
   render() {
@@ -150,36 +173,17 @@ export default class Delegates extends React.Component {
           }}
         />
         <View style={{flex: 1}}>
-          <Text style={styles.text}>Lisk Vote App</Text>
-          <View style={{flexDirection:'row', justifyContent: 'flex-end'}}>
-            <Text style={styles.sumcount}>voted: {this.currentVotes.length + this.addVotes.length - this.removeVotes.length}</Text>
-            <Text style={styles.addcount}>+ {this.addVotes.length}</Text>
-            <Text style={styles.removecount}>- {this.removeVotes.length}</Text>
+          <View style={{flexDirection:'row', justifyContent: 'flex-end', marginTop: 10}}>
+            <Text style={styles.sumcount}>voted: {this.currentVotes.size + this.addVotes.size - this.removeVotes.size}</Text>
+            <Text style={styles.addcount}>+ {this.addVotes.size}</Text>
+            <Text style={styles.removecount}>- {this.removeVotes.size}</Text>
           </View>
           <FlatList
             style={{marginTop: 10}}
-            data={this.viewDelegatesList}
-            extraData={this.state.listUpdate}
+            data={this.viewDelegatesList.get(this.state.currentPage)}
             keyExtractor={(item) => item.publicKey}
-            renderItem={({ item }) => (
-              <ListItem
-                title={
-                  <View style={{flexDirection:'row', alignItems: 'center'}}>
-                    <Text style={styles.rank}>{item.rank}</Text>
-                    <View style={{flexDirection:'column'}}>
-                      <Text style={styles.username}>{item.username}</Text>
-                      <View style={{flexDirection:'row', paddingTop: 5}}>
-                        <Text style={styles.productivity_label}>productivity</Text>
-                        <Text style={styles.productivity_value}>{item.productivity}</Text>
-                      </View>
-                    </View>
-                    <Icon name={this._getListIcon(item.publicKey)} size={30} style={{marginLeft: 'auto'}}/>
-                  </View>
-                }
-                containerStyle = {{borderBottomWidth:1,...this._getListColor(item.publicKey)}}
-                onPress = {() => this.onPress_ListItem(item.publicKey)}
-              />
-            )}
+            renderItem={this.renderItem}
+            initialNumToRender={30}
           />
         </View>
 
@@ -203,11 +207,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  text: {
-    color: '#000',
-    fontSize: 30,
-    fontFamily: 'Gilroy-ExtraBold'
-  },
   sumcount: {
     color: '#000',
     fontSize: 20,
@@ -215,7 +214,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginRight: 10,
     padding: 5,
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: 'rgba(0,0,0,0.25)',
     borderRadius: 10
   },
   addcount: {
@@ -225,7 +224,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginRight: 10,
     padding: 5,
-    backgroundColor: 'rgba(0,255,0,0.3)',
+    backgroundColor: 'rgba(0,255,0,0.25)',
     borderRadius: 10
   },
   removecount: {
@@ -235,7 +234,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginRight: 10,
     padding: 5,
-    backgroundColor: 'rgba(255,0,0,0.3)',
+    backgroundColor: 'rgba(255,0,0,0.25)',
     borderRadius: 10
   },
   rank: {
@@ -244,22 +243,21 @@ const styles = StyleSheet.create({
     textAlignVertical: 'center',
     width: 100,
     fontSize: 30,
-    fontFamily: 'Gilroy-ExtraBold'
+    fontFamily: 'Gilroy-ExtraBold',
+    borderRadius: 50
   },
   username: {
     color: '#000',
-    paddingLeft: 5,
     fontSize: 20,
     fontFamily: 'Gilroy-ExtraBold'
   },
-  productivity_label: {
+  productivity: {
+    marginTop: 5,
+    fontSize: 15,
     color: '#000',
-    paddingLeft: 5,
-    fontWeight: 'bold',
-  },
-  productivity_value: {
-    color: '#000',
-    paddingLeft: 5,
+    backgroundColor: '#ddd',
+    borderRadius: 5,
+    padding: 5
   },
   modal: {
     justifyContent: 'center',

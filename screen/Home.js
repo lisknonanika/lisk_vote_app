@@ -147,9 +147,9 @@ export default class Home extends React.Component {
           <Icon name="question-circle" style={[this.modal_box.next_icon_style]}/>
           <Icon name="times-circle" style={[this.modal_box.err_icon_style]}/>
           <Text style={styles.modal_message}>{this.modal_box.message}</Text>
-          <Text style={styles.modal_label}>[address]</Text>
+          <Text style={styles.modal_label}>address</Text>
           <Text style={styles.modal_text}>{this.user_data.address}</Text>
-          <Text style={styles.modal_label}>[balance]</Text>
+          <Text style={styles.modal_label}>balance</Text>
           <Text style={styles.modal_text}>{this.user_data.balance} LSK</Text>
           <Button title={"OK"} buttonStyle={this.modal_box.ok_button_style} onPress={this.onPress_Next} />
           <Button title={"Cancel"} buttonStyle={this.modal_box.cancel_btn_style} onPress={() => {this.refs.account_modal.close()}} />
@@ -230,12 +230,20 @@ const styles = StyleSheet.create({
     lineHeight:30
   },
   modal_label: {
+    textAlign: 'center',
+    width: 280,
+    padding: 3,
     marginTop: 15,
     fontSize: 23,
-    fontFamily: 'Gilroy-ExtraBold'
+    fontFamily: 'Gilroy-ExtraBold',
+    backgroundColor: 'rgba(0,0,0,0.15)'
   },
   modal_text: {
+    textAlign: 'center',
+    width: 280,
     fontSize: 23,
-    fontFamily: 'Gilroy-ExtraBold'
+    padding: 3,
+    fontFamily: 'Gilroy-ExtraBold',
+    backgroundColor: 'rgba(0,0,0,0.1)'
   },
 })
