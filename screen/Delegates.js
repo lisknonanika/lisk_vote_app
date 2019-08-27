@@ -40,11 +40,10 @@ export default class Delegates extends React.Component {
   }
 
   onChangeText_Search = (value) => {
-    this.setState({search_text: value});
+    if (value.length > 0 && value.length < 3) return;
+    this.setState({search_text: value, currentPage: 0});
     this._setViewDelegatesList(value, "");
-    if (Object.keys(this.viewDelegatesList).length > 0) {
-      this.setState({rerenderList: this.state.rerenderList+1});
-    }
+    if (this.viewDelegatesList.get(0) !== undefined) this.setState({rerenderList: this.state.rerenderList+1});
   }
 
   onPress_ListItem = (key) => {
@@ -126,7 +125,7 @@ export default class Delegates extends React.Component {
   _getDisplayRank = () => {
     const current = this.viewDelegatesList.get(this.state.currentPage);
     if (current === undefined) return 'No Data';
-    return `${current[0].rank} - ${current[current.length-1].rank}`;
+    return `${this.state.currentPage*100+1} - ${this.state.currentPage*100+current.length}`;
   }
 
   renderItem = ({ item }) => {
@@ -210,18 +209,22 @@ export default class Delegates extends React.Component {
             autoCapitalize={"none"}
             containerStyle={styles.input_item}
             searchIcon={<Icon name="search" size={20}/>}
-            inputContainerStyle={{backgroundColor: '#fff', padding: 5}} 
-            inputStyle={{backgroundColor: 'transparent', color: '#000'}}
+            inputContainerStyle={{backgroundColor:'#fff', padding:5}} 
+            inputStyle={{backgroundColor:'transparent', color:'#000'}}
             onChangeText={this.onChangeText_Search} />
-          <View style={{flexDirection:'row', justifyContent: 'space-between', margin: 10}}>
-            <View style={{flexDirection:'row'}}>
-              <Text style={styles.rank_length}>{this._getDisplayRank()}</Text>
-            </View>
-            <View style={{flexDirection:'row', justifyContent: 'flex-end'}}>
-              <Text style={[styles.sum_count, {display: this.isRefMode? "none": "flex"}]}>voted: {this.currentVotes.size + this.addVotes.size - this.removeVotes.size}</Text>
-              <Text style={[styles.add_count, {display: this.isRefMode? "none": "flex"}]}>+ {this.addVotes.size}</Text>
-              <Text style={[styles.remove_count, {display: this.isRefMode? "none": "flex"}]}>- {this.removeVotes.size}</Text>
-            </View>
+          <View style={[styles.count_field, {display: this.isRefMode? "none":"flex"}]}>
+            <Text style={styles.sum_count}>vote: </Text>
+            <Text style={styles.sum_count}>{this.currentVotes.size + this.addVotes.size - this.removeVotes.size}</Text>
+            <Text style={styles.sum_count}> / 101 </Text>
+            <Text style={styles.kigo_count}>(</Text>
+            <Text style={styles.add_count}>+ {this.addVotes.size}</Text>
+            <Text style={styles.kigo_count}> , </Text>
+            <Text style={styles.remove_count}>- {this.removeVotes.size}</Text>
+            <Text style={styles.kigo_count}>)</Text>
+          </View>
+          <View style={styles.rank_field}>
+            <Text style={[styles.rank_length, {marginRight: 10}]}>Disp.</Text>
+            <Text style={styles.rank_length}>{this._getDisplayRank()}</Text>
           </View>
           <FlatList
             data={this.viewDelegatesList.get(this.state.currentPage)}
@@ -273,42 +276,46 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     width: '100%'
   },
+  rank_field: {
+    flexDirection:'row',
+    margin:10,
+    marginTop:0
+  },
   rank_length: {
     color: '#000',
-    fontSize: 20,
+    fontSize: 15,
     fontFamily: 'Gilroy-ExtraBold',
-    textAlign: 'left',
-    marginRight: 20,
-    padding: 5
+    textAlignVertical: "bottom",
+  },
+  count_field: {
+    flexDirection:'row',
+    justifyContent:'flex-end',
+    margin:10,
+    marginBottom:0
   },
   sum_count: {
     color: '#000',
     fontSize: 20,
     fontFamily: 'Gilroy-ExtraBold',
-    textAlign: 'right',
-    marginRight: 10,
-    padding: 5,
-    backgroundColor: 'rgba(0,0,0,0.25)',
-    borderRadius: 10
+    textAlignVertical: "bottom",
+  },
+  kigo_count: {
+    color: '#000',
+    fontSize: 18,
+    fontFamily: 'Gilroy-ExtraBold',
+    textAlignVertical: "bottom",
   },
   add_count: {
-    color: '#000',
-    fontSize: 20,
+    color: '#0d0',
+    fontSize: 18,
     fontFamily: 'Gilroy-ExtraBold',
-    textAlign: 'right',
-    marginRight: 10,
-    padding: 5,
-    backgroundColor: 'rgba(0,255,0,0.25)',
-    borderRadius: 10
+    textAlignVertical: "bottom",
   },
   remove_count: {
-    color: '#000',
-    fontSize: 20,
+    color: '#d00',
+    fontSize: 18,
     fontFamily: 'Gilroy-ExtraBold',
-    textAlign: 'right',
-    padding: 5,
-    backgroundColor: 'rgba(255,0,0,0.25)',
-    borderRadius: 10
+    textAlignVertical: "bottom",
   },
   rank: {
     color: '#000',
