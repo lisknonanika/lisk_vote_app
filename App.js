@@ -1,19 +1,27 @@
 import React from 'react';
-import { createStackNavigator, createAppContainer } from 'react-navigation'
+import { createStackNavigator, createAppContainer, createDrawerNavigator } from 'react-navigation'
 
 import Welcome from './screen/Welcome';
 import Home from './screen/Home';
+import Drawer from './screen/Drawer';
 import Delegates from './screen/Delegates';
 
-const Stack = createStackNavigator(
+const DrawerNavi = createDrawerNavigator(
+  {
+    Delegates: { screen: Delegates },
+    Drawer: { screen: Drawer },
+  }
+)
+
+const StackNavi = createStackNavigator(
   {
     Welcome: { screen: Welcome },
     Home: { screen: Home },
-    Delegates: { screen: Delegates },
+    DrawerNavi: { screen: DrawerNavi },
   },
   {initialRouteName: 'Home', mode: 'card', headerMode: 'none'}
 );
-const AppContainer = createAppContainer(Stack);
+const AppContainer = createAppContainer(StackNavi);
 
 export default class App extends React.Component {
   constructor(props) {
