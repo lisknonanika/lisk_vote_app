@@ -42,6 +42,10 @@ export default class Delegates extends React.Component {
     this.setState({isLoading: false, isReady: true});
   }
 
+  onPress_Drawer = () => {
+    this.props.navigation.toggleDrawer();
+  }
+
   onChangeText_Search = (value) => {
     this.setState({search_text: value});
     if (value.length > 0 && value.length < 3) return;
@@ -49,13 +53,13 @@ export default class Delegates extends React.Component {
     if (this.viewDelegatesList.get(0) !== undefined) this.setState({currentPage: 0, rerenderList: this.state.rerenderList + 1});
   }
 
-  onPress_ListItem = (key) => {
+  onPress_ListItem = (key, item) => {
     if (this.isRefMode) return;
 
     if (this.removeVotes.has(key)) this.removeVotes.delete(key);
     else if (this.addVotes.has(key)) this.addVotes.delete(key);
-    else if (this.currentVotes.has(key)) this.removeVotes.set(key, true);
-    else this.addVotes.set(key, true);
+    else if (this.currentVotes.has(key)) this.removeVotes.set(key, item);
+    else this.addVotes.set(key, item);
 
     this.setState((state) => {
       const selected = new Map(state.selected);
@@ -66,7 +70,7 @@ export default class Delegates extends React.Component {
   }
 
   onPress_MoveButton = (type) => {
-    if ((type === 0 || type === 1) && this.setState.current === 0) return;
+    if ((type === 0 || type === 1) && this.state.currentPage === 0) return;
     if ((type === 2 || type === 3) && this.state.currentPage === this.viewDelegatesList.size - 1) return;
 
     if (type === 0) this.setState({currentPage: 0});
@@ -157,7 +161,7 @@ export default class Delegates extends React.Component {
         }}
         checkBox={
           {
-            onPress: () => this.onPress_ListItem(item.publicKey),
+            onPress: () => this.onPress_ListItem(item.publicKey, item),
             checked: !!this.state.selected.get(item.publicKey),
             checkedIcon: "minus-circle",
             checkedColor: "#cc0000",
@@ -200,7 +204,7 @@ export default class Delegates extends React.Component {
 
         <Header
           barStyle="light-content"
-          leftComponent={{ icon: 'menu', color: '#fff', size: 30 }}
+          leftComponent={{ icon: 'menu', color: '#fff', size: 30, onPress: () => this.onPress_Drawer() }}
           centerComponent={{
             text: 'Delegates',
             style: { color: '#fff', fontFamily: 'Gilroy-ExtraBold', fontSize: 25 }
@@ -314,11 +318,6 @@ const styles = StyleSheet.create({
     width: "100%",
     marginLeft:10,
     marginRight:10
-  },
-  kigo_count: {
-    color: '#000',
-    fontSize: 15,
-    fontFamily: 'Gilroy-ExtraBold'
   },
   add_count: {
     color: 'rgba(45,140,115,1)',
