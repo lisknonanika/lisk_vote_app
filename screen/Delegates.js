@@ -6,6 +6,8 @@ import Modal from 'react-native-modalbox';
 import Spinner from 'react-native-loading-spinner-overlay';
 import VoteAPIClient from '../VoteAPIClient';
 
+const DELEGATES_NUM = 100;
+
 export default class Delegates extends React.Component {
   constructor(props) {
     super(props);
@@ -40,10 +42,10 @@ export default class Delegates extends React.Component {
   }
 
   onChangeText_Search = (value) => {
+    this.setState({search_text: value});
     if (value.length > 0 && value.length < 3) return;
-    this.setState({search_text: value, currentPage: 0});
     this._setViewDelegatesList(value, "");
-    if (this.viewDelegatesList.get(0) !== undefined) this.setState({rerenderList: this.state.rerenderList+1});
+    if (this.viewDelegatesList.get(0) !== undefined) this.setState({currentPage: 0, rerenderList: this.state.rerenderList + 1});
   }
 
   onPress_ListItem = (key) => {
@@ -59,20 +61,18 @@ export default class Delegates extends React.Component {
       this.state.selected.has(key)? selected.delete(key): selected.set(key, true);
       return {selected}
     })
-    this.setState({rerenderList: this.state.rerenderList+1});
+    this.setState({rerenderList: this.state.rerenderList + 1});
   }
 
   onPress_MoveButton = (type) => {
-    if (type === 0) {
-      this.setState({currentPage: 0});
-    } else if (type === 1) {
-      this.setState({currentPage: this.state.currentPage-1 < 0? 0: this.state.currentPage-1});
-    } else if (type === 2) {
-      this.setState({currentPage: this.state.currentPage+1 > this.viewDelegatesList.size-1? this.state.currentPage: this.state.currentPage+1});
-    } else {
-      this.setState({currentPage: this.viewDelegatesList.size-1});
-    }
-    this.setState({rerenderList: this.state.rerenderList+1});
+    if ((type === 0 || type === 1) && this.setState.current === 0) return;
+    if ((type === 2 || type === 3) && this.state.currentPage === this.viewDelegatesList.size - 1) return;
+
+    if (type === 0) this.setState({currentPage: 0});
+    else if (type === 1) this.setState({currentPage: this.state.currentPage - 1});
+    else if (type === 2) this.setState({currentPage: this.state.currentPage + 1});
+    else if (type === 3) this.setState({currentPage: this.viewDelegatesList.size - 1});
+    this.setState({rerenderList: this.state.rerenderList + 1});
   }
 
   _getNaviBackgroundColor = () => {
@@ -114,7 +114,7 @@ export default class Delegates extends React.Component {
     this.delegatesList.forEach((delegate) => {
       if ((name.length === 0 || delegate.username.toLowerCase().indexOf(name.toLowerCase()) >= 0) &&
           (group.length === 0 || delegate.groups.indexOf(group) >= 0)) {
-        page = Math.floor(cnt / 100);
+        page = Math.floor(cnt / DELEGATES_NUM);
         if (!this.viewDelegatesList.has(page)) this.viewDelegatesList.set(page, []);
         this.viewDelegatesList.get(page).push(delegate);
         cnt += 1;
@@ -122,10 +122,15 @@ export default class Delegates extends React.Component {
     });
   }
 
-  _getDisplayRank = () => {
+  _getDispLength = () => {
     const current = this.viewDelegatesList.get(this.state.currentPage);
     if (current === undefined) return 'No Data';
-    return `${this.state.currentPage*100+1} - ${this.state.currentPage*100+current.length}`;
+    return `${this.state.currentPage * DELEGATES_NUM + 1} - ${this.state.currentPage * DELEGATES_NUM + current.length}`;
+  }
+
+  _getMaxCount = () => {
+    if (this.viewDelegatesList.size === 0) return 0;
+    return (this.viewDelegatesList.size - 1) * DELEGATES_NUM + this.viewDelegatesList.get(this.viewDelegatesList.size - 1).length
   }
 
   renderItem = ({ item }) => {
@@ -197,10 +202,7 @@ export default class Delegates extends React.Component {
             style: { color: '#fff', fontFamily: 'Gilroy-ExtraBold', fontSize: 25 }
           }}
           rightComponent={{ icon: 'home', color: '#fff', size: 30, onPress: () => this.props.navigation.goBack() }}
-          containerStyle={{
-            justifyContent: 'space-around',
-            ...this._getNaviBackgroundColor(),
-          }}
+          containerStyle={{justifyContent: 'space-around', ...this._getNaviBackgroundColor(),}}
         />
         <View style={{flex: 1}}>
           <SearchBar
@@ -209,29 +211,26 @@ export default class Delegates extends React.Component {
             autoCapitalize={"none"}
             containerStyle={styles.input_item}
             searchIcon={<Icon name="search" size={20}/>}
-            inputContainerStyle={{backgroundColor:'#fff', padding:5}} 
-            inputStyle={{backgroundColor:'transparent', color:'#000'}}
+            inputContainerStyle={{backgroundColor:'#fff', padding:0}} 
+            inputStyle={{backgroundColor:'transparent', color:'#000', padding:0}}
             onChangeText={this.onChangeText_Search} />
-          <View style={[styles.count_field, {display: this.isRefMode? "none":"flex"}]}>
-            <Text style={styles.sum_count}>vote: </Text>
-            <Text style={styles.sum_count}>{this.currentVotes.size + this.addVotes.size - this.removeVotes.size}</Text>
-            <Text style={styles.sum_count}> / 101 </Text>
-            <Text style={styles.kigo_count}>(</Text>
-            <Text style={styles.add_count}>+ {this.addVotes.size}</Text>
-            <Text style={styles.kigo_count}> , </Text>
-            <Text style={styles.remove_count}>- {this.removeVotes.size}</Text>
-            <Text style={styles.kigo_count}>)</Text>
-          </View>
-          <View style={styles.rank_field}>
-            <Text style={[styles.rank_length, {marginRight: 10}]}>Disp.</Text>
-            <Text style={styles.rank_length}>{this._getDisplayRank()}</Text>
+          <TouchableOpacity style={[styles.vote_button, {display: this.isRefMode? "none":"flex"}]}>
+              <Text style={styles.vote_button_text}>この内容でVoteする</Text>
+              <View style={styles.count_field}>
+                <Text style={[styles.sum_count, {marginRight:10}]}>vote: {this.currentVotes.size + this.addVotes.size - this.removeVotes.size} / 101</Text>
+                <Text style={[styles.add_count, {marginRight:10}]}> add: {this.addVotes.size}</Text>
+                <Text style={[styles.remove_count]}> remove: {this.removeVotes.size}</Text>
+              </View>
+          </TouchableOpacity>
+          <View style={styles.disp_num_field}>
+            <Text style={styles.disp_num}>Disp: {this._getDispLength()} ({this._getMaxCount()})</Text>
           </View>
           <FlatList
             data={this.viewDelegatesList.get(this.state.currentPage)}
             extraData={this.state.rerenderList}
             keyExtractor={(item) => item.publicKey}
             renderItem={this.renderItem}
-            initialNumToRender={100}
+            initialNumToRender={DELEGATES_NUM}
           />
         </View>
 
@@ -276,46 +275,60 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0,
     width: '100%'
   },
-  rank_field: {
+  disp_num_field: {
     flexDirection:'row',
-    margin:10,
-    marginTop:0
+    justifyContent: 'space-between',
+    margin:10
   },
-  rank_length: {
+  disp_num: {
     color: '#000',
     fontSize: 15,
     fontFamily: 'Gilroy-ExtraBold',
     textAlignVertical: "bottom",
   },
-  count_field: {
-    flexDirection:'row',
-    justifyContent:'flex-end',
+  vote_button: {
+    justifyContent: 'center',
+    alignItems: 'center',
     margin:10,
-    marginBottom:0
+    marginBottom:0,
+    padding: 5,
+    backgroundColor: 'rgba(175,85,105,1)',
+    borderRadius: 10
   },
-  sum_count: {
-    color: '#000',
-    fontSize: 20,
-    fontFamily: 'Gilroy-ExtraBold',
-    textAlignVertical: "bottom",
+  vote_button_text: {
+    color: "#fff",
+    fontSize: 16,
+  },
+  count_field: {
+    flexDirection:"row",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor:"rgba(255,255,255,0.8)",
+    padding:1,
+    borderRadius:5,
+    width: "100%",
+    marginLeft:10,
+    marginRight:10
   },
   kigo_count: {
     color: '#000',
-    fontSize: 18,
-    fontFamily: 'Gilroy-ExtraBold',
-    textAlignVertical: "bottom",
+    fontSize: 15,
+    fontFamily: 'Gilroy-ExtraBold'
   },
   add_count: {
-    color: '#0d0',
-    fontSize: 18,
-    fontFamily: 'Gilroy-ExtraBold',
-    textAlignVertical: "bottom",
+    color: 'rgba(45,140,115,1)',
+    fontSize: 15,
+    fontFamily: 'Gilroy-ExtraBold'
   },
   remove_count: {
-    color: '#d00',
-    fontSize: 18,
+    color: 'rgba(165,20,20,1)',
+    fontSize: 15,
+    fontFamily: 'Gilroy-ExtraBold'
+  },
+  sum_count: {
+    color: '#000',
+    fontSize: 15,
     fontFamily: 'Gilroy-ExtraBold',
-    textAlignVertical: "bottom",
   },
   rank: {
     color: '#000',

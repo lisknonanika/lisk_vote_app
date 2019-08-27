@@ -118,8 +118,8 @@ export default class Home extends React.Component {
                 value={this.state.mainnet_address}
                 searchIcon={<Icon name="edit" size={20}/>}
                 containerStyle={styles.input_item}
-                inputContainerStyle={{backgroundColor: 'transparent', padding: 5}} 
-                inputStyle={{backgroundColor: 'transparent', color: '#000'}}
+                inputContainerStyle={{backgroundColor: 'transparent', padding: 0}} 
+                inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0}}
                 onChangeText={this.onChangeText_Address} />
               <Button title={"Voteを開始する"} buttonStyle={styles.start_button} onPress={this.onPress_StartButton} />
             </View>
@@ -135,8 +135,8 @@ export default class Home extends React.Component {
                 autoCapitalize={"none"}
                 searchIcon={<Icon name="edit" size={20}/>}
                 containerStyle={styles.input_item}
-                inputContainerStyle={{backgroundColor: 'transparent', padding: 5}} 
-                inputStyle={{backgroundColor: 'transparent', color: '#000'}}
+                inputContainerStyle={{backgroundColor: 'transparent', padding: 0}} 
+                inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0}}
                 onChangeText={this.onChangeText_Address} />
               <Button title={"Voteを開始する"} buttonStyle={styles.start_button} onPress={this.onPress_StartButton} />
             </View>
@@ -179,7 +179,8 @@ const styles = StyleSheet.create({
   text: {
     color: '#fff',
     fontSize: 30,
-    fontFamily: 'Gilroy-ExtraBold'
+    fontFamily: 'Gilroy-ExtraBold',
+    marginTop: -100
   },
   text_small: {
     color: '#fff',
@@ -198,8 +199,7 @@ const styles = StyleSheet.create({
     marginTop: 30
   },
   input_item: {
-    backgroundColor: 'rgba(255,255,255,1)',
-    padding: 0,
+    backgroundColor: '#fff',
     borderRadius: 10,
     borderTopWidth: 0,
     borderBottomWidth: 0,
