@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import { Header, Button, SearchBar, Text, ListItem } from 'react-native-elements';
+import { SafeAreaView } from 'react-navigation'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modalbox';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -150,7 +151,10 @@ export default class Delegates extends React.Component {
         containerStyle={{
           borderBottomColor: "#ccc",
           borderBottomWidth: 1,
-          backgroundColor: this.addVotes.has(item.publicKey)? "rgba(0,255,0,0.15)": this.removeVotes.has(item.publicKey)? "rgba(255,0,0,0.15)": "#fff" }}
+          backgroundColor: this.addVotes.has(item.publicKey)? "rgba(0,255,0,0.15)":
+                            this.removeVotes.has(item.publicKey)? "rgba(255,0,0,0.15)":
+                            "#fff"
+        }}
         checkBox={
           {
             onPress: () => this.onPress_ListItem(item.publicKey),
@@ -248,6 +252,7 @@ export default class Delegates extends React.Component {
             <Icon name="angle-double-right" size={30} style={{color: "#fff"}}/>
           </TouchableOpacity>
         </View>
+        <SafeAreaView style={this._getNaviBackgroundColor()}/>
 
         <Modal style={styles.modal} position={"center"} ref={"error_modal"}>
           <Icon name="times-circle" style={styles.modal_icon_error}/>
