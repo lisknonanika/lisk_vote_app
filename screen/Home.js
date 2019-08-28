@@ -14,38 +14,43 @@ export default class Home extends React.Component {
     super(props);
     this.state = {isLoading: false, swiperIdx: 0, mainnet_address: '', testnet_address: '5244341344295779314L'};
     this.user_data = {address: '', balance: '', votes: []};
-    this.modal_box = {message: '', next_icon_style: {}, err_icon_style: {}, ok_button_style: {}, cancel_btn_style: {}};
+    this.err_message = "";
   }
 
   onChangeText_Address = (value) => {
-    if (this.state.swiperIdx === 0) {
-      this.setState({ mainnet_address: value });
-    } else {
-      this.setState({ testnet_address: value });
-    }
+    if (this.state.swiperIdx === 0) this.setState({ mainnet_address: value });
+    else this.setState({ testnet_address: value });
   };
   
   onPress_StartButton = async() => {
     this.setState({ isLoading: true });
     this.user_data = {address: '', balance: '', votes: []};
     this.user_data.votes.length = 0;
-    this.modal_box = {message: '', next_icon_style: {}, err_icon_style: {}, ok_button_style: {}, cancel_btn_style: {}};
+    this.err_message = "";
     const isTestnet = this.state.swiperIdx === 1;
     const address = isTestnet? this.state.testnet_address: this.state.mainnet_address;
+
+    // アドレス未入力なら遷移
     if (address.length === 0) {
-      this.setState({ isLoading: false });
       this.props.navigation.navigate('Delegates', {isTestnet: this.state.swiperIdx === 1, user: this.user_data});
+      this.setState({ isLoading: false });
       return;
     }
+    
     const ret = await this._getUserData(address, isTestnet);
     this._setUserData(address, ret);
-    this._openModal(ret.result);
-    this.setState({ isLoading: false });
-  }
 
-  onPress_Next = () => {
-    this.refs.account_modal.close();
-    this.props.navigation.navigate('Delegates', {isTestnet: this.state.swiperIdx === 1, user: this.user_data});
+    // ユーザーの情報が取得できたら遷移
+    if (ret.result) {
+      this.props.navigation.navigate('Delegates', {isTestnet: this.state.swiperIdx === 1, user: this.user_data});
+      this.setState({ isLoading: false });
+      return;
+    }
+
+    // それ以外はエラー
+    this.err_message = 'アドレスが正しくないようです。';
+    this.refs.err_modal.open();
+    this.setState({ isLoading: false });
   }
   
   _getUserData = async(address, isTestnet) => {
@@ -69,28 +74,6 @@ export default class Home extends React.Component {
       this.user_data.balance = new BigNumber(userData.data.balance).dividedBy(new BigNumber('100000000')).toFixed();
       this.user_data.votes = userData.data.votes;
     }
-  }
-
-  _openModal = (result) => {
-    const base_style = {justifyContent: 'center', alignItems: 'center', width: 300, padding: 10, borderRadius: 10};
-    if (!result) {
-      this.modal_box = {
-        message: 'アドレスが正しくないようです。',
-        next_icon_style: {display: 'none'},
-        err_icon_style: {color: 'rgba(200,50,50,0.8)', fontSize: 50},
-        ok_button_style: {display: 'none'},
-        cancel_btn_style: {marginTop: 20, backgroundColor: "#999", ...base_style}
-      };
-    } else {
-      this.modal_box = {
-        message: 'このアカウントで開始しますか？',
-        next_icon_style: {color: 'rgba(10,50,200,0.8)', fontSize: 50},
-        err_icon_style: {display: 'none'},
-        ok_button_style: {marginTop: 20, backgroundColor: "rgba(175,85,105,1)", ...base_style},
-        cancel_btn_style: {marginTop: 10, backgroundColor: "#999", ...base_style}
-      };
-    }
-    this.refs.account_modal.open();
   }
 
   render() {
@@ -144,16 +127,10 @@ export default class Home extends React.Component {
           
         </Swiper>
 
-        <Modal style={styles.modal} position={"center"} ref={"account_modal"}>
-          <Icon name="question-circle" style={[this.modal_box.next_icon_style]}/>
-          <Icon name="times-circle" style={[this.modal_box.err_icon_style]}/>
-          <Text style={styles.modal_message}>{this.modal_box.message}</Text>
-          <Text style={styles.modal_label}>address</Text>
-          <Text style={styles.modal_text}>{this.user_data.address}</Text>
-          <Text style={styles.modal_label}>balance</Text>
-          <Text style={styles.modal_text}>{this.user_data.balance} LSK</Text>
-          <Button title={"OK"} buttonStyle={this.modal_box.ok_button_style} onPress={this.onPress_Next} />
-          <Button title={"Cancel"} buttonStyle={this.modal_box.cancel_btn_style} onPress={() => this.refs.account_modal.close()} />
+        <Modal style={styles.modal} position={"center"} ref={"err_modal"}>
+          <Icon name="times-circle" style={[styles.modal_icon_error]}/>
+          <Text style={styles.modal_message}>{this.err_message}</Text>
+          <Button title={"OK"} buttonStyle={styles.modal_ok_error} onPress={() => this.refs.err_modal.close()} />
         </Modal>
       </View>
     );
@@ -217,7 +194,7 @@ const styles = StyleSheet.create({
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 450,
+    height: 350,
     width: 350,
     padding: 15,
     borderRadius: 10,
@@ -247,4 +224,17 @@ const styles = StyleSheet.create({
     fontFamily: 'Gilroy-ExtraBold',
     backgroundColor: 'rgba(0,0,0,0.1)'
   },
+  modal_icon_error: {
+    color: 'rgba(200,50,50,0.8)',
+    fontSize: 50
+  },
+  modal_ok_error: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 300,
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 20,
+    backgroundColor: "rgba(175,85,105,1)"
+  }
 })

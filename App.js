@@ -1,23 +1,24 @@
 import React from 'react';
-import { createStackNavigator, createAppContainer, createDrawerNavigator } from 'react-navigation'
+import { createStackNavigator, createAppContainer } from 'react-navigation'
 
 import Welcome from './screen/Welcome';
 import Home from './screen/Home';
-import Drawer from './screen/Drawer';
 import Delegates from './screen/Delegates';
+import DelegateDetail from './screen/DelegateDetail';
 
-const DrawerNavi = createDrawerNavigator(
-  {
+const ModalNavi = createStackNavigator(
+  { 
     Delegates: { screen: Delegates },
-    Drawer: { screen: Drawer },
-  }
-)
+    DelegateDetail: { screen: DelegateDetail },
+  },
+  {initialRouteName: 'Delegates', mode: 'modal', headerMode: 'none'}
+);
 
 const StackNavi = createStackNavigator(
   {
     Welcome: { screen: Welcome },
     Home: { screen: Home },
-    DrawerNavi: { screen: DrawerNavi },
+    ModalNavi: { screen: ModalNavi },
   },
   {initialRouteName: 'Home', mode: 'card', headerMode: 'none'}
 );

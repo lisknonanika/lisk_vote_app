@@ -7,7 +7,7 @@ import Modal from 'react-native-modalbox';
 import Spinner from 'react-native-loading-spinner-overlay';
 import VoteAPIClient from '../VoteAPIClient';
 
-const DELEGATES_NUM = 100;
+const DELEGATES_NUM = 50;
 
 export default class Delegates extends React.Component {
   constructor(props) {
@@ -17,6 +17,7 @@ export default class Delegates extends React.Component {
     this.isRefMode = this.props.navigation.state.params.user.address.length === 0;
     this.isTestnet = this.props.navigation.state.params.isTestnet;
     this.user_data = this.props.navigation.state.params.user;
+    this.delegate_data = {};
     this.delegatesList = [];
     this.delegatesGroup = [];
     this.currentVotes = new Map();
@@ -43,12 +44,11 @@ export default class Delegates extends React.Component {
   }
 
   onPress_Drawer = () => {
-    this.props.navigation.toggleDrawer();
+    //
   }
 
   onChangeText_Search = (value) => {
     this.setState({search_text: value});
-    if (value.length > 0 && value.length < 3) return;
     this._setViewDelegatesList(value, "");
     if (this.viewDelegatesList.get(0) !== undefined) this.setState({currentPage: 0, rerenderList: this.state.rerenderList + 1});
   }
@@ -78,6 +78,10 @@ export default class Delegates extends React.Component {
     else if (type === 2) this.setState({currentPage: this.state.currentPage + 1});
     else if (type === 3) this.setState({currentPage: this.viewDelegatesList.size - 1});
     this.setState({rerenderList: this.state.rerenderList + 1});
+  }
+
+  onPress_Confirm = () => {
+    //
   }
 
   _getNaviBackgroundColor = () => {
@@ -138,13 +142,32 @@ export default class Delegates extends React.Component {
     return (this.viewDelegatesList.size - 1) * DELEGATES_NUM + this.viewDelegatesList.get(this.viewDelegatesList.size - 1).length
   }
 
+  renderInitialLoadong = () => {
+    return (
+      <View style={styles.container}>
+        <Spinner
+            visible={this.state.isLoading}
+            textContent="Now Loading.."
+            textStyle={{ color:"rgba(255,255,255,0.5)" }}
+            overlayColor="rgba(0,0,0,0.5)" />
+
+        <Modal style={styles.modal} position={"center"} ref={"ready_error_modal"} onClosed={() => this.props.navigation.navigate("Home")}>
+          <Icon name="times-circle" style={styles.modal_icon_error}/>
+          <Text style={styles.modal_message}>エラーが発生しました。</Text>
+          <Text style={styles.modal_message_dtl}>{this.errorMessage}</Text>
+          <Button title={"OK"} buttonStyle={styles.modal_ok_error} onPress={() => this.refs.ready_error_modal.close()} />
+        </Modal>
+      </View>
+    );
+  }
+
   renderItem = ({ item }) => {
     return (
       <ListItem
         title={
           <View style={{flexDirection:'row', alignItems: 'center'}}>
             <Text style={{...styles.rank, backgroundColor: this.currentVotes.has(item.publicKey)? "#95ecba" : "#ccc"}}>{item.rank}</Text>
-            <View style={{flexDirection:'column', marginLeft:20, width:'65%'}}>
+            <View style={{flexDirection:'column', marginLeft:20, width: this.isRefMode? '65%': '100%'}}>
               <Text style={styles.username}>{item.username}</Text>
               <View style={{flexDirection:'row', paddingTop: 5}}>
                 <Text style={styles.productivity}>productivity: {item.productivity} %</Text>
@@ -162,6 +185,7 @@ export default class Delegates extends React.Component {
         checkBox={
           {
             onPress: () => this.onPress_ListItem(item.publicKey, item),
+            containerStyle: {display: this.isRefMode? "none": "flex"},
             checked: !!this.state.selected.get(item.publicKey),
             checkedIcon: "minus-circle",
             checkedColor: "#cc0000",
@@ -170,30 +194,13 @@ export default class Delegates extends React.Component {
             size: 50
           }
         }
+        onLongPress={() => this.props.navigation.navigate('DelegateDetail', {delegate: item, isTestnet: this.isTestnet})}
       />
     );
   }
 
   render() {
-    if (!this.state.isReady) {
-      return (
-        <View style={styles.container}>
-          <Spinner
-              visible={this.state.isLoading}
-              textContent="Now Loading.."
-              textStyle={{ color:"rgba(255,255,255,0.5)" }}
-              overlayColor="rgba(0,0,0,0.5)" />
-
-          <Modal style={styles.modal} position={"center"} ref={"ready_error_modal"} onClosed={() => this.props.navigation.goBack()}>
-            <Icon name="times-circle" style={styles.modal_icon_error}/>
-            <Text style={styles.modal_message}>エラーが発生しました。</Text>
-            <Text style={styles.modal_message_dtl}>{this.errorMessage}</Text>
-            <Button title={"OK"} buttonStyle={styles.modal_ok_error} onPress={() => this.refs.ready_error_modal.close()} />
-          </Modal>
-        </View>
-      );
-    }
-
+    if (!this.state.isReady) return this.renderInitialLoadong();
     return (
       <View style={styles.container}>
         <Spinner
@@ -205,44 +212,22 @@ export default class Delegates extends React.Component {
         <Header
           barStyle="light-content"
           leftComponent={{ icon: 'menu', color: '#fff', size: 30, onPress: () => this.onPress_Drawer() }}
-          centerComponent={{
-            text: 'Delegates',
-            style: { color: '#fff', fontFamily: 'Gilroy-ExtraBold', fontSize: 25 }
-          }}
-          rightComponent={{ icon: 'home', color: '#fff', size: 30, onPress: () => this.props.navigation.goBack() }}
+          centerComponent={
+            <SearchBar
+              placeholder="Name"
+              value={this.state.search_text}
+              autoCapitalize={"none"}
+              containerStyle={styles.input_item}
+              searchIcon={<Icon name="search" size={20}/>}
+              inputContainerStyle={{backgroundColor: "rgba(255,255,255,0.85)", borderRadius: 30, padding:0}} 
+              inputStyle={{color:'#000', padding:0}}
+              onChangeText={this.onChangeText_Search} />
+          }
+          rightComponent={{ icon: 'home', color: '#fff', size: 30, onPress: () => this.props.navigation.navigate("Home") }}
           containerStyle={{justifyContent: 'space-around', ...this._getNaviBackgroundColor(),}}
         />
-        <View style={{flex: 1}}>
-          <SearchBar
-            placeholder="Name (Min: 3 character)"
-            value={this.state.search_text}
-            autoCapitalize={"none"}
-            containerStyle={styles.input_item}
-            searchIcon={<Icon name="search" size={20}/>}
-            inputContainerStyle={{backgroundColor:'#fff', padding:0}} 
-            inputStyle={{backgroundColor:'transparent', color:'#000', padding:0}}
-            onChangeText={this.onChangeText_Search} />
-          <TouchableOpacity style={[styles.vote_button, {display: this.isRefMode? "none":"flex"}]}>
-              <Text style={styles.vote_button_text}>この内容でVoteする</Text>
-              <View style={styles.count_field}>
-                <Text style={[styles.sum_count, {marginRight:10}]}>vote: {this.currentVotes.size + this.addVotes.size - this.removeVotes.size} / 101</Text>
-                <Text style={[styles.add_count, {marginRight:10}]}> add: {this.addVotes.size}</Text>
-                <Text style={[styles.remove_count]}> remove: {this.removeVotes.size}</Text>
-              </View>
-          </TouchableOpacity>
-          <View style={styles.disp_num_field}>
-            <Text style={styles.disp_num}>Disp: {this._getDispLength()} ({this._getMaxCount()})</Text>
-          </View>
-          <FlatList
-            data={this.viewDelegatesList.get(this.state.currentPage)}
-            extraData={this.state.rerenderList}
-            keyExtractor={(item) => item.publicKey}
-            renderItem={this.renderItem}
-            initialNumToRender={DELEGATES_NUM}
-          />
-        </View>
 
-        <View style={{flexDirection:'row', justifyContent: 'space-between', marginTop: 10}}>
+        <View style={{flexDirection:'row', justifyContent: 'space-between'}}>
           <TouchableOpacity style={[styles.navi_button, this._getNaviBackgroundColor(), {borderLeftWidth:0}]} onPress={() => this.onPress_MoveButton(0)} >
             <Icon name="angle-double-left" size={30} style={{color: "#fff"}}/>
           </TouchableOpacity>
@@ -256,6 +241,26 @@ export default class Delegates extends React.Component {
             <Icon name="angle-double-right" size={30} style={{color: "#fff"}}/>
           </TouchableOpacity>
         </View>
+        <View style={styles.disp_num_field}>
+          <Text style={styles.disp_num}>Disp: {this._getDispLength()} ({this._getMaxCount()})</Text>
+        </View>
+
+        <View style={{flex: 1}}>
+          <FlatList
+            data={this.viewDelegatesList.get(this.state.currentPage)}
+            extraData={this.state.rerenderList}
+            keyExtractor={(item) => item.publicKey}
+            renderItem={this.renderItem}
+            initialNumToRender={DELEGATES_NUM}
+          />
+        </View>
+
+        <View style={[styles.count_field, {display: this.isRefMode? "none": "flex"}]}>
+          <Text style={[styles.sum_count, {marginRight:10}]}>vote: {this.currentVotes.size + this.addVotes.size - this.removeVotes.size} / 101</Text>
+          <Text style={[styles.add_count, {marginRight:10}]}> add: {this.addVotes.size}</Text>
+          <Text style={[styles.remove_count]}> remove: {this.removeVotes.size}</Text>
+        </View>
+        <Button title={"この内容でVoteする"} buttonStyle={[styles.vote_button, {display: this.isRefMode? "none": "flex"}]} onPress={this.onPress_Confirm} />
         <SafeAreaView style={this._getNaviBackgroundColor()}/>
 
         <Modal style={styles.modal} position={"center"} ref={"error_modal"}>
@@ -279,7 +284,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   input_item: {
-    backgroundColor: '#ccc',
+    backgroundColor: "transparent",
+    padding: 0,
     borderTopWidth: 0,
     borderBottomWidth: 0,
     width: '100%'
@@ -296,28 +302,19 @@ const styles = StyleSheet.create({
     textAlignVertical: "bottom",
   },
   vote_button: {
+    margin: 10,
+    marginTop: 0,
+    padding: 10,
+    backgroundColor: 'rgba(175,85,105,1)',
     justifyContent: 'center',
     alignItems: 'center',
-    margin:10,
-    marginBottom:0,
-    padding: 5,
-    backgroundColor: 'rgba(175,85,105,1)',
     borderRadius: 10
-  },
-  vote_button_text: {
-    color: "#fff",
-    fontSize: 16,
   },
   count_field: {
     flexDirection:"row",
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     alignItems: 'center',
-    backgroundColor:"rgba(255,255,255,0.8)",
-    padding:1,
-    borderRadius:5,
-    width: "100%",
-    marginLeft:10,
-    marginRight:10
+    margin:10
   },
   add_count: {
     color: 'rgba(45,140,115,1)',
@@ -370,7 +367,7 @@ const styles = StyleSheet.create({
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 450,
+    height: 350,
     width: 350,
     padding: 15,
     borderRadius: 10,
