@@ -76,6 +76,26 @@ export default class Home extends React.Component {
     }
   }
 
+  renderPage = (isTestnet) => {
+    return (
+      <View style={isTestnet? styles.testnet: styles.mainnet}>
+        <Text style={styles.text}>Lisk Vote App</Text>
+        <Text style={styles.text_small}>{isTestnet? "- Lisk Testnet -": "- Lisk Mainnet -"}</Text>
+        <View style={styles.input_field}>
+          <SearchBar
+            placeholder="Lisk Address"
+            value={isTestnet? this.state.testnet_address: this.state.mainnet_address}
+            searchIcon={<Icon name="edit" size={20}/>}
+            containerStyle={styles.input_item}
+            inputContainerStyle={{backgroundColor: 'transparent', padding: 0}} 
+            inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0}}
+            onChangeText={this.onChangeText_Address} />
+          <Button title={"Voteを開始する"} buttonStyle={styles.start_button} onPress={() => this.onPress_StartButton()} />
+        </View>
+      </View>
+    );
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -92,38 +112,8 @@ export default class Home extends React.Component {
                 prevButton={<Text style={styles.swipe_button}>‹</Text>}
                 onIndexChanged={(index) => this.setState({swiperIdx: index})}>
 
-          <View style={styles.mainnet}>
-            <Text style={styles.text}>Lisk Vote App</Text>
-            <Text style={styles.text_small}>- Lisk Mainnet -</Text>
-            <View style={styles.input_field}>
-              <SearchBar
-                placeholder="Lisk Address"
-                value={this.state.mainnet_address}
-                searchIcon={<Icon name="edit" size={20}/>}
-                containerStyle={styles.input_item}
-                inputContainerStyle={{backgroundColor: 'transparent', padding: 0}} 
-                inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0}}
-                onChangeText={this.onChangeText_Address} />
-              <Button title={"Voteを開始する"} buttonStyle={styles.start_button} onPress={this.onPress_StartButton} />
-            </View>
-          </View>
-
-          <View style={styles.testnet}>
-            <Text style={styles.text}>Lisk Vote App</Text>
-            <Text style={styles.text_small}>- Lisk Testnet -</Text>
-            <View style={styles.input_field}>
-              <SearchBar
-                placeholder="Lisk Address"
-                value={this.state.testnet_address}
-                autoCapitalize={"none"}
-                searchIcon={<Icon name="edit" size={20}/>}
-                containerStyle={styles.input_item}
-                inputContainerStyle={{backgroundColor: 'transparent', padding: 0}} 
-                inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0}}
-                onChangeText={this.onChangeText_Address} />
-              <Button title={"Voteを開始する"} buttonStyle={styles.start_button} onPress={this.onPress_StartButton} />
-            </View>
-          </View>
+          {this.renderPage(false)}
+          {this.renderPage(true)}
           
         </Swiper>
 
@@ -178,6 +168,7 @@ const styles = StyleSheet.create({
   input_item: {
     backgroundColor: '#fff',
     borderRadius: 10,
+    padding: 5,
     borderTopWidth: 0,
     borderBottomWidth: 0,
     width: '100%'
