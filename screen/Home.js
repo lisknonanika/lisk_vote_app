@@ -12,7 +12,7 @@ import VoteAPIClient from '../VoteAPIClient';
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, swiperIdx: 0, mainnet_address: '', testnet_address: '5244341344295779314L'};
+    this.state = {isLoading: false, swiperIdx: 0, mainnet_address: '', testnet_address: '3905013786800090105L'};
     this.user_data = {address: '', balance: '', votes: []};
     this.err_message = "";
   }

@@ -14,7 +14,7 @@ const MAX_VOTE_COUNT = 33;
 export default class Confirm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, passphrase: "", secondPassphrase: ""}
+    this.state = {isLoading: false, passphrase: "chicken problem whip mobile shield angry hard toast disease chronic code category", secondPassphrase: ""}
     this.addTarget = this.props.navigation.state.params.add;
     this.removeTarget = this.props.navigation.state.params.remove;
     this.user_data = this.props.navigation.state.params.user;
@@ -39,6 +39,23 @@ export default class Confirm extends React.Component {
       this.refs.error_modal.open();
       this.setState({isLoading: false});
       return;
+    }
+
+
+    try {
+      let trxs = [];
+      trxs.length = 0;
+      this.votesData.forEach((data, key) => {
+        let params = {passphrase:this.state.passphrase, votes:data.votes.key, unvotes:data.unvotes.key}
+        if (this.state.secondPassphrase) params['secondPassphrase'] = this.state.secondPassphrase;
+        const trx = transaction.castVotes();
+        trxs.push(trx);
+      })
+
+      alert(trxs.length);
+
+    } catch (err) {
+      alert(err);
     }
     this.setState({isLoading: false});
   }
@@ -103,7 +120,10 @@ export default class Confirm extends React.Component {
         <ScrollView style={{margin: 10}}>
           <Icon name="exclamation-triangle" style={styles.message_icon}/>
           <Text style={styles.message_text}>内容に間違いはありませんか？</Text>
-          <Text style={styles.message_text_s}>(Vote手数料: {this.trxNum + 1} LSK)</Text>
+          <Text style={styles.label}>Transaction: 1</Text>
+          <Text style={styles.message_text_s}>Address: {this.user_data.address}</Text>
+          <Text style={styles.message_text_s}>Balance: {this.user_data.balance} LSK</Text>
+          <Text style={styles.message_text_s}>手数料: {this.trxNum + 1} LSK</Text>
           <Text style={[styles.label, {display: this.votesData.has(0)?"flex":"none"}]}>Transaction: 1</Text>
           <View style={[styles.content,{display: this.votesData.has(0)?"flex":"none"}]}>
             {this.renderVoteList(this.votesData.get(0))}
@@ -132,7 +152,7 @@ export default class Confirm extends React.Component {
             value={this.state.passphrase}
             autoCapitalize={"none"}
             leftIcon={<Icon name="edit" size={20}/>}
-            rightIcon={<Icon name="times" size={20} style={{color: "#ccc"}} onPress={() => this.setState({publicKey:""})}/>}
+            rightIcon={<Icon name="times" size={20} style={{color: "#ccc"}} onPress={() => this.setState({passphrase:""})}/>}
             containerStyle={styles.modal_input}
             inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
             inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
@@ -143,12 +163,12 @@ export default class Confirm extends React.Component {
             value={this.state.secondPassphrase}
             autoCapitalize={"none"}
             leftIcon={<Icon name="edit" size={20}/>}
-            rightIcon={<Icon name="times" size={20} style={{color: "#ccc"}} onPress={() => this.setState({secondPublicKey:""})}/>}
+            rightIcon={<Icon name="times" size={20} style={{color: "#ccc"}} onPress={() => this.setState({secondPassphrase:""})}/>}
             containerStyle={[styles.modal_input,{display: this.user_data.secondPublicKey===undefined?"none":"flex"}]}
             inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
             inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
             secureTextEntry={true}
-            onChangeText={(value) => this.setState({passphrase:value})} />
+            onChangeText={(value) => this.setState({secondPassphrase:value})} />
           <Button title={"OK"} buttonStyle={styles.modal_ok_button} onPress={() => {this.onPress_Exec()}} />
           <Button title={"Cancel"} buttonStyle={styles.modal_cancel_button} onPress={() => {this.refs.passphrase_modal.close()}} />
         </Modal>
