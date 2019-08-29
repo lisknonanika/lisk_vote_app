@@ -5,11 +5,13 @@ import Welcome from './screen/Welcome';
 import Home from './screen/Home';
 import Delegates from './screen/Delegates';
 import DelegateDetail from './screen/DelegateDetail';
+import Confirm from './screen/Confirm';
 
 const ModalNavi = createStackNavigator(
   { 
     Delegates: { screen: Delegates },
     DelegateDetail: { screen: DelegateDetail },
+    Confirm: { screen: Confirm },
   },
   {initialRouteName: 'Delegates', mode: 'modal', headerMode: 'none'}
 );

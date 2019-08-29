@@ -1,6 +1,6 @@
 import React from 'react';
 import { StatusBar, StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
-import { Header, Button, SearchBar, Text, ListItem } from 'react-native-elements';
+import { Header, Button, Input, Text, ListItem } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation';
 import Drawer from 'react-native-drawer';
 import Icon from 'react-native-vector-icons/FontAwesome';
@@ -10,6 +10,7 @@ import VoteAPIClient from '../VoteAPIClient';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const DELEGATES_NUM = 50;
+const MAX_VOTE_COUNT = 101;
 
 export default class Delegates extends React.Component {
   constructor(props) {
@@ -83,7 +84,24 @@ export default class Delegates extends React.Component {
   }
 
   onPress_Confirm = () => {
-    this.refs.error_modal.open();
+    this.setState({isLoading: true});
+    this.errorMessage = "";
+    if (this.currentVotes.size + this.addVotes.size - this.removeVotes.size > MAX_VOTE_COUNT) {
+      this.errorMessage = `Vote可能最大数(${MAX_VOTE_COUNT})を超えています。`;
+      this.refs.error_modal.open();
+      this.setState({isLoading: false});
+      return;
+    }
+
+    if (this.addVotes.size === 0 && this.removeVotes.size === 0) {
+      this.errorMessage = `Vote対象がありません。`;
+      this.refs.error_modal.open();
+      this.setState({isLoading: false});
+      return;
+    }
+    
+    this.props.navigation.navigate('Confirm', {user: this.user_data, add: this.addVotes, remove: this.removeVotes, isTestnet: this.isTestnet});
+    this.setState({isLoading: false});
   }
 
   onPress_SelectGroup = (group) => {
@@ -134,24 +152,23 @@ export default class Delegates extends React.Component {
     this.viewDelegatesList.clear();
     let page = 0;
     let cnt = 0;
-    let targetList = [];
-    targetList.length = 0;
-    if (group === "Add") {
-      for(delegate of this.addVotes.values()) {
-        targetList.push(delegate);
-      }
-    } else if (group === "Remove") {
-      for(delegate of this.removeVotes.values()) {
-        targetList.push(delegate);
-      }
-    } else {
-      targetList = this.delegatesList;
+
+    if (group === "Add" || group === "Remove") {
+      const targetList = group === "Add"? this.addVotes: this.removeVotes;
+      this.delegatesList.forEach((delegate) => {
+        if (targetList.has(delegate.publicKey)) {
+          page = Math.floor(cnt / DELEGATES_NUM);
+          if (!this.viewDelegatesList.has(page)) this.viewDelegatesList.set(page, []);
+          this.viewDelegatesList.get(page).push(delegate);
+          cnt += 1;
+        }
+      });
+      return;
     }
 
-    targetList.forEach((delegate) => {
-      if (group === "Add" || group === "Remove" || 
-          ((name.length === 0 || delegate.username.toLowerCase().indexOf(name.toLowerCase()) >= 0) &&
-           (group.length === 0 || delegate.groups.indexOf(group) >= 0))) {
+    this.delegatesList.forEach((delegate) => {
+      if ((name.length === 0 || delegate.username.toLowerCase().indexOf(name.toLowerCase()) >= 0) &&
+          (group.length === 0 || delegate.groups.indexOf(group) >= 0)) {
         page = Math.floor(cnt / DELEGATES_NUM);
         if (!this.viewDelegatesList.has(page)) this.viewDelegatesList.set(page, []);
         this.viewDelegatesList.get(page).push(delegate);
@@ -173,7 +190,7 @@ export default class Delegates extends React.Component {
 
   renderErrorModal = () => {
     return (
-      <Modal style={styles.modal} position={"center"} ref={"error_modal"} onClosed={() => this.onClosed_ErrorModal()}>
+      <Modal style={styles.modal} position={"center"} ref={"error_modal"} backdropPressToClose={false} onClosed={() => this.onClosed_ErrorModal()}>
         <Icon name="times-circle" style={styles.modal_icon_error}/>
         <Text style={styles.modal_message}>{this.errorMessage}</Text>
         <Button title={"OK"} buttonStyle={styles.modal_ok_error} onPress={() => {this.refs.error_modal.close()}} />
@@ -200,14 +217,15 @@ export default class Delegates extends React.Component {
         barStyle="light-content"
         leftComponent={{ icon: 'menu', color: '#fff', size: 30, onPress: () => this._drawer.open() }}
         centerComponent={
-          <SearchBar
+          <Input
             placeholder="Name"
             value={this.state.search_text}
             autoCapitalize={"none"}
+            leftIcon={<Icon name="search" size={20}/>}
+            rightIcon={<Icon name="times" size={20} style={{color: "#999", marginRight: 15}} onPress={() => this.onChangeText_Search("")}/>}
             containerStyle={styles.input_item}
-            searchIcon={<Icon name="search" size={20}/>}
-            inputContainerStyle={{backgroundColor: "rgba(255,255,255,0.85)", borderRadius: 30, padding:0}} 
-            inputStyle={{color:'#000', padding:0}}
+            inputContainerStyle={{backgroundColor: "rgba(255,255,255,0.85)", padding:0, borderRadius: 30, borderBottomWidth: 0}} 
+            inputStyle={{color:'#000', padding:0, marginLeft: 10}}
             onChangeText={this.onChangeText_Search} />
         }
         rightComponent={{icon: 'home', color: '#fff', size: 30, onPress: () => this.props.navigation.navigate("Home")}}
@@ -296,11 +314,11 @@ export default class Delegates extends React.Component {
     return (
       <View>
         <View style={[styles.count_field, {display: this.isRefMode? "none": "flex"}]}>
-          <Text style={[styles.sum_count, {marginRight:10}]}>vote: {this.currentVotes.size + this.addVotes.size - this.removeVotes.size} / 101</Text>
+          <Text style={[styles.sum_count, {marginRight:10}]}>vote: {this.currentVotes.size + this.addVotes.size - this.removeVotes.size} / {MAX_VOTE_COUNT}</Text>
           <Text style={[styles.add_count, {marginRight:10}]}> add: {this.addVotes.size}</Text>
           <Text style={[styles.remove_count]}> remove: {this.removeVotes.size}</Text>
         </View>
-        <Button title={"この内容でVoteする"} buttonStyle={[styles.vote_button, {display: this.isRefMode? "none": "flex"}]} onPress={() => this.onPress_Confirm()} />
+        <Button title={"確認"} buttonStyle={[styles.vote_button, {display: this.isRefMode? "none": "flex"}]} onPress={() => this.onPress_Confirm()} />
       </View>
     )
   }
@@ -339,7 +357,7 @@ export default class Delegates extends React.Component {
               <Text style={styles.drawer_label}>Add / Remove</Text>
               {this.renderDrawerButton("Add")}
               {this.renderDrawerButton("Remove")}
-              <Text style={{marginTop:5, color: "#fff"}}>※ユーザー名検索は無視されます。</Text>
+              <Text style={{marginTop:5, color: "#fff"}}>※デリゲート名での検索は無視されます。</Text>
             </View>
             
             <Text style={styles.drawer_label}>Group</Text>
@@ -529,15 +547,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 25,
     lineHeight:30
-  },
-  modal_label: {
-    marginTop: 15,
-    fontSize: 23,
-    fontFamily: 'Gilroy-ExtraBold'
-  },
-  modal_text: {
-    fontSize: 23,
-    fontFamily: 'Gilroy-ExtraBold'
   },
   modal_icon_error: {
     color: 'rgba(200,50,50,0.8)',

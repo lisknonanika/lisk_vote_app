@@ -39,7 +39,3 @@ exports.getAccountByAddress = async(address) => {
     return {result: false, data: err}
   }
 }
-
-(async() => {
-  console.log(await this.getDelegatesList(1))
-})()

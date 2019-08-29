@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View} from 'react-native';
-import { Button, Text, SearchBar } from 'react-native-elements';
+import { Button, Text, Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Swiper from 'react-native-swiper';
 import Modal from 'react-native-modalbox';
@@ -20,6 +20,11 @@ export default class Home extends React.Component {
   onChangeText_Address = (value) => {
     if (this.state.swiperIdx === 0) this.setState({ mainnet_address: value });
     else this.setState({ testnet_address: value });
+  };
+
+  onPress_Address = () => {
+    if (this.state.swiperIdx === 0) this.setState({ mainnet_address: "" });
+    else this.setState({ testnet_address: "" });
   };
   
   onPress_StartButton = async() => {
@@ -82,13 +87,15 @@ export default class Home extends React.Component {
         <Text style={styles.text}>Lisk Vote App</Text>
         <Text style={styles.text_small}>{isTestnet? "- Lisk Testnet -": "- Lisk Mainnet -"}</Text>
         <View style={styles.input_field}>
-          <SearchBar
+          <Input
             placeholder="Lisk Address"
             value={isTestnet? this.state.testnet_address: this.state.mainnet_address}
-            searchIcon={<Icon name="edit" size={20}/>}
+            autoCapitalize={"none"}
+            leftIcon={<Icon name="edit" size={20}/>}
+            rightIcon={<Icon name="times" size={20} style={{color: "#999"}} onPress={() => this.onPress_Address()}/>}
             containerStyle={styles.input_item}
-            inputContainerStyle={{backgroundColor: 'transparent', padding: 0}} 
-            inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0}}
+            inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
+            inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
             onChangeText={this.onChangeText_Address} />
           <Button title={"Voteを開始する"} buttonStyle={styles.start_button} onPress={() => this.onPress_StartButton()} />
         </View>
@@ -117,7 +124,7 @@ export default class Home extends React.Component {
           
         </Swiper>
 
-        <Modal style={styles.modal} position={"center"} ref={"err_modal"}>
+        <Modal style={styles.modal} position={"center"} ref={"err_modal"} backdropPressToClose={false}>
           <Icon name="times-circle" style={[styles.modal_icon_error]}/>
           <Text style={styles.modal_message}>{this.err_message}</Text>
           <Button title={"OK"} buttonStyle={styles.modal_ok_error} onPress={() => this.refs.err_modal.close()} />
@@ -197,23 +204,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 25,
     lineHeight:30
-  },
-  modal_label: {
-    textAlign: 'center',
-    width: 280,
-    padding: 3,
-    marginTop: 15,
-    fontSize: 23,
-    fontFamily: 'Gilroy-ExtraBold',
-    backgroundColor: 'rgba(0,0,0,0.15)'
-  },
-  modal_text: {
-    textAlign: 'center',
-    width: 280,
-    fontSize: 23,
-    padding: 3,
-    fontFamily: 'Gilroy-ExtraBold',
-    backgroundColor: 'rgba(0,0,0,0.1)'
   },
   modal_icon_error: {
     color: 'rgba(200,50,50,0.8)',
