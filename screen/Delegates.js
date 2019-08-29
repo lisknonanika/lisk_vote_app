@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
+import { StatusBar, StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import { Header, Button, SearchBar, Text, ListItem } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation';
 import Drawer from 'react-native-drawer';
@@ -211,7 +211,7 @@ export default class Delegates extends React.Component {
             onChangeText={this.onChangeText_Search} />
         }
         rightComponent={{icon: 'home', color: '#fff', size: 30, onPress: () => this.props.navigation.navigate("Home")}}
-        containerStyle={[this._getNaviBackgroundColor(), {justifyContent: 'space-around', paddingBottom: 10}]}
+        containerStyle={[this._getNaviBackgroundColor(), styles.header]}
       />
     );
   }
@@ -398,6 +398,11 @@ const drawerStyles = {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  header: {
+    justifyContent: 'space-around',
+    paddingBottom: 10,
+    marginTop: ((StatusBar.currentHeight || 0) * -1) + 10
   },
   content: {
     flex: 1,
