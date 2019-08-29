@@ -26,7 +26,21 @@ export default class Confirm extends React.Component {
   }
 
   onPress_Exec = async() => {
-    
+    this.setState({isLoading: true});
+    this.errorMessage = "";
+    if (this.state.passphrase.length === 0) {
+      this.errorMessage = "Passphraseが未入力です。";
+      this.refs.error_modal.open();
+      this.setState({isLoading: false});
+      return;
+    }
+    if (this.user_data.secondPublicKey !== undefined && this.state.secondPassphrase.length === 0) {
+      this.errorMessage = "Second Passphraseが未入力です。";
+      this.refs.error_modal.open();
+      this.setState({isLoading: false});
+      return;
+    }
+    this.setState({isLoading: false});
   }
 
   _setVotesData = () => {
@@ -119,7 +133,7 @@ export default class Confirm extends React.Component {
             autoCapitalize={"none"}
             leftIcon={<Icon name="edit" size={20}/>}
             rightIcon={<Icon name="times" size={20} style={{color: "#ccc"}} onPress={() => this.setState({publicKey:""})}/>}
-            containerStyle={[styles.modal_input,{display: this.user_data.publicKey===undefined?"none":"flex"}]}
+            containerStyle={styles.modal_input}
             inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
             inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
             secureTextEntry={true}
