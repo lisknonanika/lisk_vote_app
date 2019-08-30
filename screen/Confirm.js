@@ -1,13 +1,13 @@
 import React from 'react';
-import { StatusBar, StyleSheet, View, ScrollView, FlatList } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, ScrollView, FlatList } from 'react-native';
 import { Header, Button, Text, Input  } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation'
 import Spinner from 'react-native-loading-spinner-overlay';
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {APIClient} from '@liskhq/lisk-api-client';
+import { APIClient } from '@liskhq/lisk-api-client';
 import VoteAPIClient from '../VoteAPIClient';
-import transaction from '@liskhq/lisk-transactions';
+import { castVotes } from '@liskhq/lisk-transactions';
 
 const MAX_VOTE_COUNT = 33;
 
@@ -41,18 +41,15 @@ export default class Confirm extends React.Component {
       return;
     }
 
-
     try {
       let trxs = [];
       trxs.length = 0;
       this.votesData.forEach((data, key) => {
         let params = {passphrase:this.state.passphrase, votes:data.votes.key, unvotes:data.unvotes.key}
         if (this.state.secondPassphrase) params['secondPassphrase'] = this.state.secondPassphrase;
-        const trx = transaction.castVotes();
+        const trx = castVotes(params)
         trxs.push(trx);
       })
-
-      alert(trxs.length);
 
     } catch (err) {
       alert(err);
@@ -121,11 +118,10 @@ export default class Confirm extends React.Component {
           <Icon name="exclamation-triangle" style={styles.message_icon}/>
           <Text style={styles.message_text}>内容に間違いはありませんか？</Text>
 
-          <Text style={styles.label}>基本情報</Text>
-          <View style={[styles.content,{display: this.votesData.has(0)?"flex":"none"}]}>
-            <Text style={styles.message_text_s}>Address: {this.user_data.address}</Text>
-            <Text style={styles.message_text_s}>Balance: {this.user_data.balance} LSK</Text>
-            <Text style={styles.message_text_s}>Vote Fee: {this.trxNum + 1} LSK</Text>
+          <View style={{display: this.votesData.has(0)?"flex":"none"}}>
+            <Text style={styles.label}>Account</Text>
+            <Text style={styles.message_text_baseInfo}>Address: {this.user_data.address}</Text>
+            <Text style={styles.message_text_baseInfo}>Balance: {this.user_data.balance} LSK</Text>
           </View>
           
           <Text style={[styles.label, {display: this.votesData.has(0)?"flex":"none"}]}>Transaction: 1</Text>
@@ -147,6 +143,8 @@ export default class Confirm extends React.Component {
           <View style={[styles.content,{display: this.votesData.has(3)?"flex":"none"}]}>
             {this.renderVoteList(this.votesData.get(3))}
           </View>
+
+          <Text style={styles.message_text_fee}>Vote手数料: {this.trxNum + 1} LSK</Text>
 
         </ScrollView>
         <Button title={"実行"} buttonStyle={styles.exec_button} onPress={() => this.refs.passphrase_modal.open()} />
@@ -195,7 +193,7 @@ const styles = StyleSheet.create({
   header: {
     justifyContent: 'space-around',
     paddingBottom: 10,
-    marginTop: ((StatusBar.currentHeight || 0) * -1) + 10
+    marginTop: Platform.OS === "android"? ((StatusBar.currentHeight || 0) * -1) + 10: 0
   },
   header_title: {
     color: '#fff',
@@ -213,6 +211,8 @@ const styles = StyleSheet.create({
   },
   label: {
     color: '#000',
+    justifyContent: 'center',
+    textAlignVertical: 'center',
     backgroundColor: "#ccc",
     fontSize: 20,
     fontFamily: 'Gilroy-ExtraBold',
@@ -251,9 +251,18 @@ const styles = StyleSheet.create({
     fontSize: 25,
     lineHeight:30
   },
-  message_text_s: {
-    marginTop: 10,
-    fontSize: 20
+  message_text_baseInfo: {
+    borderColor: "#ccc",
+    fontSize: 18,
+    borderWidth:1,
+    borderTopWidth:0,
+    padding: 10
+  },
+  message_text_fee: {
+    marginTop: 20,
+    fontSize: 18,
+    color: "#f00",
+    textAlign: "right"
   },
   exec_button: {
     margin: 10,

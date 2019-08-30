@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusBar, StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import { Header, Button, Input, Text, ListItem } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation';
 import Drawer from 'react-native-drawer';
@@ -9,7 +9,8 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import VoteAPIClient from '../VoteAPIClient';
 import { ScrollView } from 'react-native-gesture-handler';
 
-const DELEGATES_NUM = 50;
+const LIST_ITEM_HEIGHT = 100;
+const DELEGATES_NUM = 100;
 const MAX_VOTE_COUNT = 101;
 
 export default class Delegates extends React.Component {
@@ -253,7 +254,12 @@ export default class Delegates extends React.Component {
           extraData={this.state.rerenderList}
           keyExtractor={(item) => item.publicKey}
           renderItem={this.renderItem}
-          initialNumToRender={DELEGATES_NUM}
+          getItemLayout={(data, index) => ({
+            length: LIST_ITEM_HEIGHT, offset: LIST_ITEM_HEIGHT * index, index
+          })}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          windowSize={10}
         />
       </View>
     );
@@ -274,6 +280,7 @@ export default class Delegates extends React.Component {
           </View>
         }
         containerStyle={{
+          height: LIST_ITEM_HEIGHT,
           borderBottomColor: "#ccc",
           borderBottomWidth: 1,
           backgroundColor: this.addVotes.has(item.publicKey)? "rgba(0,255,0,0.15)":
@@ -292,7 +299,7 @@ export default class Delegates extends React.Component {
             size: 50
           }
         }
-        onLongPress={() => this.props.navigation.navigate('DelegateDetail', {delegate: item, isTestnet: this.isTestnet})}
+        onLongPress={() => this.props.navigation.navigate('DelegateDetail', {delegate: item, isTestnet: this.isTestnet, isRefMode: this.isRefMode})}
       />
     );
   }
@@ -363,7 +370,7 @@ export default class Delegates extends React.Component {
             />
           </ScrollView>
         </View>
-        <SafeAreaView/>
+        <SafeAreaView style={{display: this.isRefMode? "none": "flex"}}/>
       </View>
     );
   }
@@ -390,7 +397,7 @@ export default class Delegates extends React.Component {
           {this.renderListMoveButton()}
           {this.renderList()}
           {this.renderConfirmButton()}
-          <SafeAreaView style={this._getNaviBackgroundColor()}/>
+          <SafeAreaView style={[this._getNaviBackgroundColor(), {display: this.isRefMode? "none": "flex"}]}/>
           {this.renderErrorModal()}
 
         </Drawer>
@@ -411,7 +418,7 @@ const styles = StyleSheet.create({
   header: {
     justifyContent: 'space-around',
     paddingBottom: 10,
-    marginTop: ((StatusBar.currentHeight || 0) * -1) + 10
+    marginTop: Platform.OS === "android"? ((StatusBar.currentHeight || 0) * -1) + 10: 0
   },
   content: {
     flex: 1,

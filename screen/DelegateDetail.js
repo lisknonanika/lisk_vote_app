@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusBar, StyleSheet, View, ScrollView, FlatList } from 'react-native';
+import { Platform, StatusBar, StyleSheet, View, ScrollView, FlatList } from 'react-native';
 import { Header, Text } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation'
 
@@ -8,6 +8,7 @@ export default class DelegateDetail extends React.Component {
     super(props);
     this.delegate = this.props.navigation.state.params.delegate;
     this.isTestnet = this.props.navigation.state.params.isTestnet;
+    this.isRefMode = this.props.navigation.state.params.isRefMode;
   }
   render() {
     return (
@@ -37,7 +38,7 @@ export default class DelegateDetail extends React.Component {
           <Text style={styles.label}>Productivity</Text>
           <Text style={styles.text}>{this.delegate.productivity} %</Text>
         </ScrollView>
-        <SafeAreaView/>
+        <SafeAreaView style={{display: this.isRefMode? "none": "flex"}}/>
       </View>
     );
   }
@@ -47,7 +48,7 @@ const styles = StyleSheet.create({
   header: {
     justifyContent: 'space-around',
     paddingBottom: 10,
-    marginTop: ((StatusBar.currentHeight || 0) * -1) + 10
+    marginTop: Platform.OS === "android"? ((StatusBar.currentHeight || 0) * -1) + 10: 0
   },
   header_title: {
     color: '#fff',
