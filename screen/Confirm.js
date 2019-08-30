@@ -120,26 +120,34 @@ export default class Confirm extends React.Component {
         <ScrollView style={{margin: 10}}>
           <Icon name="exclamation-triangle" style={styles.message_icon}/>
           <Text style={styles.message_text}>内容に間違いはありませんか？</Text>
-          <Text style={styles.label}>Transaction: 1</Text>
-          <Text style={styles.message_text_s}>Address: {this.user_data.address}</Text>
-          <Text style={styles.message_text_s}>Balance: {this.user_data.balance} LSK</Text>
-          <Text style={styles.message_text_s}>手数料: {this.trxNum + 1} LSK</Text>
+
+          <Text style={styles.label}>基本情報</Text>
+          <View style={[styles.content,{display: this.votesData.has(0)?"flex":"none"}]}>
+            <Text style={styles.message_text_s}>Address: {this.user_data.address}</Text>
+            <Text style={styles.message_text_s}>Balance: {this.user_data.balance} LSK</Text>
+            <Text style={styles.message_text_s}>Vote Fee: {this.trxNum + 1} LSK</Text>
+          </View>
+          
           <Text style={[styles.label, {display: this.votesData.has(0)?"flex":"none"}]}>Transaction: 1</Text>
           <View style={[styles.content,{display: this.votesData.has(0)?"flex":"none"}]}>
             {this.renderVoteList(this.votesData.get(0))}
           </View>
+
           <Text style={[styles.label, {display: this.votesData.has(1)?"flex":"none"}]}>Transaction: 2</Text>
           <View style={[styles.content,{display: this.votesData.has(1)?"flex":"none"}]}>
             {this.renderVoteList(this.votesData.get(1))}
           </View>
+
           <Text style={[styles.label, {display: this.votesData.has(2)?"flex":"none"}]}>Transaction: 3</Text>
           <View style={[styles.content,{display: this.votesData.has(2)?"flex":"none"}]}>
             {this.renderVoteList(this.votesData.get(2))}
           </View>
+
           <Text style={[styles.label, {display: this.votesData.has(3)?"flex":"none"}]}>Transaction: 4</Text>
           <View style={[styles.content,{display: this.votesData.has(3)?"flex":"none"}]}>
             {this.renderVoteList(this.votesData.get(3))}
           </View>
+
         </ScrollView>
         <Button title={"実行"} buttonStyle={styles.exec_button} onPress={() => this.refs.passphrase_modal.open()} />
         <SafeAreaView/>

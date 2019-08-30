@@ -15,7 +15,7 @@ const MAX_VOTE_COUNT = 101;
 export default class Delegates extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, isReady: false, rerenderList: 0, search_text: "", search_group: "", currentPage: 0, selected: new Map()};
+    this.state = {isLoading: false, isReady: false, rerenderList: 0, search_text: "", search_group: "init", currentPage: 0, selected: new Map()};
     this.errorMessage = "";
     this.isRefMode = this.props.navigation.state.params.user.address.length === 0;
     this.isTestnet = this.props.navigation.state.params.isTestnet;
@@ -43,7 +43,7 @@ export default class Delegates extends React.Component {
     this._setDelegatesGroup();
     if (!this.isRefMode) this._setVotes();
     this._setViewDelegatesList("", "");
-    this.setState({isLoading: false, isReady: true});
+    this.setState({isLoading: false, isReady: true, search_group: ""});
   }
 
   onClosed_ErrorModal = () => {
@@ -198,19 +198,6 @@ export default class Delegates extends React.Component {
     );
   }
 
-  renderInitialLoadong = () => {
-    return (
-      <View style={styles.container}>
-        <Spinner
-            visible={this.state.isLoading}
-            textContent="Now Loading.."
-            textStyle={{ color:"rgba(255,255,255,0.5)" }}
-            overlayColor="rgba(0,0,0,0.5)" />
-          {this.renderErrorModal()}
-      </View>
-    );
-  }
-
   renderHeader = () => {
     return (
       <Header
@@ -277,7 +264,7 @@ export default class Delegates extends React.Component {
       <ListItem
         title={
           <View style={{flexDirection:'row', alignItems: 'center'}}>
-            <Text style={{...styles.rank, backgroundColor: this.currentVotes.has(item.publicKey)? "#95ecba" : "#ccc"}}>{item.rank}</Text>
+            <Text style={[styles.rank, {backgroundColor: this.currentVotes.has(item.publicKey)? "#95ecba" : "#ccc"}]}>{item.rank}</Text>
             <View style={{flexDirection:'column', marginLeft:20, width: this.isRefMode? '65%': '100%'}}>
               <Text style={styles.username}>{item.username}</Text>
               <View style={{flexDirection:'row', paddingTop: 5}}>
@@ -353,6 +340,11 @@ export default class Delegates extends React.Component {
             onPress={() => this._drawer.close()}
           />
           <ScrollView>
+            <Text style={[styles.drawer_user_info, {marginTop:20}]}>Address:</Text>
+            <Text style={[styles.drawer_user_info]}>&nbsp;&nbsp;{this.user_data.address}</Text>
+            <Text style={[styles.drawer_user_info, {marginTop:10}]}>Balance:</Text>
+            <Text style={[styles.drawer_user_info]}>&nbsp;&nbsp;{this.user_data.balance} LSK</Text>
+
             <View style={{display: this.isRefMode? "none": "flex"}}>
               <Text style={styles.drawer_label}>Add / Remove</Text>
               {this.renderDrawerButton("Add")}
@@ -377,7 +369,6 @@ export default class Delegates extends React.Component {
   }
 
   render() {
-    if (!this.state.isReady) return this.renderInitialLoadong();
     return (
       <View style={styles.container}>
         <Spinner
@@ -409,7 +400,7 @@ export default class Delegates extends React.Component {
 }
 
 const drawerStyles = {
-  drawer: {backgroundColor: 'rgba(0,0,0,0.95)'},
+  drawer: {backgroundColor: 'rgba(0,0,0,0.85)'},
   main: {paddingLeft: 3},
 }
 
@@ -507,6 +498,11 @@ const styles = StyleSheet.create({
     borderLeftWidth:1,
     borderRightWidth:1,
     borderColor: "rgba(255,255,255,0.5)"
+  },
+  drawer_user_info: {
+    color: "#fff",
+    fontSize: 16,
+    fontFamily: 'Gilroy-ExtraBold'
   },
   drawer_label: {
     color: '#000',
