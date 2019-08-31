@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, Linking, View, ScrollView, FlatList } from 'react-native';
-import { Header, Button, Text, Input  } from 'react-native-elements';
+import { Header, Button, Text  } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation'
 import Spinner from 'react-native-loading-spinner-overlay';
 import Modal from 'react-native-modalbox';
@@ -58,6 +58,7 @@ export default class Result extends React.Component {
         await this._sleep(10000);
         this.setState({done: this.state.done + 1});
       }
+      await this._sleep(5000);
       return trxResults;
     } catch(err) {
       return [];

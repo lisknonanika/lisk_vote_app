@@ -7,8 +7,10 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modalbox';
 import Spinner from 'react-native-loading-spinner-overlay';
-import VoteAPIClient from '../VoteAPIClient';
 import { ScrollView } from 'react-native-gesture-handler';
+import { APIClient } from '@liskhq/lisk-api-client';
+import VoteAPIClient from '../VoteAPIClient';
+import BigNumber from 'bignumber.js';
 
 const LIST_ITEM_HEIGHT = 100;
 const DELEGATES_NUM = 101;
@@ -119,9 +121,34 @@ export default class Delegates extends React.Component {
 
   _updateUserData = async() => {
     this._clearProp();
-    await this.props.navigation.state.params.updateUserData();
+    this.setState({isLoading: true})
+    const ret = await this._getUserData();
+    this._setUserData(ret);
     await this._setDelegates();
     this.setState({isLoading: false, isReady: true, search_group: "", currentPage: 0, rerenderList: this.state.rerenderList + 1});
+    this.props.navigation.navigate('Delegates', {isTestnet: this.isTestnet, user: this.user_data});
+  }
+  
+  _getUserData = async() => {
+    try {
+      if (this.isTestnet) return await VoteAPIClient.getAccountByAddress(this.user_data.address);
+      const client = APIClient.createMainnetAPIClient();
+      const result = await client.votes.get({address: this.user_data.address, offset: 0, limit: 101});
+      if (!result || !result.data) return {result: false};
+      return {result: true, data: result.data};
+
+    } catch (err) {
+      return {result: false};
+    }
+  }
+
+  _setUserData = (userData) => {
+    this.user_data.balance = '0';
+    this.user_data.votes.length = 0;
+    if (userData.result) {
+      this.user_data.balance = new BigNumber(userData.data.balance).dividedBy(new BigNumber('100000000')).toFixed();
+      this.user_data.votes = userData.data.votes;
+    }
   }
 
   _setDelegates = async() => {

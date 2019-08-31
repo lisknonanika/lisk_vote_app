@@ -172,6 +172,7 @@ export default class Confirm extends React.Component {
             value={this.state.passphrase}
             autoCapitalize={"none"}
             leftIcon={<Icon name="lock" size={20}/>}
+            leftIconContainerStyle={{width:20, marginLeft:0}}
             rightIcon={<MIcon name="clear" size={20} style={{color: "#ccc"}} onPress={() => this.setState({passphrase:""})}/>}
             containerStyle={styles.modal_input}
             inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
@@ -183,6 +184,7 @@ export default class Confirm extends React.Component {
             value={this.state.secondPassphrase}
             autoCapitalize={"none"}
             leftIcon={<Icon name="lock" size={20}/>}
+            leftIconContainerStyle={{width:20, marginLeft:0}}
             rightIcon={<MIcon name="clear" size={20} style={{color: "#ccc"}} onPress={() => this.setState({secondPassphrase:""})}/>}
             containerStyle={[styles.modal_input,{display: this.user_data.secondPublicKey===undefined?"none":"flex"}]}
             inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 

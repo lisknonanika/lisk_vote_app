@@ -49,9 +49,7 @@ export default class Home extends React.Component {
 
     // ユーザーの情報が取得できたら遷移
     if (ret.result) {
-      this.props.navigation.navigate('Delegates', {
-        isTestnet: this.state.swiperIdx === 1, user: this.user_data, updateUserData: this.onPress_StartButton
-      });
+      this.props.navigation.navigate('Delegates', {isTestnet: this.state.swiperIdx === 1, user: this.user_data});
       this.setState({ isLoading: false });
       return;
     }
@@ -96,6 +94,7 @@ export default class Home extends React.Component {
             value={isTestnet? this.state.testnet_address: this.state.mainnet_address}
             autoCapitalize={"none"}
             leftIcon={<MCIcon name="account" size={20}/>}
+            leftIconContainerStyle={{width:20, marginLeft:0}}
             rightIcon={<MIcon name="clear" size={20} style={{color: "#999"}} onPress={() => this.onPress_Address()}/>}
             containerStyle={styles.input_item}
             inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 

@@ -24,7 +24,7 @@ const StackNavi = createStackNavigator(
     Confirm: { screen: Confirm },
     ModalNavi: { screen: ModalNavi },
   },
-  {initialRouteName: 'Home', mode: 'card', headerMode: 'none'}
+  {initialRouteName: 'Welcome', mode: 'card', headerMode: 'none'}
 );
 const AppContainer = createAppContainer(StackNavi);
 
