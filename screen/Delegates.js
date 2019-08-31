@@ -16,34 +16,12 @@ const MAX_VOTE_COUNT = 101;
 export default class Delegates extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, isReady: false, rerenderList: 0, search_text: "", search_group: "init", currentPage: 0, selected: new Map()};
-    this.errorMessage = "";
-    this.isRefMode = this.props.navigation.state.params.user.address.length === 0;
-    this.isTestnet = this.props.navigation.state.params.isTestnet;
-    this.user_data = this.props.navigation.state.params.user;
-    this.delegate_data = {};
-    this.delegatesList = [];
-    this.delegatesGroup = [];
-    this.currentVotes = new Map();
-    this.addVotes = new Map();
-    this.removeVotes = new Map();
-    this.viewDelegatesList = new Map();
+    this._clearProp();
   }
 
   async componentDidMount() {
     this.setState({isLoading: true});
-
-    const ret = await this._getDelegatesList();
-    if (!ret.result) {
-      this.errorMessage = "Delegate情報の取得に失敗しました。";
-      this.refs.error_modal.open();
-      this.setState({isLoading: false});
-      return;
-    }
-    this.delegatesList = ret.data;
-    this._setDelegatesGroup();
-    if (!this.isRefMode) this._setVotes();
-    this._setViewDelegatesList("", "");
+    await this._setDelegates();
     this.setState({isLoading: false, isReady: true, search_group: ""});
   }
 
@@ -101,7 +79,13 @@ export default class Delegates extends React.Component {
       return;
     }
     
-    this.props.navigation.navigate('Confirm', {user: this.user_data, add: this.addVotes, remove: this.removeVotes, isTestnet: this.isTestnet});
+    this.props.navigation.navigate('Confirm', {
+      user: this.user_data,
+      add: this.addVotes,
+      remove: this.removeVotes,
+      isTestnet: this.isTestnet,
+      updateUserData: this._updateUserData
+    });
     this.setState({isLoading: false});
   }
 
@@ -115,6 +99,42 @@ export default class Delegates extends React.Component {
       this._setViewDelegatesList(this.state.search_text, group);
     }
     if (this.viewDelegatesList.get(0) !== undefined) this.setState({currentPage: 0, rerenderList: this.state.rerenderList + 1});
+  }
+
+  _clearProp = () => {
+    this.state = {isLoading: false, isReady: false, rerenderList: 0, search_text: "", search_group: "init", currentPage: 0, selected: new Map()};
+    this.errorMessage = "";
+    this.isRefMode = this.props.navigation.state.params.user.address.length === 0;
+    this.isTestnet = this.props.navigation.state.params.isTestnet;
+    this.user_data = this.props.navigation.state.params.user;
+    this.delegate_data = {};
+    this.delegatesList = [];
+    this.delegatesGroup = [];
+    this.currentVotes = new Map();
+    this.addVotes = new Map();
+    this.removeVotes = new Map();
+    this.viewDelegatesList = new Map();
+  }
+
+  _updateUserData = async() => {
+    this._clearProp();
+    await this.props.navigation.state.params.updateUserData();
+    await this._setDelegates();
+    this.setState({isLoading: false, isReady: true, search_group: "", currentPage: 0, rerenderList: this.state.rerenderList + 1});
+  }
+
+  _setDelegates = async() => {
+    const ret = await this._getDelegatesList();
+    if (!ret.result) {
+      this.errorMessage = "Delegate情報の取得に失敗しました。";
+      this.refs.error_modal.open();
+      this.setState({isLoading: false});
+      return;
+    }
+    this.delegatesList = ret.data;
+    this._setDelegatesGroup();
+    if (!this.isRefMode) this._setVotes();
+    this._setViewDelegatesList("", "");
   }
 
   _getNaviBackgroundColor = () => {

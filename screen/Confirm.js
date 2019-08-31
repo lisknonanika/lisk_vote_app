@@ -5,8 +5,6 @@ import { SafeAreaView } from 'react-navigation'
 import Spinner from 'react-native-loading-spinner-overlay';
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { APIClient } from '@liskhq/lisk-api-client';
-import VoteAPIClient from '../VoteAPIClient';
 import { castVotes } from '@liskhq/lisk-transactions';
 
 const MAX_VOTE_COUNT = 33;
@@ -28,12 +26,16 @@ export default class Confirm extends React.Component {
   onPress_Exec = async() => {
     this.setState({isLoading: true});
     this.errorMessage = "";
+
+    // パスフレーズ入力チェック
     if (this.state.passphrase.length === 0) {
       this.errorMessage = "Passphraseが未入力です。";
       this.refs.error_modal.open();
       this.setState({isLoading: false});
       return;
     }
+
+    // セカンドパスフレーズ入力チェック
     if (this.user_data.secondPublicKey !== undefined && this.state.secondPassphrase.length === 0) {
       this.errorMessage = "Second Passphraseが未入力です。";
       this.refs.error_modal.open();
@@ -41,19 +43,19 @@ export default class Confirm extends React.Component {
       return;
     }
 
-    try {
-      let trxs = [];
-      trxs.length = 0;
-      this.votesData.forEach((data, key) => {
-        let params = {passphrase:this.state.passphrase, votes:data.votes.key, unvotes:data.unvotes.key}
-        if (this.state.secondPassphrase) params['secondPassphrase'] = this.state.secondPassphrase;
-        const trx = castVotes(params)
-        trxs.push(trx);
-      })
-
-    } catch (err) {
-      alert(err);
+    // トランザクション生成チェック
+    const trxs = await this._createVoteTransaction();
+    if (trxs.length === 0) {
+      this.errorMessage = "Transactionの生成に失敗しました。";
+      this.refs.error_modal.open();
+      this.setState({isLoading: false});
+      return;
     }
+    this.props.navigation.navigate("Result", {
+      votesData: this.votesData,
+      trxs: trxs,
+      isTestnet: this.isTestnet,
+      updateUserData: this.props.navigation.state.params.updateUserData});
     this.setState({isLoading: false});
   }
 
@@ -76,6 +78,22 @@ export default class Confirm extends React.Component {
       this.votesData.get(this.trxNum).votes.key.push(key);
       cnt += 1;
     });
+  }
+
+  _createVoteTransaction = async() => {
+    try {
+      let trxs = [];
+      trxs.length = 0;
+      for(data of this.votesData.values()) {
+        let params = {passphrase:this.state.passphrase, votes:data.votes.key, unvotes:data.unvotes.key}
+        if (this.state.secondPassphrase) params['secondPassphrase'] = this.state.secondPassphrase;
+        const trx = await castVotes(params);
+        trxs.push(trx);
+      }
+      return trxs;
+    } catch (err) {
+      return [];
+    }
   }
 
   renderVoteList = (data) => {
@@ -144,7 +162,8 @@ export default class Confirm extends React.Component {
             {this.renderVoteList(this.votesData.get(3))}
           </View>
 
-          <Text style={styles.message_text_fee}>Vote手数料: {this.trxNum + 1} LSK</Text>
+          <Text style={[styles.message_note_text,{marginTop: 20}]}>処理時間は 約{(this.trxNum + 1) * 15}秒 です。</Text>
+          <Text style={styles.message_note_text}>Vote手数料は {this.trxNum + 1}LSK です。</Text>
 
         </ScrollView>
         <Button title={"実行"} buttonStyle={styles.exec_button} onPress={() => this.refs.passphrase_modal.open()} />
@@ -258,8 +277,8 @@ const styles = StyleSheet.create({
     borderTopWidth:0,
     padding: 10
   },
-  message_text_fee: {
-    marginTop: 20,
+  message_note_text: {
+    marginTop: 10,
     fontSize: 18,
     color: "#f00",
     textAlign: "right"

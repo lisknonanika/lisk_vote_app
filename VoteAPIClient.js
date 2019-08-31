@@ -39,3 +39,14 @@ exports.getAccountByAddress = async(address) => {
     return {result: false, data: err}
   }
 }
+
+exports.broadcast = async(trx) => {
+  try {
+    const client = exports.createClient();
+    const ret = await client.put('/broadcast', trx);
+    return {result: ret.data.result}
+    
+  } catch (err) {
+    return {result: false, data: err}
+  }
+}

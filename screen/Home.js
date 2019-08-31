@@ -6,7 +6,7 @@ import Swiper from 'react-native-swiper';
 import Modal from 'react-native-modalbox';
 import Spinner from 'react-native-loading-spinner-overlay';
 import BigNumber from 'bignumber.js';
-import {APIClient} from '@liskhq/lisk-api-client';
+import { APIClient } from '@liskhq/lisk-api-client';
 import VoteAPIClient from '../VoteAPIClient';
 
 export default class Home extends React.Component {
@@ -47,7 +47,9 @@ export default class Home extends React.Component {
 
     // ユーザーの情報が取得できたら遷移
     if (ret.result) {
-      this.props.navigation.navigate('Delegates', {isTestnet: this.state.swiperIdx === 1, user: this.user_data});
+      this.props.navigation.navigate('Delegates', {
+        isTestnet: this.state.swiperIdx === 1, user: this.user_data, updateUserData: this.onPress_StartButton
+      });
       this.setState({ isLoading: false });
       return;
     }
