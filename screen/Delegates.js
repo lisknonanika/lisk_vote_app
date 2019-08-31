@@ -4,13 +4,14 @@ import { Header, Button, Input, Text, ListItem } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation';
 import Drawer from 'react-native-drawer';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MIcon from 'react-native-vector-icons/MaterialIcons';
 import Modal from 'react-native-modalbox';
 import Spinner from 'react-native-loading-spinner-overlay';
 import VoteAPIClient from '../VoteAPIClient';
 import { ScrollView } from 'react-native-gesture-handler';
 
 const LIST_ITEM_HEIGHT = 100;
-const DELEGATES_NUM = 100;
+const DELEGATES_NUM = 101;
 const MAX_VOTE_COUNT = 101;
 
 export default class Delegates extends React.Component {
@@ -174,8 +175,11 @@ export default class Delegates extends React.Component {
     let page = 0;
     let cnt = 0;
 
-    if (group === "Add" || group === "Remove") {
-      const targetList = group === "Add"? this.addVotes: this.removeVotes;
+    if (group === "Current" || group === "Add" || group === "Remove") {
+      let targetList;
+      if (group === "Add") targetList = this.addVotes
+      else if (group == "Remove") targetList = this.removeVotes;
+      else targetList = this.currentVotes;
       this.delegatesList.forEach((delegate) => {
         if (targetList.has(delegate.publicKey)) {
           page = Math.floor(cnt / DELEGATES_NUM);
@@ -230,7 +234,7 @@ export default class Delegates extends React.Component {
             value={this.state.search_text}
             autoCapitalize={"none"}
             leftIcon={<Icon name="search" size={20}/>}
-            rightIcon={<Icon name="times" size={20} style={{color: "#999", marginRight: 15}} onPress={() => this.onChangeText_Search("")}/>}
+            rightIcon={<MIcon name="clear" size={20} style={{color: "#999", marginRight: 15}} onPress={() => this.onChangeText_Search("")}/>}
             containerStyle={styles.input_item}
             inputContainerStyle={{backgroundColor: "rgba(255,255,255,0.85)", padding:0, borderRadius: 30, borderBottomWidth: 0}} 
             inputStyle={{color:'#000', padding:0, marginLeft: 10}}
@@ -294,7 +298,9 @@ export default class Delegates extends React.Component {
             <View style={{flexDirection:'column', marginLeft:20, width: this.isRefMode? '65%': '100%'}}>
               <Text style={styles.username}>{item.username}</Text>
               <View style={{flexDirection:'row', paddingTop: 5}}>
-                <Text style={styles.productivity}>productivity: {item.productivity} %</Text>
+                <Text style={[styles.userdata, {marginRight: 15, display: Platform.isPad?"flat":"none"}]}>produced Blocks: {item.producedBlocks}</Text>
+                <Text style={[styles.userdata, {marginRight: 15, display: Platform.isPad?"flat":"none"}]}>missed Blocks: {item.missedBlocks}</Text>
+                <Text style={styles.userdata}>productivity: {item.productivity} %</Text>
               </View>
             </View>
           </View>
@@ -373,7 +379,8 @@ export default class Delegates extends React.Component {
             <Text style={[styles.drawer_user_info]}>&nbsp;&nbsp;{this.user_data.balance} LSK</Text>
 
             <View style={{display: this.isRefMode? "none": "flex"}}>
-              <Text style={styles.drawer_label}>Add / Remove</Text>
+              <Text style={styles.drawer_label}>Status</Text>
+              {this.renderDrawerButton("Current")}
               {this.renderDrawerButton("Add")}
               {this.renderDrawerButton("Remove")}
               <Text style={{marginTop:5, color: "#fff"}}>※デリゲート名での検索は無視されます。</Text>
@@ -387,6 +394,11 @@ export default class Delegates extends React.Component {
               renderItem={({item}) => 
                 this.renderDrawerButton(item)
               }
+            />
+            <Button
+              title="Clear"
+              buttonStyle={{backgroundColor: "#999", marginTop: 20}}
+              onPress={() => this.onPress_SelectGroup("")}
             />
           </ScrollView>
         </View>
@@ -509,7 +521,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Gilroy-ExtraBold'
   },
-  productivity: {
+  userdata: {
     marginTop: 5,
     fontSize: 15,
     color: '#000',
@@ -559,7 +571,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 350,
-    width: 350,
+    width: Platform.isPad? 500: 350,
     padding: 15,
     borderRadius: 10,
     borderWidth: 10,
@@ -578,7 +590,7 @@ const styles = StyleSheet.create({
   modal_ok_error: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 300,
+    width: Platform.isPad? 450: 300,
     padding: 10,
     borderRadius: 10,
     marginTop: 20,

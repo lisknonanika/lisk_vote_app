@@ -1,7 +1,9 @@
 import React from 'react';
-import { StyleSheet, View} from 'react-native';
+import { Platform, StyleSheet, View} from 'react-native';
 import { Button, Text, Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MIcon from 'react-native-vector-icons/MaterialIcons';
+import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Swiper from 'react-native-swiper';
 import Modal from 'react-native-modalbox';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -93,8 +95,8 @@ export default class Home extends React.Component {
             placeholder="Lisk Address"
             value={isTestnet? this.state.testnet_address: this.state.mainnet_address}
             autoCapitalize={"none"}
-            leftIcon={<Icon name="edit" size={20}/>}
-            rightIcon={<Icon name="times" size={20} style={{color: "#999"}} onPress={() => this.onPress_Address()}/>}
+            leftIcon={<MCIcon name="account" size={20}/>}
+            rightIcon={<MIcon name="clear" size={20} style={{color: "#999"}} onPress={() => this.onPress_Address()}/>}
             containerStyle={styles.input_item}
             inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
             inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
@@ -171,7 +173,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.35)',
     borderRadius: 10,
     padding: 10,
-    width: 280,
+    width: Platform.isPad? 350: 280,
     marginTop: 30
   },
   input_item: {
@@ -195,7 +197,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 350,
-    width: 350,
+    width: Platform.isPad? 500: 350,
     padding: 15,
     borderRadius: 10,
     borderWidth: 10,
@@ -214,7 +216,7 @@ const styles = StyleSheet.create({
   modal_ok_error: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 300,
+    width: Platform.isPad? 450: 300,
     padding: 10,
     borderRadius: 10,
     marginTop: 20,

@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-navigation'
 import Spinner from 'react-native-loading-spinner-overlay';
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import MIcon from 'react-native-vector-icons/MaterialIcons';
 import { castVotes } from '@liskhq/lisk-transactions';
 
 const MAX_VOTE_COUNT = 33;
@@ -96,7 +97,16 @@ export default class Confirm extends React.Component {
     }
   }
 
-  renderVoteList = (data) => {
+  renderVoteList = (num) => {
+    return (
+      <View style={{display: this.votesData.has(num)?"flex":"none"}}>
+        <Text style={styles.label}>Transaction: {num + 1}</Text>
+        <View style={styles.content}>{this.renderVoteListItem(this.votesData.get(num))}</View>
+      </View>
+    );
+  }
+
+  renderVoteListItem = (data) => {
     if (data === undefined || (data.unvotes.key.length === 0 && data.votes.key.length === 0)) return(<View></View>);
 
     return (
@@ -128,7 +138,7 @@ export default class Confirm extends React.Component {
             overlayColor="rgba(0,0,0,0.5)" />
 
         <Header
-          leftComponent={{ icon: 'close', color: '#fff', size: 30, onPress: () => this.props.navigation.navigate("Delegates") }}
+          leftComponent={{ icon: 'chevron-left', color: '#fff', size: 30, onPress: () => this.props.navigation.navigate("Delegates") }}
           centerComponent={<Text style={styles.header_title}>Confirm</Text>}
           containerStyle={[styles.header, {backgroundColor: this.isTestnet?"#003e1a":"#001a3e"}]}
         />
@@ -142,25 +152,10 @@ export default class Confirm extends React.Component {
             <Text style={styles.message_text_baseInfo}>Balance: {this.user_data.balance} LSK</Text>
           </View>
           
-          <Text style={[styles.label, {display: this.votesData.has(0)?"flex":"none"}]}>Transaction: 1</Text>
-          <View style={[styles.content,{display: this.votesData.has(0)?"flex":"none"}]}>
-            {this.renderVoteList(this.votesData.get(0))}
-          </View>
-
-          <Text style={[styles.label, {display: this.votesData.has(1)?"flex":"none"}]}>Transaction: 2</Text>
-          <View style={[styles.content,{display: this.votesData.has(1)?"flex":"none"}]}>
-            {this.renderVoteList(this.votesData.get(1))}
-          </View>
-
-          <Text style={[styles.label, {display: this.votesData.has(2)?"flex":"none"}]}>Transaction: 3</Text>
-          <View style={[styles.content,{display: this.votesData.has(2)?"flex":"none"}]}>
-            {this.renderVoteList(this.votesData.get(2))}
-          </View>
-
-          <Text style={[styles.label, {display: this.votesData.has(3)?"flex":"none"}]}>Transaction: 4</Text>
-          <View style={[styles.content,{display: this.votesData.has(3)?"flex":"none"}]}>
-            {this.renderVoteList(this.votesData.get(3))}
-          </View>
+          {this.renderVoteList(0)}
+          {this.renderVoteList(1)}
+          {this.renderVoteList(2)}
+          {this.renderVoteList(3)}
 
           <Text style={[styles.message_note_text,{marginTop: 20}]}>処理時間は 約{(this.trxNum + 1) * 15}秒 です。</Text>
           <Text style={styles.message_note_text}>Vote手数料は {this.trxNum + 1}LSK です。</Text>
@@ -176,8 +171,8 @@ export default class Confirm extends React.Component {
             placeholder="Passphrase"
             value={this.state.passphrase}
             autoCapitalize={"none"}
-            leftIcon={<Icon name="edit" size={20}/>}
-            rightIcon={<Icon name="times" size={20} style={{color: "#ccc"}} onPress={() => this.setState({passphrase:""})}/>}
+            leftIcon={<Icon name="lock" size={20}/>}
+            rightIcon={<MIcon name="clear" size={20} style={{color: "#ccc"}} onPress={() => this.setState({passphrase:""})}/>}
             containerStyle={styles.modal_input}
             inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
             inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
@@ -187,8 +182,8 @@ export default class Confirm extends React.Component {
             placeholder="Second Passphrase"
             value={this.state.secondPassphrase}
             autoCapitalize={"none"}
-            leftIcon={<Icon name="edit" size={20}/>}
-            rightIcon={<Icon name="times" size={20} style={{color: "#ccc"}} onPress={() => this.setState({secondPassphrase:""})}/>}
+            leftIcon={<Icon name="lock" size={20}/>}
+            rightIcon={<MIcon name="clear" size={20} style={{color: "#ccc"}} onPress={() => this.setState({secondPassphrase:""})}/>}
             containerStyle={[styles.modal_input,{display: this.user_data.secondPublicKey===undefined?"none":"flex"}]}
             inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
             inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
@@ -266,6 +261,7 @@ const styles = StyleSheet.create({
     fontSize: 50
   },
   message_text: {
+    textAlign: 'center',
     marginTop: 10,
     fontSize: 25,
     lineHeight:30
@@ -295,7 +291,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 350,
-    width: 350,
+    width: Platform.isPad? 500: 350,
     padding: 15,
     borderRadius: 10,
     borderWidth: 10,
@@ -327,7 +323,7 @@ const styles = StyleSheet.create({
   modal_cancel_button: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 300,
+    width: Platform.isPad? 450: 300,
     padding: 10,
     borderRadius: 10,
     marginTop: 20,
@@ -336,7 +332,7 @@ const styles = StyleSheet.create({
   modal_ok_button: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 300,
+    width: Platform.isPad? 450: 300,
     padding: 10,
     borderRadius: 10,
     marginTop: 20,

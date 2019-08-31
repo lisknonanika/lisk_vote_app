@@ -12,7 +12,6 @@ const ModalNavi = createStackNavigator(
   { 
     Delegates: { screen: Delegates },
     DelegateDetail: { screen: DelegateDetail },
-    Confirm: { screen: Confirm },
     Result: { screen: Result },
   },
   {initialRouteName: 'Delegates', mode: 'modal', headerMode: 'none'}
@@ -22,6 +21,7 @@ const StackNavi = createStackNavigator(
   {
     Welcome: { screen: Welcome },
     Home: { screen: Home },
+    Confirm: { screen: Confirm },
     ModalNavi: { screen: ModalNavi },
   },
   {initialRouteName: 'Home', mode: 'card', headerMode: 'none'}

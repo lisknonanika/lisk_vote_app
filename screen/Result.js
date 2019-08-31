@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View, ScrollView, FlatList } from 'react-native';
+import { Platform, StatusBar, StyleSheet, Linking, View, ScrollView, FlatList } from 'react-native';
 import { Header, Button, Text, Input  } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation'
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -8,13 +8,15 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { APIClient } from '@liskhq/lisk-api-client';
 import VoteAPIClient from '../VoteAPIClient';
 
+const LiskClient = APIClient.createMainnetAPIClient();
+
 export default class Result extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, trxExecResults: [false,false,false,false]}
+    this.state = {isLoading: false, trxExecResults: [false,false,false,false], done: 0}
     this.isTestnet = this.props.navigation.state.params.isTestnet;
     this.votesData = this.props.navigation.state.params.votesData;
-    this.trxs = this.props.navigation.state.params.trxs
+    this.trxs = this.props.navigation.state.params.trxs;
     this.errorMessage = "";
   }
 
@@ -44,8 +46,17 @@ export default class Result extends React.Component {
         if (this.isTestnet) {
           const ret = await VoteAPIClient.broadcast({trx:trx});
           trxResults.push(ret.result);
-          await this._sleep(10000);
+        } else {
+          try {
+            const ret = await LiskClient.transactions.broadcast({trx:trx});
+            if (!ret || !ret.data) trxResults.push(true);
+            else trxResults.push(false);
+          } catch(err) {
+            trxResults.push(false);
+          }
         }
+        await this._sleep(10000);
+        this.setState({done: this.state.done + 1});
       }
       return trxResults;
     } catch(err) {
@@ -57,17 +68,37 @@ export default class Result extends React.Component {
     return new Promise((resolve) => {
        setTimeout(() => resolve(), msec);
     })
- }
+  }
 
-  renderVoteList = (num) => {
+  _link = (trxId) => {
+    this.errorMessage = "";
+    const url = this.isTestnet? `https://testnet-explorer.lisk.io/tx/${trxId}`: `https://explorer.lisk.io/tx/${trxId}`
+    Linking.canOpenURL(url).then(supported => {
+      if (!supported) {
+        this.errorMessage = "無効なURLです";
+        this.refs.error_modal.open();
+      } else {
+        return Linking.openURL(url);
+      }
+    }).catch((err) => {
+      this.errorMessage = "URLを開くことが出来ませんでした";
+      this.refs.error_modal.open();
+    });
+  }
+
+  renderVoteList = (num, trxId) => {
     return (
       <View style={{display: this.votesData.has(num)?"flex":"none"}}>
         <View style={styles.label_layout}>
           <Icon name={this.state.trxExecResults[num]?"check-circle":"times-circle"}
             style={this.state.trxExecResults[num]?styles.result_icon_ok: styles.result_icon_error}/>
-          <Text style={styles.label}>Transaction: {num + 1}</Text> 
+          <Text style={styles.label}>Transaction: {num + 1}</Text>
         </View>
         <View style={[styles.content,{display: this.votesData.has(num)?"flex":"none"}]}>
+          <View style={{flexDirection:"row", display: this.state.trxExecResults[num]?"flex":"none"}}>
+            <Icon name="link" style={styles.link_icon}/>
+            <Text style={styles.link} onPress={() => this._link(trxId)}>ID: {trxId}</Text>
+          </View>
           {this.renderVoteListItem(this.votesData.get(num))}
         </View>
       </View>
@@ -111,6 +142,9 @@ export default class Result extends React.Component {
             centerComponent={<Text style={styles.header_title}>Result</Text>}
             containerStyle={[styles.header, {backgroundColor: this.isTestnet?"#003e1a":"#001a3e"}]}
           />
+          <View style={{flex:1, alignItems: 'center', justifyContent: 'center'}}>
+            <Text style={[styles.label, {fontSize: 30}]}>{this.state.done} / {this.trxs.length}</Text>
+          </View>
         </View>
       );
     }
@@ -126,10 +160,10 @@ export default class Result extends React.Component {
           <Icon name="info-circle" style={styles.message_icon}/>
           <Text style={styles.message_text}>結果は以下の通りです。</Text>
           
-          {this.renderVoteList(0)}
-          {this.renderVoteList(1)}
-          {this.renderVoteList(2)}
-          {this.renderVoteList(3)}
+          {this.renderVoteList(0, this.trxs.length > 0? (this.trxs[0]).id: "")}
+          {this.renderVoteList(1, this.trxs.length > 1? (this.trxs[1]).id: "")}
+          {this.renderVoteList(2, this.trxs.length > 2? (this.trxs[2]).id: "")}
+          {this.renderVoteList(3, this.trxs.length > 3? (this.trxs[3]).id: "")}
 
         </ScrollView>
         <Button title={"OK"} buttonStyle={styles.ok_button} onPress={() => this.onPress_OK()} />
@@ -183,6 +217,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     padding: 10,
   },
+  link_icon: {
+    color: '#999',
+    marginRight: 10,
+    marginTop: 10,
+    fontSize: 25,
+  },
+  link: {
+    color: '#00f',
+    marginTop: 10,
+    fontSize: 20,
+    fontFamily: 'Gilroy-ExtraBold',
+  },
   label: {
     color: '#000',
     fontSize: 20,
@@ -214,6 +260,7 @@ const styles = StyleSheet.create({
     fontSize: 50
   },
   message_text: {
+    textAlign: 'center',
     marginTop: 10,
     fontSize: 25,
     lineHeight:30
@@ -230,7 +277,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 350,
-    width: 350,
+    width: Platform.isPad? 500: 350,
     padding: 15,
     borderRadius: 10,
     borderWidth: 10,
@@ -249,7 +296,7 @@ const styles = StyleSheet.create({
   modal_ok_button: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: 300,
+    width: Platform.isPad? 450: 300,
     padding: 10,
     borderRadius: 10,
     marginTop: 20,
