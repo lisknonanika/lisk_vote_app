@@ -127,6 +127,9 @@ export default class Home extends React.Component {
           
         </Swiper>
 
+        <Icon name="question-circle" size={30} style={{position: 'absolute', bottom: 30, left: 20, color: "rgba(255,255,255,0.5)"}} onPress={() => this.props.navigation.navigate('Welcome')}/>
+        <Icon name="info-circle" size={30} style={{position: 'absolute', bottom: 30, right: 20, color: "rgba(255,255,255,0.5)"}}/>
+
         <Modal style={styles.modal} position={"center"} ref={"err_modal"} backdropPressToClose={false}>
           <Icon name="times-circle" style={[styles.modal_icon_error]}/>
           <Text style={styles.modal_message}>{this.err_message}</Text>

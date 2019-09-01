@@ -22,8 +22,7 @@ export default class Welcome extends React.Component {
           containerStyle={[styles.header, {backgroundColor: "#ccc"}]}
         />
             
-        <Swiper loop={false}
-                showsButtons={true}
+        <Swiper showsButtons={true}
                 activeDotColor="rgba(255,255,255,0.75)" dotColor="rgba(100,100,100,0.75)"
                 nextButton={<Text style={styles.swipe_button}>›</Text>}
                 prevButton={<Text style={styles.swipe_button}>‹</Text>}>
@@ -154,7 +153,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     color: '#000',
     fontSize: 17,
-    fontFamily: 'Open Sans'
   },
   swipe_button: {
     color: 'rgba(100,100,100,0.65)',
