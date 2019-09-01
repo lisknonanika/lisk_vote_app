@@ -11,6 +11,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { APIClient } from '@liskhq/lisk-api-client';
 import VoteAPIClient from '../VoteAPIClient';
 import BigNumber from 'bignumber.js';
+import I18n from 'react-native-i18n';
 
 const LIST_ITEM_HEIGHT = 100;
 const DELEGATES_NUM = 101;
@@ -69,14 +70,14 @@ export default class Delegates extends React.Component {
     this.setState({isLoading: true});
     this.errorMessage = "";
     if (this.currentVotes.size + this.addVotes.size - this.removeVotes.size > MAX_VOTE_COUNT) {
-      this.errorMessage = `Vote可能最大数(${MAX_VOTE_COUNT})を超えています。`;
+      this.errorMessage = `${I18n.t('Delegates.ErrMsg1')}(${MAX_VOTE_COUNT})`;
       this.refs.error_modal.open();
       this.setState({isLoading: false});
       return;
     }
 
     if (this.addVotes.size === 0 && this.removeVotes.size === 0) {
-      this.errorMessage = `Vote対象がありません。`;
+      this.errorMessage = I18n.t('Delegates.ErrMsg2');
       this.refs.error_modal.open();
       this.setState({isLoading: false});
       return;
@@ -154,7 +155,7 @@ export default class Delegates extends React.Component {
   _setDelegates = async() => {
     const ret = await this._getDelegatesList();
     if (!ret.result) {
-      this.errorMessage = "Delegate情報の取得に失敗しました。";
+      this.errorMessage = I18n.t('Delegates.ErrMsg3');
       this.refs.error_modal.open();
       this.setState({isLoading: false});
       return;
@@ -345,10 +346,10 @@ export default class Delegates extends React.Component {
             onPress: () => this.onPress_ListItem(item.publicKey, item),
             containerStyle: {display: this.isRefMode? "none": "flex"},
             checked: !!this.state.selected.get(item.publicKey),
-            checkedIcon: "minus-circle",
-            checkedColor: "#cc0000",
-            uncheckedIcon: "plus-circle",
-            uncheckedColor: "#00cc00",
+            checkedIcon: "check-circle",
+            checkedColor: "rgba(45,140,115,1)",
+            uncheckedIcon: "check-circle",
+            uncheckedColor: "#ccc",
             size: 50
           }
         }
@@ -365,7 +366,7 @@ export default class Delegates extends React.Component {
           <Text style={[styles.add_count, {marginRight:10}]}> add: {this.addVotes.size}</Text>
           <Text style={[styles.remove_count]}> remove: {this.removeVotes.size}</Text>
         </View>
-        <Button title={"確認"} buttonStyle={[styles.vote_button, {display: this.isRefMode? "none": "flex"}]} onPress={() => this.onPress_Confirm()} />
+        <Button title={I18n.t('Delegates.Button1')} buttonStyle={[styles.vote_button, {display: this.isRefMode? "none": "flex"}]} onPress={() => this.onPress_Confirm()} />
       </View>
     )
   }
@@ -410,7 +411,7 @@ export default class Delegates extends React.Component {
               {this.renderDrawerButton("Current")}
               {this.renderDrawerButton("Add")}
               {this.renderDrawerButton("Remove")}
-              <Text style={{marginTop:5, color: "#fff"}}>※デリゲート名での検索は無視されます。</Text>
+              <Text style={{marginTop:5, color: "#fff"}}>{I18n.t('Delegates.Msg1')}</Text>
             </View>
             
             <Text style={styles.drawer_label}>Group</Text>
@@ -448,7 +449,7 @@ export default class Delegates extends React.Component {
           type="overlay"
           content={this.renderDrawer()}
           tapToClose={true}
-          openDrawerOffset={0.3}
+          openDrawerOffset={0.2}
           closedDrawerOffset={-5}
           styles={drawerStyles}>
           
@@ -456,7 +457,7 @@ export default class Delegates extends React.Component {
           {this.renderListMoveButton()}
           {this.renderList()}
           {this.renderConfirmButton()}
-          <SafeAreaView style={[this._getNaviBackgroundColor(), {display: this.isRefMode? "none": "flex"}]}/>
+          <SafeAreaView style={{display: this.isRefMode? "none": "flex"}}/>
           {this.renderErrorModal()}
 
         </Drawer>

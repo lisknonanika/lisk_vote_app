@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StyleSheet, View} from 'react-native';
+import { Platform, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Button, Text, Input } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
@@ -10,6 +10,7 @@ import Spinner from 'react-native-loading-spinner-overlay';
 import BigNumber from 'bignumber.js';
 import { APIClient } from '@liskhq/lisk-api-client';
 import VoteAPIClient from '../VoteAPIClient';
+import I18n from 'react-native-i18n';
 
 export default class Home extends React.Component {
   constructor(props) {
@@ -55,7 +56,7 @@ export default class Home extends React.Component {
     }
 
     // それ以外はエラー
-    this.err_message = 'アドレスが正しくないようです。';
+    this.err_message = I18n.t('Home.ErrMsg1');
     this.refs.err_modal.open();
     this.setState({ isLoading: false });
   }
@@ -100,7 +101,7 @@ export default class Home extends React.Component {
             inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
             inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
             onChangeText={this.onChangeText_Address} />
-          <Button title={"Voteを開始する"} buttonStyle={styles.start_button} onPress={() => this.onPress_StartButton()} />
+          <Button title={I18n.t('Home.Button1')} buttonStyle={styles.start_button} onPress={() => this.onPress_StartButton()} />
         </View>
       </View>
     );
@@ -127,8 +128,12 @@ export default class Home extends React.Component {
           
         </Swiper>
 
-        <Icon name="question-circle" size={30} style={{position: 'absolute', bottom: 30, left: 20, color: "rgba(255,255,255,0.5)"}} onPress={() => this.props.navigation.navigate('Welcome')}/>
-        <Icon name="info-circle" size={30} style={{position: 'absolute', bottom: 30, right: 20, color: "rgba(255,255,255,0.5)"}}/>
+        <TouchableOpacity style={{position: 'absolute', bottom: 40, left: 20}} onPress={() => this.props.navigation.navigate('Welcome')}>
+          <Text style={styles.link}>Tutorial</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={{position: 'absolute', bottom: 40, right: 20}}>
+          <Text style={styles.link}>Help</Text>
+        </TouchableOpacity>
 
         <Modal style={styles.modal} position={"center"} ref={"err_modal"} backdropPressToClose={false}>
           <Icon name="times-circle" style={[styles.modal_icon_error]}/>
@@ -194,6 +199,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: '100%',
     borderRadius: 10
+  },
+  link: {
+    color: "rgba(255,255,255,0.75)",
+    fontFamily: "Open Sans",
+    fontSize: 17,
+    fontWeight: 'bold'
   },
   modal: {
     justifyContent: 'center',

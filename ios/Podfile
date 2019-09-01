@@ -30,6 +30,9 @@ target 'lisk_vote_app' do
 
 
 
+
+  pod 'RNI18n', :path => '../node_modules/react-native-i18n'
+
   target 'lisk_vote_appTests' do
     inherit! :search_paths
     # Pods for testing
@@ -38,12 +41,12 @@ target 'lisk_vote_app' do
   use_native_modules!
 end
 
-target 'lisk_vote_app-tvOS' do
-  # Pods for lisk_vote_app-tvOS
+# target 'lisk_vote_app-tvOS' do
+#   # Pods for lisk_vote_app-tvOS
 
-  target 'lisk_vote_app-tvOSTests' do
-    inherit! :search_paths
-    # Pods for testing
-  end
+#   target 'lisk_vote_app-tvOSTests' do
+#     inherit! :search_paths
+#     # Pods for testing
+#   end
 
-end
+# end

@@ -7,6 +7,7 @@ import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import { castVotes } from '@liskhq/lisk-transactions';
+import I18n from 'react-native-i18n';
 
 const MAX_VOTE_COUNT = 33;
 
@@ -30,7 +31,7 @@ export default class Confirm extends React.Component {
 
     // パスフレーズ入力チェック
     if (this.state.passphrase.length === 0) {
-      this.errorMessage = "Passphraseが未入力です。";
+      this.errorMessage = I18n.t('Confirm.ErrMsg1');
       this.refs.error_modal.open();
       this.setState({isLoading: false});
       return;
@@ -38,7 +39,7 @@ export default class Confirm extends React.Component {
 
     // セカンドパスフレーズ入力チェック
     if (this.user_data.secondPublicKey !== undefined && this.state.secondPassphrase.length === 0) {
-      this.errorMessage = "Second Passphraseが未入力です。";
+      this.errorMessage = I18n.t('Confirm.ErrMsg2');
       this.refs.error_modal.open();
       this.setState({isLoading: false});
       return;
@@ -47,7 +48,7 @@ export default class Confirm extends React.Component {
     // トランザクション生成チェック
     const trxs = await this._createVoteTransaction();
     if (trxs.length === 0) {
-      this.errorMessage = "Transactionの生成に失敗しました。";
+      this.errorMessage = I18n.t('Confirm.ErrMsg3');
       this.refs.error_modal.open();
       this.setState({isLoading: false});
       return;
@@ -144,7 +145,7 @@ export default class Confirm extends React.Component {
         />
         <ScrollView style={{margin: 10}}>
           <Icon name="exclamation-triangle" style={styles.message_icon}/>
-          <Text style={styles.message_text}>内容に間違いはありませんか？</Text>
+          <Text style={styles.message_text}>{I18n.t('Confirm.Msg1')}</Text>
 
           <View style={{display: this.votesData.has(0)?"flex":"none"}}>
             <Text style={styles.label}>Account</Text>
@@ -157,16 +158,16 @@ export default class Confirm extends React.Component {
           {this.renderVoteList(2)}
           {this.renderVoteList(3)}
 
-          <Text style={[styles.message_note_text,{marginTop: 20}]}>処理時間は 約{(this.trxNum + 1) * 15}秒 です。</Text>
-          <Text style={styles.message_note_text}>Vote手数料は {this.trxNum + 1}LSK です。</Text>
+          <Text style={[styles.message_note_text,{marginTop: 20}]}>{I18n.t('Confirm.Msg3')}{(this.trxNum + 1) * 15}{I18n.t('Confirm.Msg4')}</Text>
+          <Text style={styles.message_note_text}>{I18n.t('Confirm.Msg5')}{this.trxNum + 1}{I18n.t('Confirm.Msg6')}</Text>
 
         </ScrollView>
-        <Button title={"実行"} buttonStyle={styles.exec_button} onPress={() => this.refs.passphrase_modal.open()} />
+        <Button title={I18n.t('Confirm.Button1')} buttonStyle={styles.exec_button} onPress={() => this.refs.passphrase_modal.open()} />
         <SafeAreaView/>
 
         <Modal style={[styles.modal, {height: 450}]} position={"center"} ref={"passphrase_modal"} backdropPressToClose={false}>
           <Icon name="info-circle" style={styles.modal_icon_info}/>
-          <Text style={styles.modal_message}>パスフレーズを入力して下さい</Text>
+          <Text style={styles.modal_message}>{I18n.t('Confirm.Msg2')}</Text>
           <Input 
             placeholder="Passphrase"
             value={this.state.passphrase}

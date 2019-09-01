@@ -1,5 +1,7 @@
 import React from 'react';
 import { createStackNavigator, createAppContainer } from 'react-navigation'
+import I18n from 'react-native-i18n';
+import langs from './I18n/Language';
 
 import Welcome from './screen/Welcome';
 import Home from './screen/Home';
@@ -32,6 +34,12 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
   }
+
+  componentWillMount() {
+    I18n.fallbacks = true;
+    I18n.translations = langs;
+  }
+
   render() {
     return (
       <AppContainer ref={nav => this.navigator = nav} />

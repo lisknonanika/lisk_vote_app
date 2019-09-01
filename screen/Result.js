@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, Linking, View, ScrollView, FlatList } from 'react-native';
+import { Platform, StatusBar, StyleSheet, Linking, View, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import { Header, Button, Text  } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation'
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -7,6 +7,7 @@ import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { APIClient } from '@liskhq/lisk-api-client';
 import VoteAPIClient from '../VoteAPIClient';
+import I18n from 'react-native-i18n';
 
 const LiskClient = APIClient.createMainnetAPIClient();
 
@@ -26,7 +27,7 @@ export default class Result extends React.Component {
 
     const trxResults = await this._broadcast(this.trxs);
     if (trxResults.length === 0) {
-      this.errorMessage = "ブロードキャストに失敗しました。";
+      this.errorMessage = I18n.t('Result.ErrMsg1');
       this.refs.error_modal.open();
       this.setState({isLoading: false});
       return;
@@ -76,13 +77,13 @@ export default class Result extends React.Component {
     const url = this.isTestnet? `https://testnet-explorer.lisk.io/tx/${trxId}`: `https://explorer.lisk.io/tx/${trxId}`
     Linking.canOpenURL(url).then(supported => {
       if (!supported) {
-        this.errorMessage = "無効なURLです";
+        this.errorMessage = I18n.t('Result.ErrMsg2');
         this.refs.error_modal.open();
       } else {
         return Linking.openURL(url);
       }
     }).catch((err) => {
-      this.errorMessage = "URLを開くことが出来ませんでした";
+      this.errorMessage = I18n.t('Result.ErrMsg3');
       this.refs.error_modal.open();
     });
   }
@@ -96,10 +97,12 @@ export default class Result extends React.Component {
           <Text style={styles.label}>Transaction: {num + 1}</Text>
         </View>
         <View style={[styles.content,{display: this.votesData.has(num)?"flex":"none"}]}>
-          <View style={{flexDirection:"row", display: this.state.trxExecResults[num]?"flex":"none"}}>
-            <Icon name="link" style={styles.link_icon}/>
-            <Text style={styles.link} onPress={() => this._link(trxId)}>ID: {trxId}</Text>
-          </View>
+          <TouchableOpacity>
+            <View style={{flexDirection:"row", display: this.state.trxExecResults[num]?"flex":"none"}}>
+              <Icon name="link" style={styles.link_icon}/>
+              <Text style={styles.link} onPress={() => this._link(trxId)}>ID: {trxId}</Text>
+            </View>
+          </TouchableOpacity>
           {this.renderVoteListItem(this.votesData.get(num))}
         </View>
       </View>
@@ -159,7 +162,7 @@ export default class Result extends React.Component {
         />
         <ScrollView style={{margin: 10}}>
           <Icon name="info-circle" style={styles.message_icon}/>
-          <Text style={styles.message_text}>結果は以下の通りです。</Text>
+          <Text style={styles.message_text}>{I18n.t('Result.Msg1')}</Text>
           
           {this.renderVoteList(0, this.trxs.length > 0? (this.trxs[0]).id: "")}
           {this.renderVoteList(1, this.trxs.length > 1? (this.trxs[1]).id: "")}

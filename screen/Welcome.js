@@ -2,6 +2,7 @@ import React from 'react';
 import { Platform, StyleSheet, View} from 'react-native';
 import { Header, Button, Text } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
+import I18n from 'react-native-i18n';
 
 export default class Welcome extends React.Component {
   constructor(props) {
@@ -22,7 +23,8 @@ export default class Welcome extends React.Component {
           containerStyle={[styles.header, {backgroundColor: "#ccc"}]}
         />
             
-        <Swiper showsButtons={true}
+        <Swiper loop={false}
+                showsButtons={true}
                 activeDotColor="rgba(255,255,255,0.75)" dotColor="rgba(100,100,100,0.75)"
                 nextButton={<Text style={styles.swipe_button}>›</Text>}
                 prevButton={<Text style={styles.swipe_button}>‹</Text>}>
@@ -30,83 +32,83 @@ export default class Welcome extends React.Component {
           <View style={styles.page}>
             <Text style={styles.title}>Home (1/3)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>スワイプでメインネット/テストネットを切り替えることが出来ます。</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.Home1')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Home (2/3)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>あなたのLiskアドレスでVoteを開始してください。</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.Home2')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Home (3/3)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>Delegateのランキングの確認のみであればLiskアドレスは入力不要です。</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.Home3')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (1/6)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>最大1時間前の情報を表示します。</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.DelegateList1')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (2/6)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>検索欄にデリゲート名を入力すると部分一致検索が出来ます。</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.DelegateList2')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (3/6)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>サブメニューではVote内容やデリゲートグループで絞り込みが出来ます。</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.DelegateList3')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (4/6)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>リストを長押しすることで、デリゲート情報を参照出来ます。</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.DelegateList4')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (5/6)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>＋ボタンで追加、−ボタンで解除が出来ます。(Homeでアドレス入力していない場合は表示しません)</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.DelegateList5')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (6/6)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>Vote内容を反映するには確認ボタンを押してください。(Homeでアドレス入力していない場合は表示しません)</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.DelegateList6')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate Info (1/1)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>デリゲート情報の確認が出来ます。</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.DelegateInfo1')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Confirm (1/2)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>実行前に内容の確認をしてください。</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.Confirm1')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Confirm (2/2)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>Vote内容の反映にはパスフレーズの入力が必要です。</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.Confirm2')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Result (1/1)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>処理結果の確認が出来ます。トランザクションIDからExplorerを開く事もできます。</Text>
+            <Text style={styles.text}>{I18n.t('Welcome.Result1')}</Text>
           </View>
 
           <View style={[styles.page, {justifyContent: 'center'}]}>
-            <Button title={"さあ、はじめましょう"} buttonStyle={styles.button} onPress={this.onPress_Button} />
+            <Button title={I18n.t('Welcome.Button1')} buttonStyle={styles.button} onPress={this.onPress_Button} />
           </View>
           
         </Swiper>
