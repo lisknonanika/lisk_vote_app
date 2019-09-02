@@ -323,7 +323,7 @@ export default class Delegates extends React.Component {
         title={
           <View style={{flexDirection:'row', alignItems: 'center'}}>
             <Text style={[styles.rank, {backgroundColor: this.currentVotes.has(item.publicKey)? "#95ecba" : "#ccc"}]}>{item.rank}</Text>
-            <View style={{flexDirection:'column', marginLeft:20, width: this.isRefMode? '65%': '100%'}}>
+            <View style={{flexDirection:'column', marginLeft:20, width: this.isRefMode? '100%': '65%'}}>
               <Text style={styles.username}>{item.username}</Text>
               <View style={{flexDirection:'row', paddingTop: 5}}>
                 <Text style={[styles.userdata, {marginRight: 15, display: Platform.isPad?"flat":"none"}]}>produced Blocks: {item.producedBlocks}</Text>
