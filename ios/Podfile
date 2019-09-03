@@ -40,13 +40,3 @@ target 'lisk_vote_app' do
 
   use_native_modules!
 end
-
-# target 'lisk_vote_app-tvOS' do
-#   # Pods for lisk_vote_app-tvOS
-
-#   target 'lisk_vote_app-tvOSTests' do
-#     inherit! :search_paths
-#     # Pods for testing
-#   end
-
-# end
