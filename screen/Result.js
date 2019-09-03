@@ -77,13 +77,13 @@ export default class Result extends React.Component {
     const url = this.isTestnet? `https://testnet-explorer.lisk.io/tx/${trxId}`: `https://explorer.lisk.io/tx/${trxId}`
     Linking.canOpenURL(url).then(supported => {
       if (!supported) {
-        this.errorMessage = I18n.t('Result.ErrMsg2');
+        this.errorMessage = I18n.t('MoveURL.ErrMsg1');
         this.refs.error_modal.open();
       } else {
         return Linking.openURL(url);
       }
     }).catch((err) => {
-      this.errorMessage = I18n.t('Result.ErrMsg3');
+      this.errorMessage = I18n.t('MoveURL.ErrMsg2');
       this.refs.error_modal.open();
     });
   }
@@ -97,10 +97,10 @@ export default class Result extends React.Component {
           <Text style={styles.label}>Transaction: {num + 1}</Text>
         </View>
         <View style={[styles.content,{display: this.votesData.has(num)?"flex":"none"}]}>
-          <TouchableOpacity>
-            <View style={{flexDirection:"row", display: this.state.trxExecResults[num]?"flex":"none"}}>
+          <TouchableOpacity style={{display: this.state.trxExecResults[num]?"flex":"none"}} onPress={() => this._link(trxId)}>
+            <View style={{flexDirection:"row"}}>
               <Icon name="link" style={styles.link_icon}/>
-              <Text style={styles.link} onPress={() => this._link(trxId)}>ID: {trxId}</Text>
+              <Text style={styles.link}>ID: {trxId}</Text>
             </View>
           </TouchableOpacity>
           {this.renderVoteListItem(this.votesData.get(num))}

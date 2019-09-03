@@ -114,6 +114,7 @@ export default class Delegates extends React.Component {
     this.delegate_data = {};
     this.delegatesList = [];
     this.delegatesGroup = [];
+    this.delegatesGroupURL = new Map();
     this.currentVotes = new Map();
     this.addVotes = new Map();
     this.removeVotes = new Map();
@@ -162,6 +163,7 @@ export default class Delegates extends React.Component {
     }
     this.delegatesList = ret.data;
     this._setDelegatesGroup();
+    this._setDelegatesGroupURL(ret.groupUrl);
     if (!this.isRefMode) this._setVotes();
     this._setViewDelegatesList("", "");
   }
@@ -189,6 +191,15 @@ export default class Delegates extends React.Component {
       });
     });
     this.delegatesGroup.sort();
+  }
+
+  _setDelegatesGroupURL = (groupUrls) => {
+    this.delegatesGroupURL.clear();
+    groupUrls.forEach((info) => {
+      if (!this.delegatesGroupURL.has(info.group)) {
+        this.delegatesGroupURL.set(info.group, info.url);
+      }
+    });
   }
 
   _setVotes = () => {
@@ -353,7 +364,8 @@ export default class Delegates extends React.Component {
             size: 50
           }
         }
-        onLongPress={() => this.props.navigation.navigate('DelegateDetail', {delegate: item, isTestnet: this.isTestnet, isRefMode: this.isRefMode})}
+        onLongPress={() => this.props.navigation.navigate('DelegateDetail', {
+          delegate: item, groupUrl: this.delegatesGroupURL, isTestnet: this.isTestnet, isRefMode: this.isRefMode})}
       />
     );
   }

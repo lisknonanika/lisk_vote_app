@@ -21,7 +21,7 @@ exports.getDelegatesList = async(net) => {
     if (!ret.data.result) {
       return {result: false, data: 'Not Found'}
     }
-    return {result: true, data: ret.data.data}
+    return {result: true, data: ret.data.data, groupUrl: ret.data.groupUrl}
   } catch (err) {
     return {result: false, data: err}
   }

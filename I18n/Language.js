@@ -42,8 +42,10 @@ export default {
     Result: {
       Msg1: "The results are as follows.",
       ErrMsg1: "Broadcast failed.",
-      ErrMsg2: "Invalid URL.",
-      ErrMsg3: "Could not open URL."
+    },
+    MoveURL: {
+      ErrMsg1: "Invalid URL.",
+      ErrMsg2: "Could not open URL."
     }
   },
   ja: {
@@ -89,8 +91,10 @@ export default {
     Result: {
       Msg1: "結果は以下の通りです。",
       ErrMsg1: "ブロードキャストに失敗しました。",
-      ErrMsg2: "無効なURLです。",
-      ErrMsg3: "URLを開くことが出来ませんでした。"
+    },
+    MoveURL: {
+      ErrMsg1: "無効なURLです。",
+      ErrMsg2: "URLを開くことが出来ませんでした。"
     }
   }
 }
