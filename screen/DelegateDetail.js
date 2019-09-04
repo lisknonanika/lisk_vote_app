@@ -1,14 +1,16 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, Linking, View, ScrollView, FlatList, TouchableOpacity } from 'react-native';
-import { Header, Button, Text } from 'react-native-elements';
+import { Header, Text } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation'
-import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import I18n from 'react-native-i18n';
+
+import ErrorModal from '../parts/ErrorModal';
 
 export default class DelegateDetail extends React.Component {
   constructor(props) {
     super(props);
-    this.errorMessage = "";
+    this.state={upd: false}
     this.delegate = this.props.navigation.state.params.delegate;
     this.groupUrl = this.props.navigation.state.params.groupUrl;
     this.isTestnet = this.props.navigation.state.params.isTestnet;
@@ -16,17 +18,13 @@ export default class DelegateDetail extends React.Component {
   }
 
   _link = (url) => {
-    this.errorMessage = "";
     Linking.canOpenURL(url).then(supported => {
-      if (!supported) {
-        this.errorMessage = I18n.t('MoveURL.ErrMsg1');
-        this.refs.error_modal.open();
-      } else {
-        return Linking.openURL(url);
-      }
+      if (supported) return Linking.openURL(url);
+      this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg1'));
+      this.setState({upd: !this.state.upd})
     }).catch((err) => {
-      this.errorMessage = I18n.t('MoveURL.ErrMsg2');
-      this.refs.error_modal.open();
+      this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg2'));
+      this.setState({upd: !this.state.upd})
     });
   }
 
@@ -76,12 +74,7 @@ export default class DelegateDetail extends React.Component {
           <Text style={styles.text}>{this.delegate.productivity} %</Text>
         </ScrollView>
         <SafeAreaView style={{display: this.isRefMode? "none": "flex"}}/>
-
-        <Modal style={styles.modal} position={"center"} ref={"error_modal"} backdropPressToClose={false}>
-          <Icon name="times-circle" style={styles.modal_icon_error}/>
-          <Text style={styles.modal_message}>{this.errorMessage}</Text>
-          <Button title={"OK"} buttonStyle={styles.modal_ok_button} onPress={() => {this.refs.error_modal.close()}} />
-        </Modal>
+        <ErrorModal ref={"error_modal"}/>
       </View>
     );
   }
@@ -136,34 +129,5 @@ const styles = StyleSheet.create({
     color: '#00f',
     fontSize: 17,
     fontFamily: 'Gilroy-ExtraBold',
-  },
-  modal: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 350,
-    width: Platform.isPad? 500: 350,
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 10,
-    borderColor: "#e0e0df",
-    backgroundColor: "#f0f0ef"
-  },
-  modal_message: {
-    marginTop: 10,
-    fontSize: 25,
-    lineHeight:30
-  },
-  modal_icon_error: {
-    color: 'rgba(200,50,50,0.8)',
-    fontSize: 50
-  },
-  modal_ok_button: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: Platform.isPad? 450: 300,
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-    backgroundColor: 'rgba(175,85,105,1)',
   }
 });

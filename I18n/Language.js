@@ -36,8 +36,10 @@ export default {
       Msg5: "The fee is ",
       Msg6: "LSK.",
       ErrMsg1: "Passphrase is required.",
-      ErrMsg2: "Second Passphrase is required.",
-      ErrMsg3: "Transaction generation failed."
+      ErrMsg2: "Passphrase is incorrect.",
+      ErrMsg3: "Second Passphrase is required.",
+      ErrMsg4: "Second Passphrase is incorrect.",
+      ErrMsg5: "Transaction generation failed."
     },
     Result: {
       Msg1: "The results are as follows.",
@@ -85,8 +87,10 @@ export default {
       Msg5: "Vote手数料は ",
       Msg6: "LSK です。",
       ErrMsg1: "パスフレーズが未入力です。",
-      ErrMsg2: "セカンドパスフレーズが未入力です。",
-      ErrMsg3: "トランザクションの生成に失敗しました。"
+      ErrMsg2: "パスフレーズが正しくないようです。",
+      ErrMsg3: "セカンドパスフレーズが未入力です。",
+      ErrMsg4: "セカンドパスフレーズが正しくないようです。",
+      ErrMsg5: "トランザクションの生成に失敗しました。"
     },
     Result: {
       Msg1: "結果は以下の通りです。",

@@ -2,33 +2,32 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, Linking, View, ScrollView, FlatList, TouchableOpacity } from 'react-native';
 import { Header, Button, Text  } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation'
-import Spinner from 'react-native-loading-spinner-overlay';
-import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { APIClient } from '@liskhq/lisk-api-client';
 import VoteAPIClient from '../VoteAPIClient';
 import I18n from 'react-native-i18n';
+
+import Loading from '../parts/Loading';
+import MainButton from '../parts/MainButton';
+import ErrorModal from '../parts/ErrorModal';
 
 const LiskClient = APIClient.createMainnetAPIClient();
 
 export default class Result extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, trxExecResults: [false,false,false,false], done: 0}
+    this.state = {isLoading: false, trxExecResults: [false,false,false,false], done: 0, upd: false}
     this.isTestnet = this.props.navigation.state.params.isTestnet;
     this.votesData = this.props.navigation.state.params.votesData;
     this.trxs = this.props.navigation.state.params.trxs;
-    this.errorMessage = "";
   }
 
   async componentDidMount() {
     this.setState({isLoading: true});
-    this.errorMessage = "";
 
     const trxResults = await this._broadcast(this.trxs);
     if (trxResults.length === 0) {
-      this.errorMessage = I18n.t('Result.ErrMsg1');
-      this.refs.error_modal.open();
+      this.refs.error_modal.open(I18n.t('Result.ErrMsg1'));
       this.setState({isLoading: false});
       return;
     }
@@ -73,18 +72,14 @@ export default class Result extends React.Component {
   }
 
   _link = (trxId) => {
-    this.errorMessage = "";
     const url = this.isTestnet? `https://testnet-explorer.lisk.io/tx/${trxId}`: `https://explorer.lisk.io/tx/${trxId}`
     Linking.canOpenURL(url).then(supported => {
-      if (!supported) {
-        this.errorMessage = I18n.t('MoveURL.ErrMsg1');
-        this.refs.error_modal.open();
-      } else {
-        return Linking.openURL(url);
-      }
+      if (supported) return Linking.openURL(url);
+      this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg1'));
+      this.setState({upd: !this.state.upd})
     }).catch((err) => {
-      this.errorMessage = I18n.t('MoveURL.ErrMsg2');
-      this.refs.error_modal.open();
+      this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg2'));
+      this.setState({upd: !this.state.upd})
     });
   }
 
@@ -135,11 +130,7 @@ export default class Result extends React.Component {
     if (this.state.isLoading) {
       return (
         <View style={{flex:1}}>
-          <Spinner
-              visible={this.state.isLoading}
-              textContent="Now Voting.."
-              textStyle={{ color:"rgba(255,255,255,0.5)" }}
-              overlayColor="rgba(0,0,0,0.5)" />
+          <Loading params={{isLoading: this.state.isLoading, text: "Now Voting.."}}/>
 
           <Header
             leftComponent={{ icon: 'close', color: '#fff', size: 30, onPress: () => this.onPress_OK() }}
@@ -170,14 +161,9 @@ export default class Result extends React.Component {
           {this.renderVoteList(3, this.trxs.length > 3? (this.trxs[3]).id: "")}
 
         </ScrollView>
-        <Button title={"OK"} buttonStyle={styles.ok_button} onPress={() => this.onPress_OK()} />
+        <MainButton params={{title:"OK", style:{margin: 10}, event:this.onPress_OK}}/>
         <SafeAreaView/>
-
-        <Modal style={styles.modal} position={"center"} ref={"error_modal"} backdropPressToClose={false}>
-          <Icon name="times-circle" style={styles.modal_icon_error}/>
-          <Text style={styles.modal_message}>{this.errorMessage}</Text>
-          <Button title={"OK"} buttonStyle={styles.modal_ok_button} onPress={() => {this.refs.error_modal.close()}} />
-        </Modal>
+        <ErrorModal ref={"error_modal"}/>
       </View>
     );
   }
@@ -268,42 +254,5 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 25,
     lineHeight:30
-  },
-  ok_button: {
-    margin: 10,
-    padding: 10,
-    backgroundColor: 'rgba(175,85,105,1)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10
-  },
-  modal: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 350,
-    width: Platform.isPad? 500: 350,
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 10,
-    borderColor: "#e0e0df",
-    backgroundColor: "#f0f0ef"
-  },
-  modal_message: {
-    marginTop: 10,
-    fontSize: 25,
-    lineHeight:30
-  },
-  modal_icon_error: {
-    color: 'rgba(200,50,50,0.8)',
-    fontSize: 50
-  },
-  modal_ok_button: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: Platform.isPad? 450: 300,
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-    backgroundColor: 'rgba(175,85,105,1)',
   }
 });

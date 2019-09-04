@@ -1,23 +1,22 @@
 import React from 'react';
 import { Platform, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Button, Text, Input } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Swiper from 'react-native-swiper';
-import Modal from 'react-native-modalbox';
-import Spinner from 'react-native-loading-spinner-overlay';
 import BigNumber from 'bignumber.js';
 import { APIClient } from '@liskhq/lisk-api-client';
 import VoteAPIClient from '../VoteAPIClient';
 import I18n from 'react-native-i18n';
 
+import Loading from '../parts/Loading';
+import ErrorModal from '../parts/ErrorModal';
+
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, swiperIdx: 0, mainnet_address: '', testnet_address: '3905013786800090105L'};
-    this.user_data = {address: '', balance: '', votes: []};
-    this.err_message = "";
+    this.state = {isLoading: false, swiperIdx: 0, mainnet_address: '', testnet_address: '5244341344295779314L'};
+    this.user_data = {address: '', balance: '', publicKey: '', secondPublicKey: '', votes: []};
   }
 
   onChangeText_Address = (value) => {
@@ -32,9 +31,8 @@ export default class Home extends React.Component {
   
   onPress_StartButton = async() => {
     this.setState({ isLoading: true });
-    this.user_data = {address: '', balance: '', votes: []};
+    this.user_data = {address: '', balance: '', publicKey: '', secondPublicKey: '', votes: []};
     this.user_data.votes.length = 0;
-    this.err_message = "";
     const isTestnet = this.state.swiperIdx === 1;
     const address = isTestnet? this.state.testnet_address: this.state.mainnet_address;
 
@@ -56,8 +54,7 @@ export default class Home extends React.Component {
     }
 
     // それ以外はエラー
-    this.err_message = I18n.t('Home.ErrMsg1');
-    this.refs.err_modal.open();
+    this.refs.error_modal.open(I18n.t('Home.ErrMsg1'));
     this.setState({ isLoading: false });
   }
   
@@ -65,9 +62,16 @@ export default class Home extends React.Component {
     try {
       if (isTestnet) return await VoteAPIClient.getAccountByAddress(address);
       const client = APIClient.createMainnetAPIClient();
-      const result = await client.votes.get({address: address, offset: 0, limit: 101});
-      if (!result || !result.data) return {result: false};
-      return {result: true, data: result.data};
+
+      const result1 = await client.accounts.get({address: address, offset: 0, limit: 1});
+      if (!result1 || !result1.data || result1.data.length === 0) return {result: false};
+
+      const result2 = await client.votes.get({address: address, offset: 0, limit: 101});
+      if (!result2 || !result2.data) return {result: false};
+
+      let result = result1.data[0];
+      result.votes = result2.data.votes;
+      return {result: true, data: result};
 
     } catch (err) {
       return {result: false};
@@ -81,6 +85,8 @@ export default class Home extends React.Component {
     if (userData.result) {
       this.user_data.balance = new BigNumber(userData.data.balance).dividedBy(new BigNumber('100000000')).toFixed();
       this.user_data.votes = userData.data.votes;
+      this.user_data.publicKey = userData.data.publicKey;
+      this.user_data.secondPublicKey = userData.data.secondPublicKey;
     }
   }
 
@@ -110,11 +116,7 @@ export default class Home extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Spinner
-            visible={this.state.isLoading}
-            textContent="Now Loading.."
-            textStyle={{ color:"rgba(255,255,255,0.5)" }}
-            overlayColor="rgba(0,0,0,0.5)" />
+        <Loading params={{isLoading: this.state.isLoading, text: "Now Loading.."}}/>
             
         <Swiper loop={false}
                 showsButtons={true}
@@ -134,12 +136,8 @@ export default class Home extends React.Component {
         <TouchableOpacity style={{position: 'absolute', bottom: 40, right: 20}}>
           <Text style={styles.link}>Help</Text>
         </TouchableOpacity>
-
-        <Modal style={styles.modal} position={"center"} ref={"err_modal"} backdropPressToClose={false}>
-          <Icon name="times-circle" style={[styles.modal_icon_error]}/>
-          <Text style={styles.modal_message}>{this.err_message}</Text>
-          <Button title={"OK"} buttonStyle={styles.modal_ok_error} onPress={() => this.refs.err_modal.close()} />
-        </Modal>
+        
+        <ErrorModal ref={"error_modal"}/>
       </View>
     );
   }
@@ -205,34 +203,5 @@ const styles = StyleSheet.create({
     fontFamily: "Open Sans",
     fontSize: 17,
     fontWeight: 'bold'
-  },
-  modal: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 350,
-    width: Platform.isPad? 500: 350,
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 10,
-    borderColor: "#e0e0df",
-    backgroundColor: "#f0f0ef"
-  },
-  modal_message: {
-    marginTop: 10,
-    fontSize: 25,
-    lineHeight:30
-  },
-  modal_icon_error: {
-    color: 'rgba(200,50,50,0.8)',
-    fontSize: 50
-  },
-  modal_ok_error: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: Platform.isPad? 450: 300,
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-    backgroundColor: "rgba(175,85,105,1)"
   }
 })

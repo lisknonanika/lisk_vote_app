@@ -5,13 +5,15 @@ import { SafeAreaView } from 'react-navigation';
 import Drawer from 'react-native-drawer';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
-import Modal from 'react-native-modalbox';
-import Spinner from 'react-native-loading-spinner-overlay';
 import { ScrollView } from 'react-native-gesture-handler';
 import { APIClient } from '@liskhq/lisk-api-client';
 import VoteAPIClient from '../VoteAPIClient';
 import BigNumber from 'bignumber.js';
 import I18n from 'react-native-i18n';
+
+import Loading from '../parts/Loading';
+import MainButton from '../parts/MainButton';
+import ErrorModal from '../parts/ErrorModal';
 
 const LIST_ITEM_HEIGHT = 100;
 const DELEGATES_NUM = 101;
@@ -27,10 +29,6 @@ export default class Delegates extends React.Component {
     this.setState({isLoading: true});
     await this._setDelegates();
     this.setState({isLoading: false, isReady: true, search_group: ""});
-  }
-
-  onClosed_ErrorModal = () => {
-    if (!this.state.isReady) this.props.navigation.navigate("Home");
   }
 
   onChangeText_Search = (value) => {
@@ -68,17 +66,14 @@ export default class Delegates extends React.Component {
 
   onPress_Confirm = () => {
     this.setState({isLoading: true});
-    this.errorMessage = "";
     if (this.currentVotes.size + this.addVotes.size - this.removeVotes.size > MAX_VOTE_COUNT) {
-      this.errorMessage = `${I18n.t('Delegates.ErrMsg1')}(${MAX_VOTE_COUNT})`;
-      this.refs.error_modal.open();
+      this.refs.error_modal.open(`${I18n.t('Delegates.ErrMsg1')}(${MAX_VOTE_COUNT})`);
       this.setState({isLoading: false});
       return;
     }
 
     if (this.addVotes.size === 0 && this.removeVotes.size === 0) {
-      this.errorMessage = I18n.t('Delegates.ErrMsg2');
-      this.refs.error_modal.open();
+      this.refs.error_modal.open(I18n.t('Delegates.ErrMsg2'));
       this.setState({isLoading: false});
       return;
     }
@@ -107,7 +102,6 @@ export default class Delegates extends React.Component {
 
   _clearProp = () => {
     this.state = {isLoading: false, isReady: false, rerenderList: 0, search_text: "", search_group: "init", currentPage: 0, selected: new Map()};
-    this.errorMessage = "";
     this.isRefMode = this.props.navigation.state.params.user.address.length === 0;
     this.isTestnet = this.props.navigation.state.params.isTestnet;
     this.user_data = this.props.navigation.state.params.user;
@@ -156,8 +150,7 @@ export default class Delegates extends React.Component {
   _setDelegates = async() => {
     const ret = await this._getDelegatesList();
     if (!ret.result) {
-      this.errorMessage = I18n.t('Delegates.ErrMsg3');
-      this.refs.error_modal.open();
+      this.refs.error_modal.open(I18n.t('Delegates.ErrMsg3'), () => this.props.navigation.navigate("Home"));
       this.setState({isLoading: false});
       return;
     }
@@ -175,7 +168,6 @@ export default class Delegates extends React.Component {
   _getDelegatesList = async() => {
     try {
       this.delegatesList.length = 0;
-      this.errorMessage = "";
       const net = this.isTestnet? 0: 1;
       return await VoteAPIClient.getDelegatesList(net);
     } catch (err) {
@@ -250,16 +242,6 @@ export default class Delegates extends React.Component {
   _getMaxCount = () => {
     if (this.viewDelegatesList.size === 0) return 0;
     return (this.viewDelegatesList.size - 1) * DELEGATES_NUM + this.viewDelegatesList.get(this.viewDelegatesList.size - 1).length
-  }
-
-  renderErrorModal = () => {
-    return (
-      <Modal style={styles.modal} position={"center"} ref={"error_modal"} backdropPressToClose={false} onClosed={() => this.onClosed_ErrorModal()}>
-        <Icon name="times-circle" style={styles.modal_icon_error}/>
-        <Text style={styles.modal_message}>{this.errorMessage}</Text>
-        <Button title={"OK"} buttonStyle={styles.modal_ok_error} onPress={() => {this.refs.error_modal.close()}} />
-      </Modal>
-    );
   }
 
   renderHeader = () => {
@@ -337,8 +319,8 @@ export default class Delegates extends React.Component {
             <View style={{flexDirection:'column', marginLeft:20, width: this.isRefMode? '100%': '65%'}}>
               <Text style={styles.username}>{item.username}</Text>
               <View style={{flexDirection:'row', paddingTop: 5}}>
-                <Text style={[styles.userdata, {marginRight: 15, display: Platform.isPad?"flat":"none"}]}>produced Blocks: {item.producedBlocks}</Text>
-                <Text style={[styles.userdata, {marginRight: 15, display: Platform.isPad?"flat":"none"}]}>missed Blocks: {item.missedBlocks}</Text>
+                <Text style={[styles.userdata, {marginRight: 15, display: Platform.isPad?"flex":"none"}]}>produced Blocks: {item.producedBlocks}</Text>
+                <Text style={[styles.userdata, {marginRight: 15, display: Platform.isPad?"flex":"none"}]}>missed Blocks: {item.missedBlocks}</Text>
                 <Text style={styles.userdata}>productivity: {item.productivity} %</Text>
               </View>
             </View>
@@ -348,9 +330,7 @@ export default class Delegates extends React.Component {
           height: LIST_ITEM_HEIGHT,
           borderBottomColor: "#ccc",
           borderBottomWidth: 1,
-          backgroundColor: this.addVotes.has(item.publicKey)? "rgba(0,255,0,0.15)":
-                            this.removeVotes.has(item.publicKey)? "rgba(255,0,0,0.15)":
-                            "#fff"
+          backgroundColor: "#fff"
         }}
         checkBox={
           {
@@ -371,14 +351,15 @@ export default class Delegates extends React.Component {
   }
 
   renderConfirmButton = () => {
+    if (this.isRefMode) return (<View/>);
     return (
       <View>
-        <View style={[styles.count_field, {display: this.isRefMode? "none": "flex"}]}>
+        <View style={styles.count_field}>
           <Text style={[styles.sum_count, {marginRight:10}]}>vote: {this.currentVotes.size + this.addVotes.size - this.removeVotes.size} / {MAX_VOTE_COUNT}</Text>
           <Text style={[styles.add_count, {marginRight:10}]}> add: {this.addVotes.size}</Text>
           <Text style={[styles.remove_count]}> remove: {this.removeVotes.size}</Text>
         </View>
-        <Button title={I18n.t('Delegates.Button1')} buttonStyle={[styles.vote_button, {display: this.isRefMode? "none": "flex"}]} onPress={() => this.onPress_Confirm()} />
+        <MainButton params={{title:I18n.t('Delegates.Button1'), style:styles.vote_button, event:this.onPress_Confirm}}/>
       </View>
     )
   }
@@ -450,11 +431,7 @@ export default class Delegates extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Spinner
-            visible={this.state.isLoading}
-            textContent="Now Loading.."
-            textStyle={{ color:"rgba(255,255,255,0.5)" }}
-            overlayColor="rgba(0,0,0,0.5)" />
+        <Loading params={{isLoading: this.state.isLoading, text: "Now Loading.."}}/>
 
         <Drawer
           ref={(ref) => this._drawer = ref}
@@ -470,7 +447,7 @@ export default class Delegates extends React.Component {
           {this.renderList()}
           {this.renderConfirmButton()}
           <SafeAreaView style={{display: this.isRefMode? "none": "flex"}}/>
-          {this.renderErrorModal()}
+          <ErrorModal ref={"error_modal"}/>
 
         </Drawer>
       </View>
@@ -518,11 +495,6 @@ const styles = StyleSheet.create({
   vote_button: {
     margin: 10,
     marginTop: 0,
-    padding: 10,
-    backgroundColor: 'rgba(175,85,105,1)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10
   },
   count_field: {
     flexDirection:"row",
@@ -606,34 +578,5 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontFamily: 'Gilroy-ExtraBold',
     marginLeft: 10
-  },
-  modal: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 350,
-    width: Platform.isPad? 500: 350,
-    padding: 15,
-    borderRadius: 10,
-    borderWidth: 10,
-    borderColor: "#e0e0df",
-    backgroundColor: "#f0f0ef"
-  },
-  modal_message: {
-    marginTop: 10,
-    fontSize: 25,
-    lineHeight:30
-  },
-  modal_icon_error: {
-    color: 'rgba(200,50,50,0.8)',
-    fontSize: 50
-  },
-  modal_ok_error: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: Platform.isPad? 450: 300,
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-    backgroundColor: "rgba(175,85,105,1)"
   }
 })

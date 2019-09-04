@@ -2,12 +2,17 @@ import React from 'react';
 import { Platform, StatusBar, StyleSheet, View, ScrollView, FlatList } from 'react-native';
 import { Header, Button, Text, Input  } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation'
-import Spinner from 'react-native-loading-spinner-overlay';
 import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import { castVotes } from '@liskhq/lisk-transactions';
 import I18n from 'react-native-i18n';
+
+import Loading from '../parts/Loading';
+import MainButton from '../parts/MainButton';
+import ErrorModal from '../parts/ErrorModal';
+
+import * as cryptography from '@liskhq/lisk-cryptography';
 
 const MAX_VOTE_COUNT = 33;
 
@@ -21,26 +26,32 @@ export default class Confirm extends React.Component {
     this.isTestnet = this.props.navigation.state.params.isTestnet;
     this.votesData = new Map();
     this.trxNum = 0;
-    this.errorMessage = "";
     this._setVotesData();
   }
 
   onPress_Exec = async() => {
     this.setState({isLoading: true});
-    this.errorMessage = "";
-
+    
     // パスフレーズ入力チェック
     if (this.state.passphrase.length === 0) {
-      this.errorMessage = I18n.t('Confirm.ErrMsg1');
-      this.refs.error_modal.open();
+      this.refs.error_modal.open(I18n.t('Confirm.ErrMsg1'));
+      this.setState({isLoading: false});
+      return;
+    }
+    if (this.user_data.publicKey !== cryptography.getPrivateAndPublicKeyFromPassphrase(this.state.passphrase).publicKey) {
+      this.refs.error_modal.open(I18n.t('Confirm.ErrMsg2'));
       this.setState({isLoading: false});
       return;
     }
 
     // セカンドパスフレーズ入力チェック
     if (this.user_data.secondPublicKey !== undefined && this.state.secondPassphrase.length === 0) {
-      this.errorMessage = I18n.t('Confirm.ErrMsg2');
-      this.refs.error_modal.open();
+      this.refs.error_modal.open(I18n.t('Confirm.ErrMsg3'));
+      this.setState({isLoading: false});
+      return;
+    }
+    if (this.user_data.secondPublicKey !== cryptography.getPrivateAndPublicKeyFromPassphrase(this.state.secondPassphrase).publicKey) {
+      this.refs.error_modal.open(I18n.t('Confirm.ErrMsg4'));
       this.setState({isLoading: false});
       return;
     }
@@ -48,11 +59,11 @@ export default class Confirm extends React.Component {
     // トランザクション生成チェック
     const trxs = await this._createVoteTransaction();
     if (trxs.length === 0) {
-      this.errorMessage = I18n.t('Confirm.ErrMsg3');
-      this.refs.error_modal.open();
+      this.refs.error_modal.open(I18n.t('Confirm.ErrMsg5'));
       this.setState({isLoading: false});
       return;
     }
+    
     this.props.navigation.navigate("Result", {
       votesData: this.votesData,
       trxs: trxs,
@@ -129,14 +140,33 @@ export default class Confirm extends React.Component {
     )
   }
 
+  renderPassphraseModal = (isSecond) => {
+    if (isSecond && this.user_data.secondPublicKey === undefined) return (<View/>); 
+    return (
+      <Input 
+        placeholder={isSecond? "Second Passphrase": "Passphrase"}
+        value={isSecond? this.state.secondPassphrase: this.state.passphrase}
+        autoCapitalize={"none"}
+        leftIcon={<Icon name="lock" size={20}/>}
+        leftIconContainerStyle={{width:20, marginLeft:0}}
+        rightIcon={
+          <MIcon name="clear" size={20} style={{color: "#ccc"}}
+                  onPress={() => isSecond? this.setState({secondPassphrase:""}): this.setState({passphrase:""})}/>
+        }
+        containerStyle={styles.modal_input}
+        inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
+        inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
+        secureTextEntry={true}
+        onChangeText={
+          (value) => isSecond? this.setState({secondPassphrase:value}): this.setState({passphrase:value})
+        } />
+    );
+  }
+
   render() {
     return (
       <View style={{flex:1}}>
-        <Spinner
-            visible={this.state.isLoading}
-            textContent="Now Loading.."
-            textStyle={{ color:"rgba(255,255,255,0.5)" }}
-            overlayColor="rgba(0,0,0,0.5)" />
+        <Loading params={{isLoading: this.state.isLoading, text: "Now Loading.."}}/>
 
         <Header
           leftComponent={{ icon: 'chevron-left', color: '#fff', size: 30, onPress: () => this.props.navigation.navigate("Delegates") }}
@@ -162,45 +192,20 @@ export default class Confirm extends React.Component {
           <Text style={styles.message_note_text}>{I18n.t('Confirm.Msg5')}{this.trxNum + 1}{I18n.t('Confirm.Msg6')}</Text>
 
         </ScrollView>
-        <Button title={I18n.t('Confirm.Button1')} buttonStyle={styles.exec_button} onPress={() => this.refs.passphrase_modal.open()} />
+        <MainButton params={{title:I18n.t('Confirm.Button1'), style:{margin: 10}, event:() => this.refs.passphrase_modal.open()}}/>
         <SafeAreaView/>
 
         <Modal style={[styles.modal, {height: 450}]} position={"center"} ref={"passphrase_modal"} backdropPressToClose={false}>
-          <Icon name="info-circle" style={styles.modal_icon_info}/>
+          <Icon name="info-circle" style={styles.modal_icon}/>
           <Text style={styles.modal_message}>{I18n.t('Confirm.Msg2')}</Text>
-          <Input 
-            placeholder="Passphrase"
-            value={this.state.passphrase}
-            autoCapitalize={"none"}
-            leftIcon={<Icon name="lock" size={20}/>}
-            leftIconContainerStyle={{width:20, marginLeft:0}}
-            rightIcon={<MIcon name="clear" size={20} style={{color: "#ccc"}} onPress={() => this.setState({passphrase:""})}/>}
-            containerStyle={styles.modal_input}
-            inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
-            inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
-            secureTextEntry={true}
-            onChangeText={(value) => this.setState({passphrase:value})} />
-          <Input 
-            placeholder="Second Passphrase"
-            value={this.state.secondPassphrase}
-            autoCapitalize={"none"}
-            leftIcon={<Icon name="lock" size={20}/>}
-            leftIconContainerStyle={{width:20, marginLeft:0}}
-            rightIcon={<MIcon name="clear" size={20} style={{color: "#ccc"}} onPress={() => this.setState({secondPassphrase:""})}/>}
-            containerStyle={[styles.modal_input,{display: this.user_data.secondPublicKey===undefined?"none":"flex"}]}
-            inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
-            inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
-            secureTextEntry={true}
-            onChangeText={(value) => this.setState({secondPassphrase:value})} />
+          
+          {this.renderPassphraseModal(false)}
+          {this.renderPassphraseModal(true)}
+
           <Button title={"OK"} buttonStyle={styles.modal_ok_button} onPress={() => {this.onPress_Exec()}} />
           <Button title={"Cancel"} buttonStyle={styles.modal_cancel_button} onPress={() => {this.refs.passphrase_modal.close()}} />
         </Modal>
-
-        <Modal style={styles.modal} position={"center"} ref={"error_modal"} backdropPressToClose={false}>
-          <Icon name="times-circle" style={styles.modal_icon_error}/>
-          <Text style={styles.modal_message}>{this.errorMessage}</Text>
-          <Button title={"OK"} buttonStyle={styles.modal_ok_button} onPress={() => {this.refs.error_modal.close()}} />
-        </Modal>
+        <ErrorModal ref={"error_modal"}/>
       </View>
     );
   }
@@ -282,14 +287,6 @@ const styles = StyleSheet.create({
     color: "#f00",
     textAlign: "right"
   },
-  exec_button: {
-    margin: 10,
-    padding: 10,
-    backgroundColor: 'rgba(175,85,105,1)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10
-  },
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -315,11 +312,7 @@ const styles = StyleSheet.create({
     fontSize: 25,
     lineHeight:30
   },
-  modal_icon_error: {
-    color: 'rgba(200,50,50,0.8)',
-    fontSize: 50
-  },
-  modal_icon_info: {
+  modal_icon: {
     color: 'rgba(0,50,140,0.8)',
     fontSize: 50
   },
