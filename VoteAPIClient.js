@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const baseURL = "https://ik1-309-14844.vs.sakura.ne.jp/lva"
+const baseURL = "https://ysdev.work/lva"
 
 exports.createClient = () => {
   const client = axios.create({
