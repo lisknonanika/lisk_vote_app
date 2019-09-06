@@ -31,9 +31,7 @@ target 'lisk_vote_app' do
 
 
 
-  pod 'RNI18n', :path => '../node_modules/react-native-i18n'
 
-  pod 'react-native-splash-screen', :path => '../node_modules/react-native-splash-screen'
 
   target 'lisk_vote_appTests' do
     inherit! :search_paths
