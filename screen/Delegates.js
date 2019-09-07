@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
+import { Platform, Dimensions, StatusBar, StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import { Header, Button, Input, Text, ListItem } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation';
 import Drawer from 'react-native-drawer';
@@ -319,8 +319,8 @@ export default class Delegates extends React.Component {
             <View style={{flexDirection:'column', marginLeft:20, width: this.isRefMode? '100%': '65%'}}>
               <Text style={styles.username}>{item.username}</Text>
               <View style={{flexDirection:'row', paddingTop: 5}}>
-                <Text style={[styles.userdata, {marginRight: 15, display: Platform.isPad?"flex":"none"}]}>produced Blocks: {item.producedBlocks}</Text>
-                <Text style={[styles.userdata, {marginRight: 15, display: Platform.isPad?"flex":"none"}]}>missed Blocks: {item.missedBlocks}</Text>
+                <Text style={[styles.userdata, {marginRight: 15, display: (Platform.isPad || Dimensions.get('window').width >= 750)?"flex":"none"}]}>produced Blocks: {item.producedBlocks}</Text>
+                <Text style={[styles.userdata, {marginRight: 15, display: (Platform.isPad || Dimensions.get('window').width >= 750)?"flex":"none"}]}>missed Blocks: {item.missedBlocks}</Text>
                 <Text style={styles.userdata}>productivity: {item.productivity} %</Text>
               </View>
             </View>

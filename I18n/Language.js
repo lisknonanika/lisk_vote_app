@@ -1,19 +1,16 @@
 export default {
   en: {
-    Welcome: {
-      Home1: "You can switch between the main net and the test net by swiping.",
-      Home2: "Start voting with your Lisk address.",
-      Home3: "If you want to check only the delegate ranking, you do not need to enter the Lisk address.",
+    Tutorial: {
+      Home1: "You can switch between the main net and the test net.",
+      Home2: "Start voting.\nYou can see the delegation information even if no Lisk address is entered.",
       DelegateList1: "Information is delayed up to 1 hour.",
-      DelegateList2: "If you enter a delegate name in the search field, a partial match search is performed.",
-      DelegateList3: "In the submenu, you can filter by “voting status” and “delegate group”.",
-      DelegateList4: "Long press on the list to see the delegate information.",
-      DelegateList5: "Press the check button to add or remove.",
-      DelegateList6: "Please push the confirmation button to reflect the contents of the vote.",
-      DelegateInfo1: "Displays the delegate information.",
-      Confirm1: "Check the contents before executing.",
-      Confirm2: "You must enter a passphrase to vote.",
-      Result1: "Displays the processing result.Pressing the transaction ID opens Lisk Explorer.",
+      DelegateList2: "Delegate name partial match search is possible.",
+      DelegateList3: "Open the filter condition menu.",
+      DelegateList4: "You can see the delegate information.",
+      DelegateList5: "You can vote or unvote.",
+      DelegateList6: "Opens a confirmation screen.",
+      Confirm1: "Reflects the vote contents.\n*You must enter a passphrase.",
+      Result1: "You can see the processing result.",
       Button1: "Let's Start!"
     },
     Home: {
@@ -51,20 +48,17 @@ export default {
     }
   },
   ja: {
-    Welcome: {
-      Home1: "スワイプすることでメインネットとテストネットを切り替えることができます。",
-      Home2: "あなたのLiskアドレスでVoteを開始してください。",
-      Home3: "Delegateのランキングの確認のみであればLiskアドレスは入力不要です。",
+    Tutorial: {
+      Home1: "メインネットとテストネットを切り替えることができます。",
+      Home2: "Voteを開始します。\nアドレスが未入力でもデリゲート情報の確認が出来ます。",
       DelegateList1: "最大1時間前の情報を表示します。",
-      DelegateList2: "検索欄にデリゲート名を入力すると部分一致検索が出来ます。",
-      DelegateList3: "サブメニューではVote内容やデリゲートグループで絞り込みが出来ます。",
-      DelegateList4: "リストを長押しすることで、デリゲート情報を参照出来ます。",
-      DelegateList5: "チェックボタンを押すことで追加・削除が出来ます。",
-      DelegateList6: "Vote内容を反映するには確認ボタンを押してください。",
-      DelegateInfo1: "デリゲート情報の確認が出来ます。",
-      Confirm1: "実行前に内容の確認をしてください。",
-      Confirm2: "Vote内容の反映にはパスフレーズの入力が必要です。",
-      Result1: "処理結果の確認が出来ます。トランザクションIDからLisk Explorerを開く事もできます。",
+      DelegateList2: "デリゲート名の部分一致検索が出来ます。",
+      DelegateList3: "フィルターメニューを開きます。",
+      DelegateList4: "デリゲート情報を確認出来ます。",
+      DelegateList5: "Voteの追加・削除が出来ます。",
+      DelegateList6: "確認画面を開きます。",
+      Confirm1: "vote内容を反映します。\n※パスフレーズの入力が必要です。",
+      Result1: "処理結果の確認が出来ます。",
       Button1: "さあ、はじめましょう"
     },
     Home: {

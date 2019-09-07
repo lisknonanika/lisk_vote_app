@@ -1,22 +1,33 @@
 import React from 'react';
-import { Platform, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { Platform, Dimensions, AsyncStorage, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Button, Text, Input } from 'react-native-elements';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Swiper from 'react-native-swiper';
+import SplashScreen from 'react-native-splash-screen';
 import BigNumber from 'bignumber.js';
 import { APIClient } from '@liskhq/lisk-api-client';
 import VoteAPIClient from '../VoteAPIClient';
 import I18n from 'react-native-i18n';
 
 import Loading from '../parts/Loading';
+import TutorialModal from '../parts/TutorialModal'
 import ErrorModal from '../parts/ErrorModal';
 
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, swiperIdx: 0, mainnet_address: '', testnet_address: '5244341344295779314L'};
+    this.state = {isLoading: true, swiperIdx: 0, mainnet_address: '', testnet_address: '5244341344295779314L'};
     this.user_data = {address: '', balance: '', publicKey: '', secondPublicKey: '', votes: []};
+  }
+
+  async componentDidMount() {
+    SplashScreen.hide();
+    this.setState({isLoading: false});
+    const isInitializedString = await AsyncStorage.getItem('isInitialized');
+    if (isInitializedString === undefined || isInitializedString !== 'true') {
+      this.refs.tutorial_modal.open();
+    }
   }
 
   onChangeText_Address = (value) => {
@@ -24,7 +35,7 @@ export default class Home extends React.Component {
     else this.setState({ testnet_address: value });
   };
 
-  onPress_Address = () => {
+  onPress_AddressClear = () => {
     if (this.state.swiperIdx === 0) this.setState({ mainnet_address: "" });
     else this.setState({ testnet_address: "" });
   };
@@ -102,7 +113,7 @@ export default class Home extends React.Component {
             autoCapitalize={"none"}
             leftIcon={<MCIcon name="account" size={20}/>}
             leftIconContainerStyle={{width:20, marginLeft:0}}
-            rightIcon={<MIcon name="clear" size={20} style={{color: "#999"}} onPress={() => this.onPress_Address()}/>}
+            rightIcon={<MIcon name="clear" size={20} style={{color: "#999"}} onPress={() => this.onPress_AddressClear()}/>}
             containerStyle={styles.input_item}
             inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
             inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
@@ -130,14 +141,15 @@ export default class Home extends React.Component {
           
         </Swiper>
 
-        <TouchableOpacity style={{position: 'absolute', bottom: 40, left: 20}} onPress={() => this.props.navigation.navigate('Welcome')}>
+        <TouchableOpacity style={{position: 'absolute', bottom: 40, left: 20}} onPress={() => this.refs.tutorial_modal.open()}>
           <Text style={styles.link}>Tutorial</Text>
         </TouchableOpacity>
         <TouchableOpacity style={{position: 'absolute', bottom: 40, right: 20}}>
-          <Text style={styles.link}>Help</Text>
+          <Text style={styles.link}>Contact</Text>
         </TouchableOpacity>
         
         <ErrorModal ref={"error_modal"}/>
+        <TutorialModal ref={"tutorial_modal"}/>
       </View>
     );
   }
@@ -178,7 +190,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.35)',
     borderRadius: 10,
     padding: 10,
-    width: Platform.isPad? 350: 280,
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 350: 280,
     marginTop: 30
   },
   input_item: {

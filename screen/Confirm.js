@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View, ScrollView, FlatList } from 'react-native';
+import { Platform, Dimensions, StatusBar, StyleSheet, View, ScrollView, FlatList } from 'react-native';
 import { Header, Button, Text, Input  } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation'
 import Modal from 'react-native-modalbox';
@@ -178,7 +178,7 @@ export default class Confirm extends React.Component {
           <Text style={styles.message_text}>{I18n.t('Confirm.Msg1')}</Text>
 
           <View style={{display: this.votesData.has(0)?"flex":"none"}}>
-            <Text style={styles.label}>Account</Text>
+            <Text style={styles.label}>Account ({this.isTestnet? "Testnet": "Mainnet"})</Text>
             <Text style={styles.message_text_baseInfo}>Address: {this.user_data.address}</Text>
             <Text style={styles.message_text_baseInfo}>Balance: {this.user_data.balance} LSK</Text>
           </View>
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 350,
-    width: Platform.isPad? 500: 350,
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 500: 350,
     padding: 15,
     borderRadius: 10,
     borderWidth: 10,
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
   modal_cancel_button: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: Platform.isPad? 450: 300,
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 450: 300,
     padding: 10,
     borderRadius: 10,
     marginTop: 20,
@@ -328,7 +328,7 @@ const styles = StyleSheet.create({
   modal_ok_button: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: Platform.isPad? 450: 300,
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 450: 300,
     padding: 10,
     borderRadius: 10,
     marginTop: 20,

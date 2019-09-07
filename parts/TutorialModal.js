@@ -1,51 +1,34 @@
 import React from 'react';
-import { Platform, AsyncStorage, StatusBar, StyleSheet, View} from 'react-native';
+import { Platform, Dimensions, AsyncStorage, StatusBar, StyleSheet, View} from 'react-native';
 import { Header, Button, Text } from 'react-native-elements';
-import SplashScreen from 'react-native-splash-screen';
 import Swiper from 'react-native-swiper';
-import Spinner from 'react-native-loading-spinner-overlay';
+import Modal from 'react-native-modalbox';
 import I18n from 'react-native-i18n';
 
-export default class Welcome extends React.Component {
+export default class TutorialModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: true}
+  }
+  
+  open = () => {
+    this.refs.tutorial_modal.open();
   }
 
-  async componentDidMount() {
-    const isInitializedString = await AsyncStorage.getItem('isInitialized');
-    SplashScreen.hide();
-    if (isInitializedString === 'true') {
-      this.props.navigation.navigate('Home');
-    }
-    this.setState({isLoading: false});
-  }
-
-  onPress_Button = async() => {
+  onClosed_Modal = async() => {
     await AsyncStorage.setItem('isInitialized', 'true');
-    this.props.navigation.navigate('Home');
   }
 
   render() {
-    if (this.state.isLoading) {
-      return (
-        <View style={[styles.container, {backgroundColor: '#2475b9'}]}>
-          <Spinner visible={this.state.isLoading}
-               textContent={"Initializing.."}
-               textStyle={{ color:"rgba(255,255,255,0.5)" }}
-               overlayColor="transparent" />
-        </View>
-      )
-    }
     return (
-      <View style={styles.container}>
-
+      <Modal style={styles.container} ref={"tutorial_modal"}
+              backdropPressToClose={false} onClosed={() => this.onClosed_Modal()}>
+        
         <Header
-          rightComponent={<Text style={styles.header_skip} onPress={() => this.onPress_Button()}>SKIP</Text>}
+          rightComponent={<Text style={styles.header_skip} onPress={() => this.refs.tutorial_modal.close()}>SKIP</Text>}
           centerComponent={<Text style={styles.header_title}>Tutorial</Text>}
           containerStyle={[styles.header, {backgroundColor: "#ccc"}]}
         />
-            
+
         <Swiper loop={false}
                 showsButtons={true}
                 activeDotColor="rgba(255,255,255,0.75)" dotColor="rgba(100,100,100,0.75)"
@@ -53,89 +36,71 @@ export default class Welcome extends React.Component {
                 prevButton={<Text style={styles.swipe_button}>‹</Text>}>
 
           <View style={styles.page}>
-            <Text style={styles.title}>Home (1/3)</Text>
+            <Text style={styles.title}>Home (1/2)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.Home1')}</Text>
+            <Text style={styles.text}>{I18n.t('Tutorial.Home1')}</Text>
           </View>
 
           <View style={styles.page}>
-            <Text style={styles.title}>Home (2/3)</Text>
+            <Text style={styles.title}>Home (2/2)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.Home2')}</Text>
-          </View>
-
-          <View style={styles.page}>
-            <Text style={styles.title}>Home (3/3)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.Home3')}</Text>
+            <Text style={styles.text}>{I18n.t('Tutorial.Home2')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (1/6)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.DelegateList1')}</Text>
+            <Text style={styles.text}>{I18n.t('Tutorial.DelegateList1')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (2/6)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.DelegateList2')}</Text>
+            <Text style={styles.text}>{I18n.t('Tutorial.DelegateList2')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (3/6)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.DelegateList3')}</Text>
+            <Text style={styles.text}>{I18n.t('Tutorial.DelegateList3')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (4/6)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.DelegateList4')}</Text>
+            <Text style={styles.text}>{I18n.t('Tutorial.DelegateList4')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (5/6)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.DelegateList5')}</Text>
+            <Text style={styles.text}>{I18n.t('Tutorial.DelegateList5')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (6/6)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.DelegateList6')}</Text>
+            <Text style={styles.text}>{I18n.t('Tutorial.DelegateList6')}</Text>
           </View>
 
           <View style={styles.page}>
-            <Text style={styles.title}>Delegate Info (1/1)</Text>
+            <Text style={styles.title}>Confirm (1/1)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.DelegateInfo1')}</Text>
-          </View>
-
-          <View style={styles.page}>
-            <Text style={styles.title}>Confirm (1/2)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.Confirm1')}</Text>
-          </View>
-
-          <View style={styles.page}>
-            <Text style={styles.title}>Confirm (2/2)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.Confirm2')}</Text>
+            <Text style={styles.text}>{I18n.t('Tutorial.Confirm1')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Result (1/1)</Text>
             <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
-            <Text style={styles.text}>{I18n.t('Welcome.Result1')}</Text>
+            <Text style={styles.text}>{I18n.t('Tutorial.Result1')}</Text>
           </View>
 
           <View style={[styles.page, {justifyContent: 'center'}]}>
-            <Button title={I18n.t('Welcome.Button1')} buttonStyle={styles.button} onPress={this.onPress_Button} />
+            <Button title={I18n.t('Tutorial.Button1')} buttonStyle={styles.button} onPress={() => this.refs.tutorial_modal.close()} />
           </View>
           
         </Swiper>
-      </View>
+      </Modal>
     );
   }
 }
@@ -189,7 +154,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(175,85,105,1)',
     justifyContent: 'center',
     alignItems: 'center',
-    width: Platform.isPad? 450: 300,
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 450: 300,
     borderRadius: 10
   },
 })

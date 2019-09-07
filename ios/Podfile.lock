@@ -58,6 +58,8 @@ PODS:
   - React-jsinspector (0.60.5)
   - react-native-randombytes (3.5.3):
     - React
+  - react-native-splash-screen (3.2.0):
+    - React
   - react-native-udp (2.6.1):
     - React
   - React-RCTActionSheet (0.60.5):
@@ -103,6 +105,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
+  - react-native-splash-screen (from `../node_modules/react-native-splash-screen`)
   - react-native-udp (from `../node_modules/react-native-udp`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
@@ -146,6 +149,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
+  react-native-splash-screen:
+    :path: "../node_modules/react-native-splash-screen"
   react-native-udp:
     :path: "../node_modules/react-native-udp"
   React-RCTActionSheet:
@@ -190,6 +195,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 90ad2f9db09513fc763bc757fdc3c4ff8bde2a30
   React-jsinspector: e08662d1bf5b129a3d556eb9ea343a3f40353ae4
   react-native-randombytes: 991545e6eaaf700b4ee384c291ef3d572e0b2ca8
+  react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
   react-native-udp: 4a750f0802d4597252f2cae4a2b3302ee5cfa4fc
   React-RCTActionSheet: b0f1ea83f4bf75fb966eae9bfc47b78c8d3efd90
   React-RCTAnimation: 359ba1b5690b1e87cc173558a78e82d35919333e
@@ -206,6 +212,6 @@ SPEC CHECKSUMS:
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   yoga: 312528f5bbbba37b4dcea5ef00e8b4033fdd9411
 
-PODFILE CHECKSUM: c408eac8a0b43d4b2198cfde2d53f5c51a548f6a
+PODFILE CHECKSUM: 408927b819dbe8ee256dd17563a4b03cd1eff347
 
 COCOAPODS: 1.7.5

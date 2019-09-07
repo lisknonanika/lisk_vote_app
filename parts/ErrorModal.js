@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { Platform, Dimensions, StyleSheet } from 'react-native';
 import { Button, Text } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Modal from 'react-native-modalbox';
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 350,
-    width: Platform.isPad? 500: 350,
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 500: 350,
     padding: 15,
     borderRadius: 10,
     borderWidth: 10,
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   modal_button: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: Platform.isPad? 450: 300,
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 450: 300,
     padding: 10,
     borderRadius: 10,
     marginTop: 20,
