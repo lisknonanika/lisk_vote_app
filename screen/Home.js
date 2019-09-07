@@ -22,12 +22,12 @@ export default class Home extends React.Component {
   }
 
   async componentDidMount() {
-    SplashScreen.hide();
-    this.setState({isLoading: false});
     const isInitializedString = await AsyncStorage.getItem('isInitialized');
     if (isInitializedString === undefined || isInitializedString !== 'true') {
       this.refs.tutorial_modal.open();
     }
+    this.setState({isLoading: false});
+    SplashScreen.hide();
   }
 
   onChangeText_Address = (value) => {
