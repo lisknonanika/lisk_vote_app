@@ -3,12 +3,13 @@ import { Platform, AsyncStorage, StatusBar, StyleSheet, View} from 'react-native
 import { Header, Button, Text } from 'react-native-elements';
 import SplashScreen from 'react-native-splash-screen';
 import Swiper from 'react-native-swiper';
+import Spinner from 'react-native-loading-spinner-overlay';
 import I18n from 'react-native-i18n';
 
 export default class Welcome extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isInitialize: false}
+    this.state = {isLoading: true}
   }
 
   async componentDidMount() {
@@ -17,7 +18,7 @@ export default class Welcome extends React.Component {
     if (isInitializedString === 'true') {
       this.props.navigation.navigate('Home');
     }
-    this.setState({isInitialize: true});
+    this.setState({isLoading: false});
   }
 
   onPress_Button = async() => {
@@ -26,9 +27,14 @@ export default class Welcome extends React.Component {
   }
 
   render() {
-    if (!this.state.isInitialize) {
+    if (this.state.isLoading) {
       return (
-        <View style={[styles.container, {backgroundColor: '#2475b9'}]} />
+        <View style={[styles.container, {backgroundColor: '#2475b9'}]}>
+          <Spinner visible={this.state.isLoading}
+               textContent={"Initializing.."}
+               textStyle={{ color:"rgba(255,255,255,0.5)" }}
+               overlayColor="transparent" />
+        </View>
       )
     }
     return (
