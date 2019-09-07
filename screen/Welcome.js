@@ -1,19 +1,36 @@
 import React from 'react';
-import { Platform, StatusBar, StyleSheet, View} from 'react-native';
+import { Platform, AsyncStorage, StatusBar, StyleSheet, View} from 'react-native';
 import { Header, Button, Text } from 'react-native-elements';
+import SplashScreen from 'react-native-splash-screen';
 import Swiper from 'react-native-swiper';
 import I18n from 'react-native-i18n';
 
 export default class Welcome extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {isInitialize: false}
   }
 
-  onPress_Button = () => {
+  async componentDidMount() {
+    const isInitializedString = await AsyncStorage.getItem('isInitialized');
+    SplashScreen.hide();
+    if (isInitializedString === 'true') {
+      this.props.navigation.navigate('Home');
+    }
+    this.setState({isInitialize: true});
+  }
+
+  onPress_Button = async() => {
+    await AsyncStorage.setItem('isInitialized', 'true');
     this.props.navigation.navigate('Home');
   }
 
   render() {
+    if (!this.state.isInitialize) {
+      return (
+        <View style={[styles.container, {backgroundColor: '#2475b9'}]} />
+      )
+    }
     return (
       <View style={styles.container}>
 
