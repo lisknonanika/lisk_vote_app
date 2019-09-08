@@ -144,7 +144,7 @@ export default class Home extends React.Component {
         <TouchableOpacity style={{position: 'absolute', bottom: 50, left: 20}} onPress={() => this.refs.tutorial_modal.open()}>
           <Text style={styles.link}>Tutorial</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{position: 'absolute', bottom: 50, right: 20}}>
+        <TouchableOpacity style={{position: 'absolute', bottom: 50, right: 20}} onPress={() => this.props.navigation.navigate('Contact')}>
           <Text style={styles.link}>Contact</Text>
         </TouchableOpacity>
         

@@ -10,27 +10,15 @@ import ErrorModal from '../parts/ErrorModal';
 export default class DelegateDetail extends React.Component {
   constructor(props) {
     super(props);
-    this.state={upd: false}
     this.delegate = this.props.navigation.state.params.delegate;
     this.groupUrl = this.props.navigation.state.params.groupUrl;
     this.isTestnet = this.props.navigation.state.params.isTestnet;
   }
 
-  _link = (url) => {
-    Linking.canOpenURL(url).then(supported => {
-      if (supported) return Linking.openURL(url);
-      this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg1'));
-      this.setState({upd: !this.state.upd})
-    }).catch((err) => {
-      this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg2'));
-      this.setState({upd: !this.state.upd})
-    });
-  }
-
   render_group = (group) => {
     if (this.groupUrl.has(group)) {
       return (
-        <TouchableOpacity style={styles.link_row} onPress={() => this._link(this.groupUrl.get(group))}>
+        <TouchableOpacity style={styles.link_row} onPress={() => Linking.openURL(this.groupUrl.get(group))}>
           <View style={{flexDirection:"row"}}>
             <Icon name="link" style={styles.link_icon}/>
             <Text style={styles.link}>{group}</Text>

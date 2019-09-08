@@ -8,6 +8,7 @@ import Delegates from './screen/Delegates';
 import DelegateDetail from './screen/DelegateDetail';
 import Confirm from './screen/Confirm';
 import Result from './screen/Result';
+import Contact from './screen/Contact';
 
 const StackNavi = createStackNavigator(
   {
@@ -22,6 +23,7 @@ const ModalNavi = createStackNavigator(
   { 
     Home: { screen: Home },
     DelegateDetail: { screen: DelegateDetail },
+    Contact: { screen: Contact },
     StackNavi: { screen: StackNavi },
   },
   {initialRouteName: 'Home', mode: 'modal', headerMode: 'none'}

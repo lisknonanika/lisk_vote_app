@@ -24,7 +24,6 @@ export default class TutorialModal extends React.Component {
       <Modal style={styles.container} ref={"tutorial_modal"}
               backdropPressToClose={false} onClosed={() => this.onClosed_Modal()}>
 
-
         <Swiper loop={false}
                 showsButtons={true}
                 activeDotColor="rgba(255,255,255,0.75)" dotColor="rgba(100,100,100,0.75)"

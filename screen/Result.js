@@ -16,7 +16,7 @@ const LiskClient = APIClient.createMainnetAPIClient();
 export default class Result extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: false, trxExecResults: [false,false,false,false], done: 0, upd: false}
+    this.state = {isLoading: false, trxExecResults: [false,false,false,false], done: 0}
     this.isTestnet = this.props.navigation.state.params.isTestnet;
     this.votesData = this.props.navigation.state.params.votesData;
     this.trxs = this.props.navigation.state.params.trxs;
@@ -73,14 +73,7 @@ export default class Result extends React.Component {
 
   _link = (trxId) => {
     const url = this.isTestnet? `https://testnet-explorer.lisk.io/tx/${trxId}`: `https://explorer.lisk.io/tx/${trxId}`
-    Linking.canOpenURL(url).then(supported => {
-      if (supported) return Linking.openURL(url);
-      this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg1'));
-      this.setState({upd: !this.state.upd})
-    }).catch((err) => {
-      this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg2'));
-      this.setState({upd: !this.state.upd})
-    });
+    Linking.openURL(url);
   }
 
   renderVoteList = (num, trxId) => {
