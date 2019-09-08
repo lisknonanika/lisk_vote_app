@@ -57,3 +57,10 @@ buck-out/
 
 # CocoaPods
 /ios/Pods/
+ios/lisk_vote_app/Base.lproj/._LaunchScreen.xib
+ios/._lisk_vote_app.xcodeproj
+ios/._lisk_vote_app.xcworkspace
+ios/lisk_vote_app/._AppDelegate.h
+ios/lisk_vote_app/._AppDelegate.m
+ios/lisk_vote_app/._Info.plist
+ios/lisk_vote_app/._main.m
