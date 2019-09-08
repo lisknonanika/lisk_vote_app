@@ -14,7 +14,6 @@ export default class DelegateDetail extends React.Component {
     this.delegate = this.props.navigation.state.params.delegate;
     this.groupUrl = this.props.navigation.state.params.groupUrl;
     this.isTestnet = this.props.navigation.state.params.isTestnet;
-    this.isRefMode = this.props.navigation.state.params.isRefMode;
   }
 
   _link = (url) => {
@@ -73,7 +72,7 @@ export default class DelegateDetail extends React.Component {
           <Text style={styles.label}>Productivity</Text>
           <Text style={styles.text}>{this.delegate.productivity} %</Text>
         </ScrollView>
-        <SafeAreaView style={{display: this.isRefMode? "none": "flex"}}/>
+        <SafeAreaView/>
         <ErrorModal ref={"error_modal"}/>
       </View>
     );

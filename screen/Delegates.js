@@ -327,10 +327,18 @@ export default class Delegates extends React.Component {
           </View>
         }
         containerStyle={{
+          margin: 2,
           height: LIST_ITEM_HEIGHT,
-          borderBottomColor: "#ccc",
-          borderBottomWidth: 1,
-          backgroundColor: "#fff"
+          borderRadius: 10,
+          backgroundColor: "#fff",
+          shadowColor: 'rgba(100, 100, 130, 0.3)',
+          shadowOpacity: 1,
+          shadowRadius: 10,
+          shadowOffset: {
+            width: 3,
+            height: 0,
+          },
+          elevation: 3,
         }}
         checkBox={
           {
@@ -345,7 +353,7 @@ export default class Delegates extends React.Component {
           }
         }
         onLongPress={() => this.props.navigation.navigate('DelegateDetail', {
-          delegate: item, groupUrl: this.delegatesGroupURL, isTestnet: this.isTestnet, isRefMode: this.isRefMode})}
+          delegate: item, groupUrl: this.delegatesGroupURL, isTestnet: this.isTestnet})}
       />
     );
   }
@@ -446,7 +454,7 @@ export default class Delegates extends React.Component {
           {this.renderListMoveButton()}
           {this.renderList()}
           {this.renderConfirmButton()}
-          <SafeAreaView style={{display: this.isRefMode? "none": "flex"}}/>
+          <SafeAreaView/>
           <ErrorModal ref={"error_modal"}/>
 
         </Drawer>

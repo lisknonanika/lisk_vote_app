@@ -3,7 +3,7 @@ export default {
     Tutorial: {
       Home1: "You can switch between the main net and the test net.",
       Home2: "Start voting.\nYou can see the delegation information even if no Lisk address is entered.",
-      DelegateList1: "Information is delayed up to 1 hour.",
+      DelegateList1: "Information is delayed about 1 hour.",
       DelegateList2: "Delegate name partial match search is possible.",
       DelegateList3: "Open the filter condition menu.",
       DelegateList4: "You can see the delegate information.",
@@ -51,7 +51,7 @@ export default {
     Tutorial: {
       Home1: "メインネットとテストネットを切り替えることができます。",
       Home2: "Voteを開始します。\nアドレスが未入力でもデリゲート情報の確認が出来ます。",
-      DelegateList1: "最大1時間前の情報を表示します。",
+      DelegateList1: "約1時間前の情報を表示します。",
       DelegateList2: "デリゲート名の部分一致検索が出来ます。",
       DelegateList3: "フィルターメニューを開きます。",
       DelegateList4: "デリゲート情報を確認出来ます。",
