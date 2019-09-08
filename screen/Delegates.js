@@ -402,12 +402,12 @@ export default class Delegates extends React.Component {
             onPress={() => this._drawer.close()}
           />
           <ScrollView>
-            <Text style={[styles.drawer_user_info, {marginTop:20}]}>Address:</Text>
-            <Text style={[styles.drawer_user_info]}>&nbsp;&nbsp;{this.user_data.address}</Text>
-            <Text style={[styles.drawer_user_info, {marginTop:10}]}>Balance:</Text>
-            <Text style={[styles.drawer_user_info]}>&nbsp;&nbsp;{this.user_data.balance} LSK</Text>
-
             <View style={{display: this.isRefMode? "none": "flex"}}>
+              <Text style={[styles.drawer_user_info, {marginTop:20}]}>Address:</Text>
+              <Text style={[styles.drawer_user_info]}>&nbsp;&nbsp;{this.user_data.address}</Text>
+              <Text style={[styles.drawer_user_info, {marginTop:10}]}>Balance:</Text>
+              <Text style={[styles.drawer_user_info]}>&nbsp;&nbsp;{this.user_data.balance} LSK</Text>
+
               <Text style={styles.drawer_label}>Status</Text>
               {this.renderDrawerButton("Current")}
               {this.renderDrawerButton("Add")}

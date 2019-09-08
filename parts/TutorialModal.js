@@ -1,6 +1,6 @@
 import React from 'react';
-import { Platform, Dimensions, AsyncStorage, StatusBar, StyleSheet, View} from 'react-native';
-import { Header, Button, Text } from 'react-native-elements';
+import { Platform, Dimensions, AsyncStorage, StyleSheet, View, TouchableOpacity} from 'react-native';
+import { Button, Text } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
 import Modal from 'react-native-modalbox';
 import I18n from 'react-native-i18n';
@@ -22,12 +22,7 @@ export default class TutorialModal extends React.Component {
     return (
       <Modal style={styles.container} ref={"tutorial_modal"}
               backdropPressToClose={false} onClosed={() => this.onClosed_Modal()}>
-        
-        <Header
-          rightComponent={<Text style={styles.header_skip} onPress={() => this.refs.tutorial_modal.close()}>SKIP</Text>}
-          centerComponent={<Text style={styles.header_title}>Tutorial</Text>}
-          containerStyle={[styles.header, {backgroundColor: "#ccc"}]}
-        />
+
 
         <Swiper loop={false}
                 showsButtons={true}
@@ -100,6 +95,11 @@ export default class TutorialModal extends React.Component {
           </View>
           
         </Swiper>
+
+        <TouchableOpacity style={{position: 'absolute', bottom: 50, right: 20}} onPress={() => this.refs.tutorial_modal.close()}>
+          <Text style={styles.link}>Skip Tutorial</Text>
+        </TouchableOpacity>
+
       </Modal>
     );
   }
@@ -109,30 +109,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  header: {
-    justifyContent: 'space-around',
-    paddingBottom: 10,
-    marginTop: Platform.OS === "android"? ((StatusBar.currentHeight || 0) * -1) + 10: 0
-  },
-  header_title: {
-    color: '#000',
-    textAlign: 'center',
-    textAlignVertical: 'center',
-    fontSize: 25,
-    fontFamily: 'Gilroy-ExtraBold',
-  },
-  header_skip: {
-    color: '#666',
-    fontSize: 18,
-    fontFamily: 'Open Sans',
-  },
   page: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#bfbfbf',
+    backgroundColor: '#c4d8ee',
+    paddingTop: 50
   },
   title: {
-    marginTop: 20,
     color: '#000',
     fontSize: 25,
     fontFamily: 'Gilroy-ExtraBold'
@@ -143,6 +126,13 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     color: '#000',
     fontSize: 17,
+  },
+  link: {
+    color: "#a56",
+    fontFamily: "Open Sans",
+    fontSize: 17,
+    fontWeight: 'bold',
+    textDecorationLine: 'underline'
   },
   swipe_button: {
     color: 'rgba(100,100,100,0.65)',

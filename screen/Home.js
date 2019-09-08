@@ -17,7 +17,7 @@ import ErrorModal from '../parts/ErrorModal';
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: true, swiperIdx: 0, mainnet_address: '', testnet_address: '5244341344295779314L'};
+    this.state = {isLoading: true, swiperIdx: 0, mainnet_address: '', testnet_address: '3905013786800090105L'};
     this.user_data = {address: '', balance: '', publicKey: '', secondPublicKey: '', votes: []};
   }
 
@@ -104,8 +104,8 @@ export default class Home extends React.Component {
   renderPage = (isTestnet) => {
     return (
       <View style={isTestnet? styles.testnet: styles.mainnet}>
-        <Text style={styles.text}>Lisk Vote App</Text>
-        <Text style={styles.text_small}>{isTestnet? "- Lisk Testnet -": "- Lisk Mainnet -"}</Text>
+        <Text style={styles.text}>Lisk Vote</Text>
+        <Text style={styles.text_small}>{isTestnet? "- Testnet -": "- Mainnet -"}</Text>
         <View style={styles.input_field}>
           <Input
             placeholder="Lisk Address"
@@ -141,10 +141,10 @@ export default class Home extends React.Component {
           
         </Swiper>
 
-        <TouchableOpacity style={{position: 'absolute', bottom: 40, left: 20}} onPress={() => this.refs.tutorial_modal.open()}>
+        <TouchableOpacity style={{position: 'absolute', bottom: 50, left: 20}} onPress={() => this.refs.tutorial_modal.open()}>
           <Text style={styles.link}>Tutorial</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={{position: 'absolute', bottom: 40, right: 20}}>
+        <TouchableOpacity style={{position: 'absolute', bottom: 50, right: 20}}>
           <Text style={styles.link}>Contact</Text>
         </TouchableOpacity>
         
@@ -214,6 +214,7 @@ const styles = StyleSheet.create({
     color: "rgba(255,255,255,0.75)",
     fontFamily: "Open Sans",
     fontSize: 17,
+    textDecorationLine: 'underline',
     fontWeight: 'bold'
   }
 })

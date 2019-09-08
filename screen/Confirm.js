@@ -45,15 +45,17 @@ export default class Confirm extends React.Component {
     }
 
     // セカンドパスフレーズ入力チェック
-    if (this.user_data.secondPublicKey !== undefined && this.state.secondPassphrase.length === 0) {
-      this.refs.error_modal.open(I18n.t('Confirm.ErrMsg3'));
-      this.setState({isLoading: false});
-      return;
-    }
-    if (this.user_data.secondPublicKey !== cryptography.getPrivateAndPublicKeyFromPassphrase(this.state.secondPassphrase).publicKey) {
-      this.refs.error_modal.open(I18n.t('Confirm.ErrMsg4'));
-      this.setState({isLoading: false});
-      return;
+    if (this.user_data.secondPublicKey !== undefined && this.user_data.secondPublicKey.length > 0) {
+      if (this.state.secondPassphrase.length === 0) {
+        this.refs.error_modal.open(I18n.t('Confirm.ErrMsg3'));
+        this.setState({isLoading: false});
+        return;
+      }
+      if (this.user_data.secondPublicKey !== cryptography.getPrivateAndPublicKeyFromPassphrase(this.state.secondPassphrase).publicKey) {
+        this.refs.error_modal.open(I18n.t('Confirm.ErrMsg4'));
+        this.setState({isLoading: false});
+        return;
+      }
     }
 
     // トランザクション生成チェック
@@ -141,7 +143,8 @@ export default class Confirm extends React.Component {
   }
 
   renderPassphraseModal = (isSecond) => {
-    if (isSecond && this.user_data.secondPublicKey === undefined) return (<View/>); 
+    if (isSecond && (this.user_data.secondPublicKey === undefined ||
+                     this.user_data.secondPublicKey.length === 0)) return (<View/>); 
     return (
       <Input 
         placeholder={isSecond? "Second Passphrase": "Passphrase"}

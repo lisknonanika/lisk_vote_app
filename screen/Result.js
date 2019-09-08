@@ -48,9 +48,9 @@ export default class Result extends React.Component {
           trxResults.push(ret.result);
         } else {
           try {
-            const ret = await LiskClient.transactions.broadcast({trx:trx});
-            if (!ret || !ret.data) trxResults.push(true);
-            else trxResults.push(false);
+            const ret = await LiskClient.transactions.broadcast(trx);
+            if (!ret || !ret.data) trxResults.push(false);
+            else trxResults.push(true);
           } catch(err) {
             trxResults.push(false);
           }
