@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, Dimensions, AsyncStorage, StyleSheet, View, TouchableOpacity} from 'react-native';
+import { Platform, Dimensions, AsyncStorage, StyleSheet, View, TouchableOpacity, Image } from 'react-native';
 import { Button, Text } from 'react-native-elements';
 import Swiper from 'react-native-swiper';
 import Modal from 'react-native-modalbox';
@@ -8,6 +8,7 @@ import I18n from 'react-native-i18n';
 export default class TutorialModal extends React.Component {
   constructor(props) {
     super(props);
+    this.isTablet = (Platform.isPad || Dimensions.get('window').width >= 750);
   }
   
   open = () => {
@@ -32,61 +33,71 @@ export default class TutorialModal extends React.Component {
 
           <View style={styles.page}>
             <Text style={styles.title}>Home (1/2)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
+            <Image source={require("../img/phone/home1.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "none": "flex"}} resizeMode='contain'/>
+            <Image source={require("../img/tablet/home1.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "flex": "none"}} resizeMode='contain'/>
             <Text style={styles.text}>{I18n.t('Tutorial.Home1')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Home (2/2)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
+            <Image source={require("../img/phone/home2.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "none": "flex"}} resizeMode='contain'/>
+            <Image source={require("../img/tablet/home2.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "flex": "none"}} resizeMode='contain'/>
             <Text style={styles.text}>{I18n.t('Tutorial.Home2')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (1/6)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
+            <Image source={require("../img/phone/delegate1.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "none": "flex"}} resizeMode='contain'/>
+            <Image source={require("../img/tablet/delegate1.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "flex": "none"}} resizeMode='contain'/>
             <Text style={styles.text}>{I18n.t('Tutorial.DelegateList1')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (2/6)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
+            <Image source={require("../img/phone/delegate2.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "none": "flex"}} resizeMode='contain'/>
+            <Image source={require("../img/tablet/delegate2.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "flex": "none"}} resizeMode='contain'/>
             <Text style={styles.text}>{I18n.t('Tutorial.DelegateList2')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (3/6)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
+            <Image source={require("../img/phone/delegate3.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "none": "flex"}} resizeMode='contain'/>
+            <Image source={require("../img/tablet/delegate3.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "flex": "none"}} resizeMode='contain'/>
             <Text style={styles.text}>{I18n.t('Tutorial.DelegateList3')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (4/6)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
+            <Image source={require("../img/phone/delegate4.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "none": "flex"}} resizeMode='contain'/>
+            <Image source={require("../img/tablet/delegate4.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "flex": "none"}} resizeMode='contain'/>
             <Text style={styles.text}>{I18n.t('Tutorial.DelegateList4')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (5/6)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
+            <Image source={require("../img/phone/delegate5.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "none": "flex"}} resizeMode='contain'/>
+            <Image source={require("../img/tablet/delegate5.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "flex": "none"}} resizeMode='contain'/>
             <Text style={styles.text}>{I18n.t('Tutorial.DelegateList5')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Delegate List (6/6)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
+            <Image source={require("../img/phone/delegate6.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "none": "flex"}} resizeMode='contain'/>
+            <Image source={require("../img/tablet/delegate6.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "flex": "none"}} resizeMode='contain'/>
             <Text style={styles.text}>{I18n.t('Tutorial.DelegateList6')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Confirm (1/1)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
+            <Image source={require("../img/phone/confirm1.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "none": "flex"}} resizeMode='contain'/>
+            <Image source={require("../img/tablet/confirm1.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "flex": "none"}} resizeMode='contain'/>
             <Text style={styles.text}>{I18n.t('Tutorial.Confirm1')}</Text>
           </View>
 
           <View style={styles.page}>
             <Text style={styles.title}>Result (1/1)</Text>
-            <View style={{backgroundColor:'#333', height:400, width:280, margin:10}}></View>
+            <Image source={require("../img/phone/result1.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "none": "flex"}} resizeMode='contain'/>
+            <Image source={require("../img/tablet/result1.png")} style={{flex: 3, marginTop: 20, display: this.isTablet? "flex": "none"}} resizeMode='contain'/>
             <Text style={styles.text}>{I18n.t('Tutorial.Result1')}</Text>
           </View>
 
@@ -121,9 +132,8 @@ const styles = StyleSheet.create({
     fontFamily: 'Gilroy-ExtraBold'
   },
   text: {
+    flex: 1,
     padding: 20,
-    paddingTop: 10,
-    paddingBottom: 10,
     color: '#000',
     fontSize: 17,
   },
