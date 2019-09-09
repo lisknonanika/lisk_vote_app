@@ -26,12 +26,7 @@ export default class Contact extends React.Component {
           <Text style={[styles.dev, {marginTop: 15}]}>Lisk Vote ver. 1.0.0</Text>
           
           <Text style={styles.label}>Contact</Text>
-          <TouchableOpacity style={styles.text} onPress={() => Linking.openURL("https://twitter.com/ys_mdmg")}>
-            <View style={{flexDirection:"row"}}>
-              <Icon name="link" style={styles.link_icon}/>
-              <Text style={styles.link}>Twitter: @ys_mdmg</Text>
-            </View>
-          </TouchableOpacity>
+          <Text style={styles.text}>mail: lisknonanika@gmail.com</Text>
           <TouchableOpacity style={styles.text} onPress={() => Linking.openURL("https://github.com/lisknonanika")}>
             <View style={{flexDirection:"row"}}>
               <Icon name="link" style={styles.link_icon}/>
@@ -40,6 +35,12 @@ export default class Contact extends React.Component {
           </TouchableOpacity>
 
           <Text style={styles.label}>Special Thanks</Text>
+          <TouchableOpacity style={styles.text} onPress={() => Linking.openURL("https://twitter.com/ys_mdmg")}>
+            <View style={{flexDirection:"row"}}>
+              <Icon name="link" style={styles.link_icon}/>
+              <Text style={styles.link}>Twitter: @ys_mdmg</Text>
+            </View>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.text} onPress={() => Linking.openURL("https://www.liskjapan.org/")}>
             <View style={{flexDirection:"row"}}>
               <Icon name="link" style={styles.link_icon}/>
