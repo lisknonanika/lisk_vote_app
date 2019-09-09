@@ -23,7 +23,7 @@ export default class Contact extends React.Component {
           <View style={{flex: 1, alignItems: 'center'}}>
             <Image source={require("../img/logo.png")} style={{width: 100, height: 100}}/>
           </View>
-          <Text style={[styles.dev, {marginTop: 15}]}>Lisk Vote ver. 1.0.0</Text>
+          <Text style={[styles.dev, {marginTop: 15}]}>Lisk Vote ver. 0.1.0</Text>
           <Text style={[styles.dev]}>* This application uses Lisk Elements.</Text>
           <TouchableOpacity style={[styles.dev, {alignItems: 'center'}]} onPress={() => Linking.openURL("https://lisk.io")}>
             <View style={{flexDirection:"row"}}>

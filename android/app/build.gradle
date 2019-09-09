@@ -132,7 +132,7 @@ android {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
-        versionName "1.0"
+        versionName "0.1.0"
     }
     splits {
         abi {
@@ -176,7 +176,10 @@ android {
 
         }
     }
-
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
     packagingOptions {
         pickFirst '**/armeabi-v7a/libc++_shared.so'
         pickFirst '**/x86/libc++_shared.so'
