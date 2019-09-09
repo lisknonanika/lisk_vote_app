@@ -30,7 +30,7 @@
     "react-native-drawer": "^2.5.1",
     "react-native-elements": "^1.1.0",
     "react-native-gesture-handler": "^1.4.1",
-    "react-native-i18n": "^2.0.15",
+    "react-native-i18n": "git+https://github.com/lemankk/react-native-i18n.git#e870017bd93c9b2e3762ae83a2db3de8c4257146",
     "react-native-level-fs": "^3.0.1",
     "react-native-loading-spinner-overlay": "^1.0.1",
     "react-native-modalbox": "^1.7.1",
