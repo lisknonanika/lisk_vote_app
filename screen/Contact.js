@@ -24,6 +24,13 @@ export default class Contact extends React.Component {
             <Image source={require("../img/logo.png")} style={{width: 100, height: 100}}/>
           </View>
           <Text style={[styles.dev, {marginTop: 15}]}>Lisk Vote ver. 1.0.0</Text>
+          <Text style={[styles.dev]}>* This application uses Lisk Elements.</Text>
+          <TouchableOpacity style={[styles.dev, {alignItems: 'center'}]} onPress={() => Linking.openURL("https://lisk.io")}>
+            <View style={{flexDirection:"row"}}>
+              <Icon name="link" style={styles.link_icon}/>
+              <Text style={styles.link}>What is Lisk?</Text>
+            </View>
+          </TouchableOpacity>
           
           <Text style={styles.label}>Contact</Text>
           <Text style={styles.text}>mail: lisknonanika@gmail.com</Text>
@@ -34,13 +41,15 @@ export default class Contact extends React.Component {
             </View>
           </TouchableOpacity>
 
-          <Text style={styles.label}>Special Thanks</Text>
+          <Text style={styles.label}>Co-developer</Text>
           <TouchableOpacity style={styles.text} onPress={() => Linking.openURL("https://twitter.com/ys_mdmg")}>
             <View style={{flexDirection:"row"}}>
               <Icon name="link" style={styles.link_icon}/>
               <Text style={styles.link}>Twitter: @ys_mdmg</Text>
             </View>
           </TouchableOpacity>
+
+          <Text style={styles.label}>Special Thanks</Text>
           <TouchableOpacity style={styles.text} onPress={() => Linking.openURL("https://www.liskjapan.org/")}>
             <View style={{flexDirection:"row"}}>
               <Icon name="link" style={styles.link_icon}/>
