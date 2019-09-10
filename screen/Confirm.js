@@ -38,7 +38,7 @@ export default class Confirm extends React.Component {
       this.setState({isLoading: false});
       return;
     }
-    if (this.user_data.publicKey !== cryptography.getPrivateAndPublicKeyFromPassphrase(this.state.passphrase).publicKey) {
+    if (this.user_data.address !== cryptography.getAddressFromPassphrase(this.state.passphrase)) {
       this.refs.error_modal.open(I18n.t('Confirm.ErrMsg2'));
       this.setState({isLoading: false});
       return;
@@ -51,7 +51,7 @@ export default class Confirm extends React.Component {
         this.setState({isLoading: false});
         return;
       }
-      if (this.user_data.secondPublicKey !== cryptography.getPrivateAndPublicKeyFromPassphrase(this.state.secondPassphrase).publicKey) {
+      if (this.user_data.secondPublicKey !== cryptography.getAddressAndPublicKeyFromPassphrase(this.state.secondPassphrase).publicKey) {
         this.refs.error_modal.open(I18n.t('Confirm.ErrMsg4'));
         this.setState({isLoading: false});
         return;
