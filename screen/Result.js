@@ -73,7 +73,14 @@ export default class Result extends React.Component {
 
   _link = (trxId) => {
     const url = this.isTestnet? `https://testnet-explorer.lisk.io/tx/${trxId}`: `https://explorer.lisk.io/tx/${trxId}`
-    Linking.openURL(url);
+    try {
+      Linking.openURL(url)
+      .catch((err) => {
+        this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg1'));
+      })
+    } catch (err) {
+      this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg1'));
+    }
   }
 
   renderVoteList = (num, trxId) => {

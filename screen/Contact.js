@@ -11,6 +11,17 @@ export default class Contact extends React.Component {
     super(props);
   }
 
+  _link = (url) => {
+    try {
+      Linking.openURL(url)
+      .catch((err) => {
+        this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg1'));
+      })
+    } catch (err) {
+      this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg1'));
+    }
+  }
+
   render() {
     return (
       <View style={{flex:1}}>
@@ -25,7 +36,7 @@ export default class Contact extends React.Component {
           </View>
           <Text style={[styles.dev, {marginTop: 15}]}>Lisk Vote ver. 0.1.0</Text>
           <Text style={[styles.dev]}>* This application uses Lisk Elements.</Text>
-          <TouchableOpacity style={[styles.dev, {alignItems: 'center'}]} onPress={() => Linking.openURL("https://lisk.io")}>
+          <TouchableOpacity style={[styles.dev, {alignItems: 'center'}]} onPress={() => this._link("https://lisk.io")}>
             <View style={{flexDirection:"row"}}>
               <Icon name="link" style={styles.link_icon}/>
               <Text style={styles.link}>What is Lisk?</Text>
@@ -34,7 +45,7 @@ export default class Contact extends React.Component {
           
           <Text style={styles.label}>Contact</Text>
           <Text style={styles.text}>mail: lisknonanika@gmail.com</Text>
-          <TouchableOpacity style={styles.text} onPress={() => Linking.openURL("https://github.com/lisknonanika")}>
+          <TouchableOpacity style={styles.text} onPress={() => this._link("https://github.com/lisknonanika")}>
             <View style={{flexDirection:"row"}}>
               <Icon name="link" style={styles.link_icon}/>
               <Text style={styles.link}>github: lisknonanika</Text>
@@ -42,7 +53,7 @@ export default class Contact extends React.Component {
           </TouchableOpacity>
 
           <Text style={styles.label}>Co-developer</Text>
-          <TouchableOpacity style={styles.text} onPress={() => Linking.openURL("https://twitter.com/ys_mdmg")}>
+          <TouchableOpacity style={styles.text} onPress={() => this._link("https://twitter.com/ys_mdmg")}>
             <View style={{flexDirection:"row"}}>
               <Icon name="link" style={styles.link_icon}/>
               <Text style={styles.link}>Twitter: @ys_mdmg</Text>
@@ -50,10 +61,19 @@ export default class Contact extends React.Component {
           </TouchableOpacity>
 
           <Text style={styles.label}>Special Thanks</Text>
-          <TouchableOpacity style={styles.text} onPress={() => Linking.openURL("https://www.liskjapan.org/")}>
+          <TouchableOpacity style={styles.text} onPress={() => this._link("https://www.liskjapan.org/")}>
             <View style={{flexDirection:"row"}}>
               <Icon name="link" style={styles.link_icon}/>
               <Text style={styles.link}>Lisk Japan</Text>
+            </View>
+          </TouchableOpacity>
+          <Text style={styles.text}>Lisk情報システム部(community)</Text>
+
+          <Text style={styles.label}>Donate</Text>
+          <TouchableOpacity style={[styles.text, {marginBottom: 100}]} onPress={() => this._link("https://explorer.lisk.io/address/5380827711560203827L")}>
+            <View style={{flexDirection:"row"}}>
+              <Icon name="link" style={styles.link_icon}/>
+              <Text style={[styles.link, {borderTopWidth: 0}]}>5380827711560203827L</Text>
             </View>
           </TouchableOpacity>
 

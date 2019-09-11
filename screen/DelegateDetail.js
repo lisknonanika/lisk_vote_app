@@ -15,10 +15,21 @@ export default class DelegateDetail extends React.Component {
     this.isTestnet = this.props.navigation.state.params.isTestnet;
   }
 
+  _link = (group) => {
+    try {
+      Linking.openURL(this.groupUrl.get(group))
+      .catch((err) => {
+        this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg1'));
+      })
+    } catch (err) {
+      this.refs.error_modal.open(I18n.t('MoveURL.ErrMsg1'));
+    }
+  }
+
   render_group = (group) => {
     if (this.groupUrl.has(group)) {
       return (
-        <TouchableOpacity style={styles.link_row} onPress={() => Linking.openURL(this.groupUrl.get(group))}>
+        <TouchableOpacity style={styles.link_row} onPress={() => this._link(group)}>
           <View style={{flexDirection:"row"}}>
             <Icon name="link" style={styles.link_icon}/>
             <Text style={styles.link}>{group}</Text>

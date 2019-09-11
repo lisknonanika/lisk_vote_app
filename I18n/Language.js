@@ -43,8 +43,7 @@ export default {
       ErrMsg1: "Broadcast failed.",
     },
     MoveURL: {
-      ErrMsg1: "Invalid URL.",
-      ErrMsg2: "Could not open URL."
+      ErrMsg1: "Could not open URL."
     }
   },
   ja: {
@@ -91,8 +90,7 @@ export default {
       ErrMsg1: "ブロードキャストに失敗しました。",
     },
     MoveURL: {
-      ErrMsg1: "無効なURLです。",
-      ErrMsg2: "URLを開くことが出来ませんでした。"
+      ErrMsg1: "URLを開くことが出来ませんでした。"
     }
   }
 }

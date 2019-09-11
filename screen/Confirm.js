@@ -198,7 +198,7 @@ export default class Confirm extends React.Component {
         <MainButton params={{title:I18n.t('Confirm.Button1'), style:{margin: 10}, event:() => this.refs.passphrase_modal.open()}}/>
         <SafeAreaView/>
 
-        <Modal style={[styles.modal, {height: 450}]} position={"center"} ref={"passphrase_modal"} backdropPressToClose={false}>
+        <Modal style={styles.modal} position={"center"} ref={"passphrase_modal"} backdropPressToClose={false}>
           <Icon name="info-circle" style={styles.modal_icon}/>
           <Text style={styles.modal_message}>{I18n.t('Confirm.Msg2')}</Text>
           
@@ -293,7 +293,7 @@ const styles = StyleSheet.create({
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 350,
+    height: 450,
     width: (Platform.isPad || Dimensions.get('window').width >= 750)? 500: 350,
     padding: 15,
     borderRadius: 10,
@@ -319,15 +319,6 @@ const styles = StyleSheet.create({
     color: 'rgba(0,50,140,0.8)',
     fontSize: 50
   },
-  modal_cancel_button: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 450: 300,
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-    backgroundColor: "rgba(150,150,150,1)"
-  },
   modal_ok_button: {
     justifyContent: 'center',
     alignItems: 'center',
@@ -336,5 +327,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
     backgroundColor: 'rgba(175,85,105,1)',
+  },
+  modal_cancel_button: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 450: 300,
+    padding: 10,
+    borderRadius: 10,
+    marginTop: 15,
+    backgroundColor: "rgba(150,150,150,1)"
   }
 });
