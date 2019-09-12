@@ -21,7 +21,7 @@ export default class Confirm extends React.Component {
     super(props);
     this.state = {
       isLoading: false,
-      passphrase: ["chicken","problem","whip","mobile","shield","angry","hard","toast","disease","chronic","code","category"],
+      passphrase: ["","","","","","","","","","","",""],
       secondPassphrase: ["","","","","","","","","","","",""]}
     this.addTarget = this.props.navigation.state.params.add;
     this.removeTarget = this.props.navigation.state.params.remove;
@@ -36,23 +36,18 @@ export default class Confirm extends React.Component {
 
   onChangeText_passphrase = (value, index, isSecond) => {
     if (value.endsWith(" ")) {
-      if (index === 0) this.refs.passphrase_1.focus();
-      else if (index === 1) this.refs.passphrase_2.focus();
-      else if (index === 2) this.refs.passphrase_3.focus();
-      else if (index === 3) this.refs.passphrase_4.focus();
-      else if (index === 4) this.refs.passphrase_5.focus();
-      else if (index === 5) this.refs.passphrase_6.focus();
-      else if (index === 6) this.refs.passphrase_7.focus();
-      else if (index === 7) this.refs.passphrase_8.focus();
-      else if (index === 8) this.refs.passphrase_9.focus();
-      else if (index === 9) this.refs.passphrase_10.focus();
-      else if (index === 10) this.refs.passphrase_11.focus();
-      else if (index === 11) this.refs.passphrase_12.focus();
+      this._focusText(index);
       return;
     }
+
+    // コピペなどでスペース区切りで入力された場合は今の位置から順に設定
+    const vals = value.split(" ");
     this.setState((state) => {
       const passphrase = isSecond? state.secondPassphrase: state.passphrase;
-      passphrase[index] = value;
+      for (i = 0; i < vals.length; i++) {
+        if (index + i === 12) break;
+        passphrase[index + i] = vals[i];
+      }
       return {passphrase}
     })
   }
@@ -152,6 +147,21 @@ export default class Confirm extends React.Component {
       this.votesData.get(this.trxNum).votes.key.push(key);
       cnt += 1;
     });
+  }
+
+  _focusText = (index) => {
+    if (index === 0) this.refs.passphrase_1.focus();
+      else if (index === 1) this.refs.passphrase_2.focus();
+      else if (index === 2) this.refs.passphrase_3.focus();
+      else if (index === 3) this.refs.passphrase_4.focus();
+      else if (index === 4) this.refs.passphrase_5.focus();
+      else if (index === 5) this.refs.passphrase_6.focus();
+      else if (index === 6) this.refs.passphrase_7.focus();
+      else if (index === 7) this.refs.passphrase_8.focus();
+      else if (index === 8) this.refs.passphrase_9.focus();
+      else if (index === 9) this.refs.passphrase_10.focus();
+      else if (index === 10) this.refs.passphrase_11.focus();
+      else if (index === 11) this.refs.passphrase_0.focus();
   }
 
   _createVoteTransaction = async() => {

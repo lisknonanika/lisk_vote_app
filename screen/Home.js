@@ -17,7 +17,7 @@ import ErrorModal from '../parts/ErrorModal';
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {isLoading: true, swiperIdx: 0, mainnet_address: '', testnet_address: '3905013786800090105L'};
+    this.state = {isLoading: true, swiperIdx: 0, mainnet_address: '', testnet_address: ''};
     this.user_data = {address: '', balance: '', publicKey: '', secondPublicKey: '', votes: []};
   }
 

@@ -22,7 +22,8 @@ export default class TutorialModal extends React.Component {
   render() {
     return (
       <Modal style={styles.container} ref={"tutorial_modal"}
-              backdropPressToClose={false} onClosed={() => this.onClosed_Modal()}>
+              swipeToClose={false} backdropPressToClose={false}
+              onClosed={() => this.onClosed_Modal()}>
 
         <Swiper loop={false}
                 showsButtons={true}
@@ -148,8 +149,8 @@ const styles = StyleSheet.create({
     fontSize: 50,
   },
   button: {
-    marginTop: 15,
-    padding: 10,
+    marginTop: -20,
+    padding: 20,
     backgroundColor: 'rgba(175,85,105,1)',
     justifyContent: 'center',
     alignItems: 'center',
