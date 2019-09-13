@@ -262,7 +262,7 @@ export default class Confirm extends React.Component {
         <Loading params={{isLoading: this.state.isLoading, text: "Now Loading.."}}/>
 
         <Header
-          leftComponent={{ icon: 'chevron-left', color: '#fff', size: 30, onPress: () => this.props.navigation.navigate("Delegates") }}
+          leftComponent={{ icon: 'close', color: '#fff', size: 30, onPress: () => this.props.navigation.navigate("Delegates") }}
           centerComponent={<Text style={styles.header_title}>Confirm</Text>}
           containerStyle={[styles.header, {backgroundColor: this.isTestnet?"#003e1a":"#001a3e"}]}
         />
@@ -291,22 +291,17 @@ export default class Confirm extends React.Component {
         <Modal style={styles.modal} ref={"passphrase_modal"} backdropPressToClose={false}>
           <Icon name="info-circle" style={styles.modal_icon}/>
           <Text style={styles.modal_message}>{I18n.t('Confirm.Msg2')}</Text>
-          
           {this.renderPassphraseModal(false)}
-
           <Button title={"OK"} buttonStyle={styles.modal_ok_button} onPress={() => {this.onPress_Exec(false)}} />
-          <Button title={"Cancel"} buttonStyle={styles.modal_cancel_button} onPress={() => {this.refs.passphrase_modal.close()}} />
+          <Icon name={"close"} style={{color: "#000", position: "absolute", top: 10, left: 10}} size={25} onPress={() => {this.refs.passphrase_modal.close()}} />
         </Modal>
         
-
         <Modal style={styles.modal} ref={"second_passphrase_modal"} backdropPressToClose={false}>
           <Icon name="info-circle" style={styles.modal_icon}/>
           <Text style={styles.modal_message}>{I18n.t('Confirm.Msg3')}</Text>
-          
           {this.renderPassphraseModal(true)}
-
           <Button title={"OK"} buttonStyle={styles.modal_ok_button} onPress={() => {this.onPress_Exec(true)}} />
-          <Button title={"Cancel"} buttonStyle={styles.modal_cancel_button} onPress={() => {this.refs.second_passphrase_modal.close()}} />
+          <Icon name={"close"} style={{color: "#000", position: "absolute", top: 10, left: 10}} size={25} onPress={() => {this.refs.second_passphrase_modal.close()}} />>
         </Modal>
         <ErrorModal ref={"error_modal"}/>
       </View>
@@ -391,7 +386,7 @@ const styles = StyleSheet.create({
     textAlign: "right"
   },
   modal: {
-    height: 600,
+    height: 500,
     width: (Platform.isPad || Dimensions.get('window').width >= 750)? 520: 370,
     padding: 15,
     justifyContent: 'center',
@@ -428,14 +423,5 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 20,
     backgroundColor: 'rgba(175,85,105,1)',
-  },
-  modal_cancel_button: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 470: 320,
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 15,
-    backgroundColor: "rgba(150,150,150,1)"
   }
 });

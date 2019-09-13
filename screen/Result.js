@@ -133,7 +133,6 @@ export default class Result extends React.Component {
           <Loading params={{isLoading: this.state.isLoading, text: "Now Voting.."}}/>
 
           <Header
-            leftComponent={{ icon: 'close', color: '#fff', size: 30, onPress: () => this.onPress_OK() }}
             centerComponent={<Text style={styles.header_title}>Result</Text>}
             containerStyle={[styles.header, {backgroundColor: this.isTestnet?"#003e1a":"#001a3e"}]}
           />

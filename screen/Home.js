@@ -45,7 +45,7 @@ export default class Home extends React.Component {
     this.user_data = {address: '', balance: '', publicKey: '', secondPublicKey: '', votes: []};
     this.user_data.votes.length = 0;
     const isTestnet = this.state.swiperIdx === 1;
-    const address = isTestnet? this.state.testnet_address: this.state.mainnet_address;
+    const address = isTestnet? this.state.testnet_address.toUpperCase(): this.state.mainnet_address.toUpperCase();
 
     // アドレス未入力なら遷移
     if (address.length === 0) {
