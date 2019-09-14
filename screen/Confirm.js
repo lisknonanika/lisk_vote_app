@@ -46,7 +46,7 @@ export default class Confirm extends React.Component {
       const passphrase = isSecond? state.secondPassphrase: state.passphrase;
       for (i = 0; i < vals.length; i++) {
         if (index + i === 12) break;
-        passphrase[index + i] = vals[i];
+        passphrase[index + i] = vals[i].trim();
       }
       return {passphrase}
     })
@@ -262,7 +262,7 @@ export default class Confirm extends React.Component {
         <Loading params={{isLoading: this.state.isLoading, text: "Now Loading.."}}/>
 
         <Header
-          leftComponent={{ icon: 'close', color: '#fff', size: 30, onPress: () => this.props.navigation.navigate("Delegates") }}
+          leftComponent={{ icon: 'chevron-left', color: '#fff', size: 30, onPress: () => this.props.navigation.navigate("Delegates") }}
           centerComponent={<Text style={styles.header_title}>Confirm</Text>}
           containerStyle={[styles.header, {backgroundColor: this.isTestnet?"#003e1a":"#001a3e"}]}
         />
@@ -301,7 +301,7 @@ export default class Confirm extends React.Component {
           <Text style={styles.modal_message}>{I18n.t('Confirm.Msg3')}</Text>
           {this.renderPassphraseModal(true)}
           <Button title={"OK"} buttonStyle={styles.modal_ok_button} onPress={() => {this.onPress_Exec(true)}} />
-          <Icon name={"close"} style={{color: "#000", position: "absolute", top: 10, left: 10}} size={25} onPress={() => {this.refs.second_passphrase_modal.close()}} />>
+          <Icon name={"close"} style={{color: "#000", position: "absolute", top: 10, left: 10}} size={25} onPress={() => {this.refs.second_passphrase_modal.close()}} />
         </Modal>
         <ErrorModal ref={"error_modal"}/>
       </View>

@@ -69,7 +69,7 @@ export default class DelegateDetail extends React.Component {
           <Text style={styles.label}>Missed Blocks</Text>
           <Text style={styles.text}>{this.delegate.missedBlocks}</Text>
           <Text style={styles.label}>Productivity</Text>
-          <Text style={styles.text}>{this.delegate.productivity} %</Text>
+          <Text style={[styles.text, {marginBottom: 100}]}>{this.delegate.productivity} %</Text>
         </ScrollView>
         <SafeAreaView/>
         <ErrorModal ref={"error_modal"}/>

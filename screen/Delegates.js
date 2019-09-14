@@ -101,7 +101,7 @@ export default class Delegates extends React.Component {
   }
 
   _clearProp = () => {
-    this.state = {isLoading: false, isReady: false, rerenderList: 0, search_text: "", search_group: "init", currentPage: 0, selected: new Map()};
+    this.state = {isLoading: true, isReady: false, rerenderList: 0, search_text: "", search_group: "init", currentPage: 0, selected: new Map()};
     this.isRefMode = this.props.navigation.state.params.user.address.length === 0;
     this.isTestnet = this.props.navigation.state.params.isTestnet;
     this.user_data = this.props.navigation.state.params.user;
@@ -117,7 +117,7 @@ export default class Delegates extends React.Component {
 
   _updateUserData = async() => {
     this._clearProp();
-    this.setState({isLoading: true})
+    this.setState({isLoading: true, isReady: true, search_group: "reload"});
     const ret = await this._getUserData();
     this._setUserData(ret);
     await this._setDelegates();
@@ -331,8 +331,8 @@ export default class Delegates extends React.Component {
           height: LIST_ITEM_HEIGHT,
           borderRadius: 10,
           backgroundColor: "#fff",
-          shadowColor: 'rgba(100, 100, 130, 0.3)',
-          shadowOpacity: 1,
+          shadowColor: 'rgba(130, 130, 150, 0.25)',
+          shadowOpacity: 0.75,
           shadowRadius: 10,
           shadowOffset: {
             width: 3,

@@ -61,13 +61,13 @@ export default class Contact extends React.Component {
           </TouchableOpacity>
 
           <Text style={styles.label}>Special Thanks</Text>
-          <TouchableOpacity style={styles.text} onPress={() => this._link("https://www.liskjapan.org/")}>
+          <TouchableOpacity style={[styles.text, {borderBottomWidth: 0}]} onPress={() => this._link("https://www.liskjapan.org/")}>
             <View style={{flexDirection:"row"}}>
               <Icon name="link" style={styles.link_icon}/>
               <Text style={styles.link}>Lisk Japan</Text>
             </View>
           </TouchableOpacity>
-          <Text style={styles.text}>Lisk情報システム部(community)</Text>
+          <Text style={styles.text}>Lisk情報システム部</Text>
 
           <Text style={styles.label}>Donate</Text>
           <TouchableOpacity style={[styles.text, {marginBottom: 100}]} onPress={() => this._link("https://explorer.lisk.io/address/5380827711560203827L")}>

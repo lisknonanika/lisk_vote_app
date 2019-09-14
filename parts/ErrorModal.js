@@ -29,6 +29,7 @@ export default class ErrorModal extends React.Component {
         <Icon name="times-circle" style={[styles.modal_icon]}/>
         <Text style={styles.modal_message}>{this.message}</Text>
         <Button title={"OK"} buttonStyle={styles.modal_button} onPress={() => this.refs.err_modal.close()} />
+        <Icon name={"close"} style={{color: "#000", position: "absolute", top: 10, left: 10}} size={25} onPress={() => {this.refs.err_modal.close()}} />
       </Modal>
     );
   }
