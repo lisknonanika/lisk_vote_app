@@ -1,6 +1,6 @@
 import React from 'react';
 import { Platform, StatusBar, StyleSheet, Linking, View, ScrollView, FlatList, TouchableOpacity } from 'react-native';
-import { Header, Button, Text  } from 'react-native-elements';
+import { Header, Text  } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation'
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { APIClient } from '@liskhq/lisk-api-client';
@@ -98,6 +98,7 @@ export default class Result extends React.Component {
               <Text style={styles.link}>ID: {trxId}</Text>
             </View>
           </TouchableOpacity>
+          <Text style={[styles.error_msg, {display: this.state.trxExecResults[num]?"none":"flex"}]}>failed..</Text>
           {this.renderVoteListItem(this.votesData.get(num))}
         </View>
       </View>
@@ -213,6 +214,12 @@ const styles = StyleSheet.create({
   },
   link: {
     color: '#00f',
+    marginTop: 10,
+    fontSize: 20,
+    fontFamily: 'Gilroy-ExtraBold',
+  },
+  error_msg: {
+    color: '#f00',
     marginTop: 10,
     fontSize: 20,
     fontFamily: 'Gilroy-ExtraBold',

@@ -165,6 +165,26 @@ export default class Delegates extends React.Component {
     return this.isTestnet? {backgroundColor: '#003e1a'}: {backgroundColor: '#001a3e'};
   }
 
+  _getRankColor = (publicKey) => {
+    if (this.addVotes.has(publicKey)) {
+      return {backgroundColor: "#b3ffb5", color: "#006400"}
+    } else if (this.removeVotes.has(publicKey)) {
+      return {backgroundColor: "#ffb5b3", color: "#780000"}
+    } else {
+      return {backgroundColor: "#ccc", color: "#000"}
+    }
+  }
+
+  _getListItemColor = (publicKey) => {
+    if (this.addVotes.has(publicKey)) {
+      return {color: "rgba(45,110,80,1)"}
+    } else if (this.removeVotes.has(publicKey)) {
+      return {color: "rgba(165,20,20,1)"}
+    } else {
+      return {color: "#000"}
+    }
+  }
+
   _getDelegatesList = async() => {
     try {
       this.delegatesList.length = 0;
@@ -315,9 +335,9 @@ export default class Delegates extends React.Component {
       <ListItem
         title={
           <View style={{flexDirection:'row', alignItems: 'center'}}>
-            <Text style={[styles.rank, {backgroundColor: this.currentVotes.has(item.publicKey)? "#95ecba" : "#ccc"}]}>{item.rank}</Text>
+            <Text style={[styles.rank, this._getRankColor(item.publicKey)]}>{item.rank}</Text>
             <View style={{flexDirection:'column', marginLeft:20, width: this.isRefMode? '100%': '65%'}}>
-              <Text style={styles.username}>{item.username}</Text>
+              <Text style={[styles.username, this._getListItemColor(item.publicKey)]}>{item.username}</Text>
               <View style={{flexDirection:'row', paddingTop: 5}}>
                 <Text style={[styles.userdata, {marginRight: 15, display: (Platform.isPad || Dimensions.get('window').width >= 750)?"flex":"none"}]}>produced Blocks: {item.producedBlocks}</Text>
                 <Text style={[styles.userdata, {marginRight: 15, display: (Platform.isPad || Dimensions.get('window').width >= 750)?"flex":"none"}]}>missed Blocks: {item.missedBlocks}</Text>
@@ -331,7 +351,7 @@ export default class Delegates extends React.Component {
           height: LIST_ITEM_HEIGHT,
           borderRadius: 10,
           backgroundColor: "#fff",
-          shadowColor: 'rgba(130, 130, 150, 0.25)',
+          shadowColor: 'rgba(150, 150, 170, 0.25)',
           shadowOpacity: 0.75,
           shadowRadius: 10,
           shadowOffset: {
@@ -526,7 +546,6 @@ const styles = StyleSheet.create({
     fontFamily: 'Gilroy-ExtraBold',
   },
   rank: {
-    color: '#000',
     textAlign: 'center',
     textAlignVertical: 'center',
     width: 85,
@@ -537,7 +556,6 @@ const styles = StyleSheet.create({
     paddingBottom: 5
   },
   username: {
-    color: '#000',
     fontSize: 20,
     fontFamily: 'Gilroy-ExtraBold'
   },
