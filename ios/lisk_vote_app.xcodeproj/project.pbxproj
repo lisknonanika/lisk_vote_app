@@ -7,31 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		00AD3222BEE6490991FDE790 /* Foundation.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 62AAA1818F7D4143923392DF /* Foundation.ttf */; };
 		00E356F31AD99517003FC87E /* lisk_vote_appTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* lisk_vote_appTests.m */; };
 		01911FCBBE4B4C389A8254A9 /* Gilroy-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 785C399C80504DED80DAABF8 /* Gilroy-ExtraBold.ttf */; };
-		0B3865202ACB42D89708ADA1 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4AC414CCDCA04508A27832D8 /* FontAwesome.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		19A9E171A62047DCB343AFA1 /* EvilIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E9CA64BB2B6C42AF83FBC71D /* EvilIcons.ttf */; };
-		261A985A53264DFBAEBDCDD9 /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = B3BC7DA89A2248F0B80BAA0B /* FontAwesome5_Solid.ttf */; };
-		292803ACCF7049E9A49E6F58 /* Entypo.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 168A23EAC0E24048AEDAB935 /* Entypo.ttf */; };
-		5CA94BE9AE02466683350B26 /* FontAwesome5_Brands.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 92879F499B4A4EC988C5997B /* FontAwesome5_Brands.ttf */; };
-		6639F16749A2439AB3BBFBB1 /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1BB0D7EDD0ED48678D2401CB /* SimpleLineIcons.ttf */; };
-		69C58AB5B2B04D9C873A6081 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DAFA24936660466298709E6E /* Feather.ttf */; };
-		70C104CDED844A4EA6062267 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FB45BB8C631B4C07983596AF /* FontAwesome5_Regular.ttf */; };
 		7D85EC3E6892796EFD1E0A42 /* libPods-lisk_vote_appTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A024B6635261CBA756CB5380 /* libPods-lisk_vote_appTests.a */; };
-		83B50E7C4ACB405990BF9E96 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EDAB0565D598492D93EF797B /* Octicons.ttf */; };
-		8C0AF9A95BBC4A13B4EB889C /* Ionicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 448A9A7A38D34F818D08774A /* Ionicons.ttf */; };
-		AABCA8D4229440CEAA33BAB7 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8D049D48C1D241A0A52F52BF /* Zocial.ttf */; };
-		ADF9ED6BB6864D198B569741 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 8546DEE8446B4E00B13DEC8C /* MaterialIcons.ttf */; };
 		B3AD5E4775327742BA530507 /* libPods-lisk_vote_app.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2884CE1D356286C22F940F47 /* libPods-lisk_vote_app.a */; };
 		D00C2B914553422E9DADC639 /* Open Sans.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50A7757ED86043EDA3E75E5D /* Open Sans.ttf */; };
-		D9297F1F522B4EDBBB52E33D /* AntDesign.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 776FDEF074AF483E9B7E962D /* AntDesign.ttf */; };
-		E75EC51F3E1F4976A820DA98 /* Fontisto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FC27A27850414C98AFBFE84B /* Fontisto.ttf */; };
-		ECE826E56DEB437EBC58049F /* MaterialCommunityIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 50E30D7E7A9A4B38A0404D6E /* MaterialCommunityIcons.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -281,12 +265,13 @@
 				TargetAttributes = {
 					00E356ED1AD99517003FC87E = {
 						CreatedOnToolsVersion = 6.2;
-						DevelopmentTeam = 86SP6MU3YG;
+						DevelopmentTeam = JFU95NVZTU;
+						ProvisioningStyle = Automatic;
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
 						DevelopmentTeam = JFU95NVZTU;
-						ProvisioningStyle = Manual;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -326,22 +311,6 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				D00C2B914553422E9DADC639 /* Open Sans.ttf in Resources */,
-				D9297F1F522B4EDBBB52E33D /* AntDesign.ttf in Resources */,
-				292803ACCF7049E9A49E6F58 /* Entypo.ttf in Resources */,
-				19A9E171A62047DCB343AFA1 /* EvilIcons.ttf in Resources */,
-				69C58AB5B2B04D9C873A6081 /* Feather.ttf in Resources */,
-				0B3865202ACB42D89708ADA1 /* FontAwesome.ttf in Resources */,
-				5CA94BE9AE02466683350B26 /* FontAwesome5_Brands.ttf in Resources */,
-				70C104CDED844A4EA6062267 /* FontAwesome5_Regular.ttf in Resources */,
-				261A985A53264DFBAEBDCDD9 /* FontAwesome5_Solid.ttf in Resources */,
-				E75EC51F3E1F4976A820DA98 /* Fontisto.ttf in Resources */,
-				00AD3222BEE6490991FDE790 /* Foundation.ttf in Resources */,
-				8C0AF9A95BBC4A13B4EB889C /* Ionicons.ttf in Resources */,
-				ECE826E56DEB437EBC58049F /* MaterialCommunityIcons.ttf in Resources */,
-				ADF9ED6BB6864D198B569741 /* MaterialIcons.ttf in Resources */,
-				83B50E7C4ACB405990BF9E96 /* Octicons.ttf in Resources */,
-				6639F16749A2439AB3BBFBB1 /* SimpleLineIcons.ttf in Resources */,
-				AABCA8D4229440CEAA33BAB7 /* Zocial.ttf in Resources */,
 				01911FCBBE4B4C389A8254A9 /* Gilroy-ExtraBold.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -409,7 +378,7 @@
 		};
 		C1A02A5077B53A5ED822BFB6 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
@@ -523,7 +492,10 @@
 			baseConfigurationReference = E2F9FF16EBBBB7DD098F61FD /* Pods-lisk_vote_appTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				DEVELOPMENT_TEAM = 86SP6MU3YG;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = JFU95NVZTU;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -538,6 +510,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/lisk_vote_app.app/lisk_vote_app";
 			};
 			name = Debug;
@@ -547,8 +521,11 @@
 			baseConfigurationReference = E8C8A52F43237E2FD98A272A /* Pods-lisk_vote_appTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				DEVELOPMENT_TEAM = 86SP6MU3YG;
+				DEVELOPMENT_TEAM = JFU95NVZTU;
 				INFOPLIST_FILE = lisk_vote_appTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
@@ -559,6 +536,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/lisk_vote_app.app/lisk_vote_app";
 			};
 			name = Release;
@@ -569,11 +548,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = NO;
-				DEVELOPMENT_TEAM = JFU95NVZTU;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = lisk_vote_app/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -583,7 +562,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = work.ysdev.liskvote;
 				PRODUCT_NAME = lisk_vote_app;
-				PROVISIONING_PROFILE_SPECIFIER = LiskVoteRelease;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -595,10 +574,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Distribution";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = JFU95NVZTU;
+				DEAD_CODE_STRIPPING = NO;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = lisk_vote_app/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -608,7 +588,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = work.ysdev.liskvote;
 				PRODUCT_NAME = lisk_vote_app;
-				PROVISIONING_PROFILE_SPECIFIER = LiskVoteRelease;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -727,7 +707,7 @@
 				00E356F71AD99517003FC87E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "lisk_vote_app" */ = {
 			isa = XCConfigurationList;
@@ -736,7 +716,7 @@
 				13B07F951A680F5B00A75B9A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "lisk_vote_app" */ = {
 			isa = XCConfigurationList;
@@ -745,7 +725,7 @@
 				83CBBA211A601CBA00E9B192 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

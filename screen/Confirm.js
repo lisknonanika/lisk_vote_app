@@ -34,19 +34,28 @@ export default class Confirm extends React.Component {
     this._setVotesData();
   }
 
-  onChangeText_passphrase = (value, index, isSecond) => {
-    if (value.endsWith(" ")) {
-      this._focusText(index);
-      return;
-    }
+  onSubmitEditing_passphrase = (index) => {
+    if (index === 0) this.refs.passphrase_1.focus();
+      else if (index === 1) this.refs.passphrase_2.focus();
+      else if (index === 2) this.refs.passphrase_3.focus();
+      else if (index === 3) this.refs.passphrase_4.focus();
+      else if (index === 4) this.refs.passphrase_5.focus();
+      else if (index === 5) this.refs.passphrase_6.focus();
+      else if (index === 6) this.refs.passphrase_7.focus();
+      else if (index === 7) this.refs.passphrase_8.focus();
+      else if (index === 8) this.refs.passphrase_9.focus();
+      else if (index === 9) this.refs.passphrase_10.focus();
+      else if (index === 10) this.refs.passphrase_11.focus();
+      else if (index === 11) this.refs.passphrase_0.focus();
+  }
 
-    // コピペなどでスペース区切りで入力された場合は今の位置から順に設定
-    const vals = value.split(" ");
+  onChangeText_passphrase = (value, index, isSecond) => {
+    const vals = value.trim().split(" ");
     this.setState((state) => {
       const passphrase = isSecond? state.secondPassphrase: state.passphrase;
       for (i = 0; i < vals.length; i++) {
         if (index + i === 12) break;
-        passphrase[index + i] = vals[i].trim();
+        passphrase[index + i] = vals[i].replace(/\s+/g, '');
       }
       return {passphrase}
     })
@@ -149,21 +158,6 @@ export default class Confirm extends React.Component {
     });
   }
 
-  _focusText = (index) => {
-    if (index === 0) this.refs.passphrase_1.focus();
-      else if (index === 1) this.refs.passphrase_2.focus();
-      else if (index === 2) this.refs.passphrase_3.focus();
-      else if (index === 3) this.refs.passphrase_4.focus();
-      else if (index === 4) this.refs.passphrase_5.focus();
-      else if (index === 5) this.refs.passphrase_6.focus();
-      else if (index === 6) this.refs.passphrase_7.focus();
-      else if (index === 7) this.refs.passphrase_8.focus();
-      else if (index === 8) this.refs.passphrase_9.focus();
-      else if (index === 9) this.refs.passphrase_10.focus();
-      else if (index === 10) this.refs.passphrase_11.focus();
-      else if (index === 11) this.refs.passphrase_0.focus();
-  }
-
   _createVoteTransaction = async() => {
     try {
       let trxs = [];
@@ -214,16 +208,20 @@ export default class Confirm extends React.Component {
   renderPassphraseInput = (isSecond, index) => {
     return (
       <Input
-            ref={`passphrase_${index}`}
-            placeholder={(index + 1).toString()}
-            value={isSecond? this.state.secondPassphrase[index]: this.state.passphrase[index]}
-            autoCapitalize={"none"}
-            rightIcon={<MIcon name="clear" size={20} style={{color: "#ccc"}} onPress={() => this.onPress_passphraseClear(index, isSecond)}/>}
-            containerStyle={styles.modal_input}
-            inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
-            inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
-            secureTextEntry={true}
-            onChangeText={(value) => this.onChangeText_passphrase(value, index, isSecond)} />
+        ref={`passphrase_${index}`}
+        placeholder={(index + 1).toString()}
+        value={isSecond? this.state.secondPassphrase[index]: this.state.passphrase[index]}
+        autoCapitalize={"none"}
+        rightIcon={<MIcon name="clear" size={20} style={{color: "#ccc"}} onPress={() => this.onPress_passphraseClear(index, isSecond)}/>}
+        containerStyle={styles.modal_input}
+        inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
+        inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
+        secureTextEntry={true}
+        onChangeText={(value) => this.onChangeText_passphrase(value, index, isSecond)}
+        returnKeyType="next"
+        blurOnSubmit={false}
+        onSubmitEditing={() => this.onSubmitEditing_passphrase(index)}
+      />
     )
   }
 
