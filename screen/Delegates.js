@@ -167,9 +167,9 @@ export default class Delegates extends React.Component {
 
   _getRankColor = (publicKey) => {
     if (this.addVotes.has(publicKey)) {
-      return {backgroundColor: "#b3ffb5", color: "#006400"}
+      return {backgroundColor: "#bae7bb", color: "#006400"}
     } else if (this.removeVotes.has(publicKey)) {
-      return {backgroundColor: "#ffb5b3", color: "#780000"}
+      return {backgroundColor: "#e7bbba", color: "#780000"}
     } else {
       return {backgroundColor: "#ccc", color: "#000"}
     }

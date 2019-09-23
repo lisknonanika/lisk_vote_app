@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, Dimensions, AsyncStorage, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { Keyboard, Platform, Dimensions, AsyncStorage, StyleSheet, View, TouchableOpacity } from 'react-native';
 import { Button, Text, Input } from 'react-native-elements';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -117,7 +117,11 @@ export default class Home extends React.Component {
             containerStyle={styles.input_item}
             inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
             inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
-            onChangeText={this.onChangeText_Address} />
+            onChangeText={this.onChangeText_Address}
+            returnKeyType="done"
+            blurOnSubmit={false}
+            onSubmitEditing={() => Keyboard.dismiss()}
+          />
           <Button title={I18n.t('Home.Button1')} buttonStyle={styles.start_button} onPress={() => this.onPress_StartButton()} />
         </View>
       </View>

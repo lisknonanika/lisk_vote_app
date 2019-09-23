@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, Dimensions, StatusBar, StyleSheet, View, ScrollView, FlatList } from 'react-native';
+import { Keyboard, Platform, Dimensions, StatusBar, StyleSheet, View, ScrollView, KeyboardAvoidingView, FlatList } from 'react-native';
 import { Header, Button, Text, Input  } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation'
 import Modal from 'react-native-modalbox';
@@ -34,19 +34,19 @@ export default class Confirm extends React.Component {
     this._setVotesData();
   }
 
-  onSubmitEditing_passphrase = (index) => {
-    if (index === 0) this.refs.passphrase_1.focus();
-      else if (index === 1) this.refs.passphrase_2.focus();
-      else if (index === 2) this.refs.passphrase_3.focus();
-      else if (index === 3) this.refs.passphrase_4.focus();
-      else if (index === 4) this.refs.passphrase_5.focus();
-      else if (index === 5) this.refs.passphrase_6.focus();
-      else if (index === 6) this.refs.passphrase_7.focus();
-      else if (index === 7) this.refs.passphrase_8.focus();
-      else if (index === 8) this.refs.passphrase_9.focus();
-      else if (index === 9) this.refs.passphrase_10.focus();
-      else if (index === 10) this.refs.passphrase_11.focus();
-      else if (index === 11) this.refs.passphrase_0.focus();
+  onSubmitEditing_passphrase = (index, isSecond) => {
+    if (index === 0) isSecond? this.refs.secondPassphrase_txt1.focus(): this.refs.passphrase_txt1.focus();
+    else if (index === 1) isSecond? this.refs.secondPassphrase_txt2.focus(): this.refs.passphrase_txt2.focus();
+    else if (index === 2) isSecond? this.refs.secondPassphrase_txt3.focus(): this.refs.passphrase_txt3.focus();
+    else if (index === 3) isSecond? this.refs.secondPassphrase_txt4.focus(): this.refs.passphrase_txt4.focus();
+    else if (index === 4) isSecond? this.refs.secondPassphrase_txt5.focus(): this.refs.passphrase_txt5.focus();
+    else if (index === 5) isSecond? this.refs.secondPassphrase_txt6.focus(): this.refs.passphrase_txt6.focus();
+    else if (index === 6) isSecond? this.refs.secondPassphrase_txt7.focus(): this.refs.passphrase_txt7.focus();
+    else if (index === 7) isSecond? this.refs.secondPassphrase_txt8.focus(): this.refs.passphrase_txt8.focus();
+    else if (index === 8) isSecond? this.refs.secondPassphrase_txt9.focus(): this.refs.passphrase_txt9.focus();
+    else if (index === 9) isSecond? this.refs.secondPassphrase_txt10.focus(): this.refs.passphrase_txt10.focus();
+    else if (index === 10) isSecond? this.refs.secondPassphrase_txt11.focus(): this.refs.passphrase_txt11.focus();
+    else if (index === 11) Keyboard.dismiss();
   }
 
   onChangeText_passphrase = (value, index, isSecond) => {
@@ -208,19 +208,19 @@ export default class Confirm extends React.Component {
   renderPassphraseInput = (isSecond, index) => {
     return (
       <Input
-        ref={`passphrase_${index}`}
+        ref={isSecond? `secondPassphrase_txt${index}`: `passphrase_txt${index}`}
         placeholder={(index + 1).toString()}
         value={isSecond? this.state.secondPassphrase[index]: this.state.passphrase[index]}
         autoCapitalize={"none"}
         rightIcon={<MIcon name="clear" size={20} style={{color: "#ccc"}} onPress={() => this.onPress_passphraseClear(index, isSecond)}/>}
         containerStyle={styles.modal_input}
         inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
-        inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 10}}
+        inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 5, marginRight: 5}}
         secureTextEntry={true}
         onChangeText={(value) => this.onChangeText_passphrase(value, index, isSecond)}
-        returnKeyType="next"
+        returnKeyType={index === 11? "done": "next"}
         blurOnSubmit={false}
-        onSubmitEditing={() => this.onSubmitEditing_passphrase(index)}
+        onSubmitEditing={() => this.onSubmitEditing_passphrase(index, isSecond)}
       />
     )
   }
@@ -384,10 +384,8 @@ const styles = StyleSheet.create({
     textAlign: "right"
   },
   modal: {
-    height: 500,
-    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 520: 370,
+    flex: 1,
     padding: 15,
-    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: "#f0f0ef",
     borderRadius: 10
@@ -402,7 +400,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderTopWidth: 0,
     borderBottomWidth: 0,
-    width: '30%'
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 160: 110,
   },
   modal_message: {
     marginTop: 10,
@@ -416,7 +414,7 @@ const styles = StyleSheet.create({
   modal_ok_button: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 470: 320,
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 500: 350,
     padding: 10,
     borderRadius: 10,
     marginTop: 20,
