@@ -272,6 +272,7 @@ export default class Delegates extends React.Component {
         centerComponent={
           <Input
             placeholder="Name"
+            placeholderTextColor="#ccc"
             value={this.state.search_text}
             autoCapitalize={"none"}
             leftIcon={<Icon name="search" size={20}/>}

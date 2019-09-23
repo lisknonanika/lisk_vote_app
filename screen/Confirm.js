@@ -210,6 +210,7 @@ export default class Confirm extends React.Component {
       <Input
         ref={isSecond? `secondPassphrase_txt${index}`: `passphrase_txt${index}`}
         placeholder={(index + 1).toString()}
+        placeholderTextColor="#ccc"
         value={isSecond? this.state.secondPassphrase[index]: this.state.passphrase[index]}
         autoCapitalize={"none"}
         rightIcon={<MIcon name="clear" size={20} style={{color: "#ccc"}} onPress={() => this.onPress_passphraseClear(index, isSecond)}/>}
@@ -384,8 +385,10 @@ const styles = StyleSheet.create({
     textAlign: "right"
   },
   modal: {
-    flex: 1,
+    height: 500,
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 520: 370,
     padding: 15,
+    justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: "#f0f0ef",
     borderRadius: 10
@@ -400,7 +403,7 @@ const styles = StyleSheet.create({
     padding: 5,
     borderTopWidth: 0,
     borderBottomWidth: 0,
-    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 160: 110,
+    width: '30%',
   },
   modal_message: {
     marginTop: 10,
@@ -414,7 +417,7 @@ const styles = StyleSheet.create({
   modal_ok_button: {
     justifyContent: 'center',
     alignItems: 'center',
-    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 500: 350,
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 470: 320,
     padding: 10,
     borderRadius: 10,
     marginTop: 20,

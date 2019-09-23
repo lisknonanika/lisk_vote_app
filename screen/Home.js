@@ -109,6 +109,7 @@ export default class Home extends React.Component {
         <View style={styles.input_field}>
           <Input
             placeholder="Lisk Address"
+            placeholderTextColor="#ccc"
             value={isTestnet? this.state.testnet_address: this.state.mainnet_address}
             autoCapitalize={"none"}
             leftIcon={<MCIcon name="account" size={20}/>}
