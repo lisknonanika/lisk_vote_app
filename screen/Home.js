@@ -47,6 +47,14 @@ export default class Home extends React.Component {
     const isTestnet = this.state.swiperIdx === 1;
     const address = isTestnet? this.state.testnet_address.toUpperCase(): this.state.mainnet_address.toUpperCase();
 
+    // Liskアドレスの仕様に従っていなければエラー
+    const regex = /^[0-9]{1,}L$/;
+    if (!regex.test(address)) {
+      this.refs.error_modal.open(I18n.t('Home.ErrMsg1'));
+      this.setState({ isLoading: false });
+      return;
+    }
+
     // アドレス未入力なら遷移
     if (address.length === 0) {
       this.props.navigation.navigate('Delegates', {isTestnet: this.state.swiperIdx === 1, user: this.user_data});
