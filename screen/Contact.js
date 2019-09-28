@@ -6,6 +6,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import ErrorModal from '../parts/ErrorModal';
 
+const VERSION = '1.0.0';
+
 export default class Contact extends React.Component {
   constructor(props) {
     super(props);
@@ -34,14 +36,7 @@ export default class Contact extends React.Component {
           <View style={{flex: 1, alignItems: 'center'}}>
             <Image source={require("../img/logo.png")} style={{width: 100, height: 100}}/>
           </View>
-          <Text style={[styles.dev, {marginTop: 15}]}>Lisk Vote ver. 0.1.0</Text>
-          <Text style={[styles.dev]}>* This application uses Lisk Elements.</Text>
-          <TouchableOpacity style={[styles.dev, {alignItems: 'center'}]} onPress={() => this._link("https://lisk.io")}>
-            <View style={{flexDirection:"row"}}>
-              <Icon name="link" style={styles.link_icon}/>
-              <Text style={styles.link}>What is Lisk?</Text>
-            </View>
-          </TouchableOpacity>
+          <Text style={[styles.dev, {marginTop: 15}]}>Lisk Vote ver. {VERSION}</Text>
           
           <Text style={styles.label}>Contact</Text>
           <Text style={styles.text}>mail: lisknonanika@gmail.com</Text>
@@ -70,15 +65,23 @@ export default class Contact extends React.Component {
           <Text style={styles.text}>Lisk情報システム部</Text>
 
           <Text style={styles.label}>Donate</Text>
-          <TouchableOpacity style={[styles.text, {marginBottom: 100}]} onPress={() => this._link("https://explorer.lisk.io/address/5380827711560203827L")}>
+          <TouchableOpacity style={styles.text} onPress={() => this._link("https://explorer.lisk.io/address/5380827711560203827L")}>
             <View style={{flexDirection:"row"}}>
               <Icon name="link" style={styles.link_icon}/>
               <Text style={[styles.link, {borderTopWidth: 0}]}>5380827711560203827L</Text>
             </View>
           </TouchableOpacity>
 
+          <Text style={[styles.dev, {marginTop: 15}]}>* This application uses Lisk Elements.</Text>
+          <TouchableOpacity style={[styles.dev, {alignItems: 'center', marginBottom: 100}]} onPress={() => this._link("https://lisk.io")}>
+            <View style={{flexDirection:"row"}}>
+              <Icon name="link" style={styles.link_icon}/>
+              <Text style={styles.link}>What is Lisk?</Text>
+            </View>
+          </TouchableOpacity>
+
         </ScrollView>
-        <SafeAreaView/>
+        <SafeAreaView style={{backgroundColor: '#c4d8ee'}}/>
 
         <ErrorModal ref={"error_modal"}/>
       </View>
@@ -133,6 +136,7 @@ const styles = StyleSheet.create({
   },
   link_icon: {
     color: '#999',
+    marginRight: 10,
     marginLeft: -10,
     fontSize: 20,
   },

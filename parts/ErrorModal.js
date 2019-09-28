@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   modal: {
     justifyContent: 'center',
     alignItems: 'center',
-    height: 350,
+    height: 300,
     width: (Platform.isPad || Dimensions.get('window').width >= 750)? 500: 350,
     padding: 15,
     borderRadius: 10,

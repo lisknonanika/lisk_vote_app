@@ -20,7 +20,7 @@ export default {
     Delegates: {
       Button1: "Confirm",
       Msg1: "* Search by delegate name is ignored.",
-      ErrMsg1: "The The maximum number of votes has been exceeded. is incorrect.",
+      ErrMsg1: "The maximum number of votes has been exceeded.",
       ErrMsg2: "There is nothing to process.",
       ErrMsg3: "Failed to get deleges."
     },
