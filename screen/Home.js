@@ -53,6 +53,14 @@ export default class Home extends React.Component {
       this.setState({ isLoading: false });
       return;
     }
+
+    // Liskアドレスの仕様に従っていなければエラー
+    const regex = /^[0-9]{1,}L$/;
+    if (!regex.test(address)) {
+      this.refs.error_modal.open(I18n.t('Home.ErrMsg1'));
+      this.setState({ isLoading: false });
+      return;
+    }
     
     const ret = await this._getUserData(address, isTestnet);
     this._setUserData(address, ret);

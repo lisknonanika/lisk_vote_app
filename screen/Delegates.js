@@ -1,5 +1,5 @@
 import React from 'react';
-import { Platform, Dimensions, StatusBar, StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
+import { Keyboard, Platform, Dimensions, StatusBar, StyleSheet, View, FlatList, TouchableOpacity } from 'react-native';
 import { Header, Button, Input, Text, ListItem } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation';
 import Drawer from 'react-native-drawer';
@@ -280,7 +280,11 @@ export default class Delegates extends React.Component {
             containerStyle={styles.input_item}
             inputContainerStyle={{backgroundColor: "rgba(255,255,255,0.85)", padding:0, borderRadius: 30, borderBottomWidth: 0}} 
             inputStyle={{color:'#000', padding:0, marginLeft: 10}}
-            onChangeText={this.onChangeText_Search} />
+            onChangeText={this.onChangeText_Search}
+            returnKeyType="done"
+            blurOnSubmit={false}
+            onSubmitEditing={() => Keyboard.dismiss()}
+          />
         }
         rightComponent={{icon: 'home', color: '#fff', size: 30, onPress: () => this.props.navigation.navigate("Home")}}
         containerStyle={[this._getNaviBackgroundColor(), styles.header]}
