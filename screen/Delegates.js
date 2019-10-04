@@ -235,7 +235,6 @@ export default class Delegates extends React.Component {
         if (targetList.has(delegate.publicKey)) {
           page = Math.floor(cnt / DELEGATES_NUM);
           if (!this.viewDelegatesList.has(page)) this.viewDelegatesList.set(page, []);
-          delegate.username = `delegate${delegate.rank}`
           this.viewDelegatesList.get(page).push(delegate);
           cnt += 1;
         }
@@ -248,7 +247,6 @@ export default class Delegates extends React.Component {
           (group.length === 0 || delegate.groups.indexOf(group) >= 0)) {
         page = Math.floor(cnt / DELEGATES_NUM);
         if (!this.viewDelegatesList.has(page)) this.viewDelegatesList.set(page, []);
-        delegate.username = `delegate${delegate.rank}`
         this.viewDelegatesList.get(page).push(delegate);
         cnt += 1;
       }
