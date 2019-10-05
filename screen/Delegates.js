@@ -553,7 +553,7 @@ const styles = StyleSheet.create({
   rank: {
     textAlign: 'center',
     textAlignVertical: 'center',
-    width: (Dimensions.get('window').width < 350)? 65: 85,
+    width: (Dimensions.get('window').width < 350)? 70: 85,
     fontSize: (Dimensions.get('window').width < 350)? 20: 27,
     fontFamily: 'Gilroy-ExtraBold',
     borderRadius: 20,
