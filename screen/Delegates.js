@@ -374,7 +374,7 @@ export default class Delegates extends React.Component {
             checkedColor: "rgba(45,140,115,1)",
             uncheckedIcon: "check-circle",
             uncheckedColor: "#ccc",
-            size: (Dimensions.get('window').width >= 350)? "50": "40"
+            size: (Dimensions.get('window').width >= 350)? 50: 40
           }
         }
         onLongPress={() => this.props.navigation.navigate('DelegateDetail', {

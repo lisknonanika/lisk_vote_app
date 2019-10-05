@@ -171,7 +171,7 @@ export default class Passphrase extends React.Component {
           centerComponent={<Text style={styles.header_title}>Confirm</Text>}
           containerStyle={[styles.header, {backgroundColor: this.isTestnet?"#003e1a":"#001a3e"}]}
         />
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === 'ios' ? 'padding' : null}>
           <ScrollView style={{margin: 10, flexDirection: 'column'}}>
             <Icon name="info-circle" style={styles.message_icon}/>
             <Text style={styles.message_text}>{I18n.t('Confirm.Msg2')}</Text>

@@ -111,7 +111,7 @@ export default class Home extends React.Component {
 
   renderPage = (isTestnet) => {
     return (
-      <KeyboardAvoidingView style={isTestnet? styles.testnet: styles.mainnet} behavior="padding">
+      <KeyboardAvoidingView style={isTestnet? styles.testnet: styles.mainnet} behavior={Platform.OS === 'ios' ? 'padding' : null}>
         <Text style={styles.text}>Lisk Vote</Text>
         <Text style={styles.text_small}>{isTestnet? "- Testnet -": "- Mainnet -"}</Text>
         <View style={styles.input_field}>
