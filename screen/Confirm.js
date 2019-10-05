@@ -1,139 +1,35 @@
 import React from 'react';
-import { Keyboard, Platform, Dimensions, StatusBar, StyleSheet, View, ScrollView, KeyboardAvoidingView, FlatList } from 'react-native';
-import { Header, Button, Text, Input  } from 'react-native-elements';
+import { Platform, StatusBar, StyleSheet, View, ScrollView, FlatList } from 'react-native';
+import { Header, Text } from 'react-native-elements';
 import { SafeAreaView } from 'react-navigation'
-import Modal from 'react-native-modalbox';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import MIcon from 'react-native-vector-icons/MaterialIcons';
-import { castVotes } from '@liskhq/lisk-transactions';
 import I18n from 'react-native-i18n';
 
 import Loading from '../parts/Loading';
 import MainButton from '../parts/MainButton';
-import ErrorModal from '../parts/ErrorModal';
-
-import * as cryptography from '@liskhq/lisk-cryptography';
 
 const MAX_VOTE_COUNT = 33;
 
 export default class Confirm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      isLoading: false,
-      passphrase: ["","","","","","","","","","","",""],
-      secondPassphrase: ["","","","","","","","","","","",""]}
+    this.state = {isLoading: false}
     this.addTarget = this.props.navigation.state.params.add;
     this.removeTarget = this.props.navigation.state.params.remove;
     this.user_data = this.props.navigation.state.params.user;
     this.isTestnet = this.props.navigation.state.params.isTestnet;
     this.votesData = new Map();
     this.trxNum = 0;
-    this._passphrase = "";
-    this._secondPassphrase = "";
     this._setVotesData();
   }
 
-  onSubmitEditing_passphrase = (index, isSecond) => {
-    if (index === 0) isSecond? this.refs.secondPassphrase_txt1.focus(): this.refs.passphrase_txt1.focus();
-    else if (index === 1) isSecond? this.refs.secondPassphrase_txt2.focus(): this.refs.passphrase_txt2.focus();
-    else if (index === 2) isSecond? this.refs.secondPassphrase_txt3.focus(): this.refs.passphrase_txt3.focus();
-    else if (index === 3) isSecond? this.refs.secondPassphrase_txt4.focus(): this.refs.passphrase_txt4.focus();
-    else if (index === 4) isSecond? this.refs.secondPassphrase_txt5.focus(): this.refs.passphrase_txt5.focus();
-    else if (index === 5) isSecond? this.refs.secondPassphrase_txt6.focus(): this.refs.passphrase_txt6.focus();
-    else if (index === 6) isSecond? this.refs.secondPassphrase_txt7.focus(): this.refs.passphrase_txt7.focus();
-    else if (index === 7) isSecond? this.refs.secondPassphrase_txt8.focus(): this.refs.passphrase_txt8.focus();
-    else if (index === 8) isSecond? this.refs.secondPassphrase_txt9.focus(): this.refs.passphrase_txt9.focus();
-    else if (index === 9) isSecond? this.refs.secondPassphrase_txt10.focus(): this.refs.passphrase_txt10.focus();
-    else if (index === 10) isSecond? this.refs.secondPassphrase_txt11.focus(): this.refs.passphrase_txt11.focus();
-    else if (index === 11) Keyboard.dismiss();
-  }
-
-  onChangeText_passphrase = (value, index, isSecond) => {
-    const vals = value.trim().split(" ");
-    this.setState((state) => {
-      const passphrase = isSecond? state.secondPassphrase: state.passphrase;
-      for (i = 0; i < vals.length; i++) {
-        if (index + i === 12) break;
-        passphrase[index + i] = vals[i].replace(/\s+/g, '');
-      }
-      return {passphrase}
-    })
-  }
-
-  onPress_passphraseClear = (index, isSecond) => {
-    this.setState((state) => {
-      const passphrase = isSecond? state.secondPassphrase: state.passphrase;
-      passphrase[index] = "";
-      return {passphrase}
-    })
-  }
-
-
-  onPress_Exec = async(isSecond) => {
-    this.setState({isLoading: true});
-    
-    // パスフレーズ入力チェック
-    if (!isSecond) {
-      this._passphrase = "";
-      this._secondPassphrase = "";
-      for (word of this.state.passphrase) {
-        this._passphrase = this._passphrase + word + " ";
-      }
-      this._passphrase = this._passphrase.trim();
-
-      if (this._passphrase.length === 0) {
-        this.refs.error_modal.open(I18n.t('Confirm.ErrMsg1'));
-        this.setState({isLoading: false});
-        return;
-      }
-      if (this.user_data.address !== cryptography.getAddressFromPassphrase(this._passphrase)) {
-        this.refs.error_modal.open(I18n.t('Confirm.ErrMsg2'));
-        this.setState({isLoading: false});
-        return;
-      }
-
-      // セカンドパスフレーズが設定されていれば、セカンドパスフレーズ入力を表示
-      if (this.user_data.secondPublicKey !== undefined && this.user_data.secondPublicKey.length > 0) {
-        this.refs.passphrase_modal.close();
-        this.refs.second_passphrase_modal.open();
-        this.setState({isLoading: false});
-        return;
-      }
-    }
-
-    // セカンドパスフレーズ入力チェック
-    if (isSecond) {
-      for (word of this.state.secondPassphrase) {
-        this._secondPassphrase = this._secondPassphrase + word + " ";
-      }
-      this._secondPassphrase = this._secondPassphrase.trim();
-
-      if (this._secondPassphrase.length === 0) {
-        this.refs.error_modal.open(I18n.t('Confirm.ErrMsg3'));
-        this.setState({isLoading: false});
-        return;
-      }
-      if (this.user_data.secondPublicKey !== cryptography.getAddressAndPublicKeyFromPassphrase(this._secondPassphrase).publicKey) {
-        this.refs.error_modal.open(I18n.t('Confirm.ErrMsg4'));
-        this.setState({isLoading: false});
-        return;
-      }
-    }
-
-    // トランザクション生成チェック
-    const trxs = await this._createVoteTransaction();
-    if (trxs.length === 0) {
-      this.refs.error_modal.open(I18n.t('Confirm.ErrMsg5'));
-      this.setState({isLoading: false});
-      return;
-    }
-    
-    this.props.navigation.navigate("Result", {
-      votesData: this.votesData,
-      trxs: trxs,
+  onPress_Execute = () => {
+    this.props.navigation.navigate('Passphrase', {
+      user: this.user_data,
       isTestnet: this.isTestnet,
-      updateUserData: this.props.navigation.state.params.updateUserData});
+      votesData: this.votesData,
+      updateUserData: this.props.navigation.state.params.updateUserData
+    });
     this.setState({isLoading: false});
   }
 
@@ -156,22 +52,6 @@ export default class Confirm extends React.Component {
       this.votesData.get(this.trxNum).votes.key.push(key);
       cnt += 1;
     });
-  }
-
-  _createVoteTransaction = async() => {
-    try {
-      let trxs = [];
-      trxs.length = 0;
-      for(data of this.votesData.values()) {
-        let params = {passphrase:this._passphrase, votes:data.votes.key, unvotes:data.unvotes.key}
-        if (this._secondPassphrase) params['secondPassphrase'] = this._secondPassphrase;
-        const trx = await castVotes(params);
-        trxs.push(trx);
-      }
-      return trxs;
-    } catch (err) {
-      return [];
-    }
   }
 
   renderVoteList = (num) => {
@@ -205,56 +85,6 @@ export default class Confirm extends React.Component {
     )
   }
 
-  renderPassphraseInput = (isSecond, index) => {
-    return (
-      <Input
-        ref={isSecond? `secondPassphrase_txt${index}`: `passphrase_txt${index}`}
-        placeholder={(index + 1).toString()}
-        placeholderTextColor="#ccc"
-        value={isSecond? this.state.secondPassphrase[index]: this.state.passphrase[index]}
-        autoCapitalize={"none"}
-        rightIcon={<MIcon name="clear" size={20} style={{color: "#ccc"}} onPress={() => this.onPress_passphraseClear(index, isSecond)}/>}
-        containerStyle={styles.modal_input}
-        inputContainerStyle={{backgroundColor: 'transparent', padding: 0, borderBottomWidth: 0}} 
-        inputStyle={{backgroundColor: 'transparent', color: '#000', padding: 0, marginLeft: 5, marginRight: 5}}
-        secureTextEntry={true}
-        onChangeText={(value) => this.onChangeText_passphrase(value, index, isSecond)}
-        returnKeyType={index === 11? "done": "next"}
-        blurOnSubmit={false}
-        onSubmitEditing={() => this.onSubmitEditing_passphrase(index, isSecond)}
-      />
-    )
-  }
-
-  renderPassphraseModal = (isSecond) => {
-    if (isSecond && (this.user_data.secondPublicKey === undefined ||
-                     this.user_data.secondPublicKey.length === 0)) return (<View/>); 
-    return (
-      <View style={{flexDirection: 'column'}}>
-        <View style={{flexDirection: 'row'}}>
-          {this.renderPassphraseInput(isSecond, 0)}
-          {this.renderPassphraseInput(isSecond, 1)}
-          {this.renderPassphraseInput(isSecond, 2)}
-        </View>
-        <View style={{flexDirection: 'row'}}>
-          {this.renderPassphraseInput(isSecond, 3)}
-          {this.renderPassphraseInput(isSecond, 4)}
-          {this.renderPassphraseInput(isSecond, 5)}
-        </View>
-        <View style={{flexDirection: 'row'}}>
-          {this.renderPassphraseInput(isSecond, 6)}
-          {this.renderPassphraseInput(isSecond, 7)}
-          {this.renderPassphraseInput(isSecond, 8)}
-        </View>
-        <View style={{flexDirection: 'row'}}>
-          {this.renderPassphraseInput(isSecond, 9)}
-          {this.renderPassphraseInput(isSecond, 10)}
-          {this.renderPassphraseInput(isSecond, 11)}
-        </View>
-      </View>
-    );
-  }
-
   render() {
     return (
       <View style={{flex:1}}>
@@ -284,25 +114,8 @@ export default class Confirm extends React.Component {
           <Text style={styles.message_note_text}>{I18n.t('Confirm.Msg6')}{this.trxNum + 1}{I18n.t('Confirm.Msg7')}</Text>
 
         </ScrollView>
-        <MainButton params={{title:I18n.t('Confirm.Button1'), style:{margin: 10}, event:() => this.refs.passphrase_modal.open()}}/>
+        <MainButton params={{title:I18n.t('Confirm.Button1'), style:{margin: 10}, event:() => this.onPress_Execute()}}/>
         <SafeAreaView/>
-
-        <Modal style={styles.modal} ref={"passphrase_modal"} backdropPressToClose={false}>
-          <Icon name="info-circle" style={styles.modal_icon}/>
-          <Text style={styles.modal_message}>{I18n.t('Confirm.Msg2')}</Text>
-          {this.renderPassphraseModal(false)}
-          <Button title={"OK"} buttonStyle={styles.modal_ok_button} onPress={() => {this.onPress_Exec(false)}} />
-          <Icon name={"close"} style={{color: "#000", position: "absolute", top: 10, left: 10}} size={25} onPress={() => {this.refs.passphrase_modal.close()}} />
-        </Modal>
-        
-        <Modal style={styles.modal} ref={"second_passphrase_modal"} backdropPressToClose={false}>
-          <Icon name="info-circle" style={styles.modal_icon}/>
-          <Text style={styles.modal_message}>{I18n.t('Confirm.Msg3')}</Text>
-          {this.renderPassphraseModal(true)}
-          <Button title={"OK"} buttonStyle={styles.modal_ok_button} onPress={() => {this.onPress_Exec(true)}} />
-          <Icon name={"close"} style={{color: "#000", position: "absolute", top: 10, left: 10}} size={25} onPress={() => {this.refs.second_passphrase_modal.close()}} />
-        </Modal>
-        <ErrorModal ref={"error_modal"}/>
       </View>
     );
   }
@@ -383,44 +196,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#f00",
     textAlign: "right"
-  },
-  modal: {
-    height: 500,
-    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 520: 370,
-    padding: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: "#f0f0ef",
-    borderRadius: 10
-  },
-  modal_input: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    marginTop: 10,
-    marginBottom: 0,
-    marginLeft: 5,
-    marginRight: 5,
-    padding: 5,
-    borderTopWidth: 0,
-    borderBottomWidth: 0,
-    width: '30%',
-  },
-  modal_message: {
-    marginTop: 10,
-    fontSize: 25,
-    lineHeight:30
-  },
-  modal_icon: {
-    color: 'rgba(0,50,140,0.8)',
-    fontSize: 50
-  },
-  modal_ok_button: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 470: 320,
-    padding: 10,
-    borderRadius: 10,
-    marginTop: 20,
-    backgroundColor: 'rgba(175,85,105,1)',
   }
 });

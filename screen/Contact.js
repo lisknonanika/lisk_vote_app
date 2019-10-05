@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 
 import ErrorModal from '../parts/ErrorModal';
 
-const VERSION = '1.0.0';
+const VERSION = '1.0.1';
 
 export default class Contact extends React.Component {
   constructor(props) {

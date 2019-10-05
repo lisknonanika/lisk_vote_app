@@ -1,5 +1,5 @@
 import React from 'react';
-import { Keyboard, Platform, Dimensions, AsyncStorage, StyleSheet, View, TouchableOpacity } from 'react-native';
+import { Keyboard, Platform, Dimensions, AsyncStorage, StyleSheet, View, KeyboardAvoidingView, TouchableOpacity } from 'react-native';
 import { Button, Text, Input } from 'react-native-elements';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import MCIcon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -111,7 +111,7 @@ export default class Home extends React.Component {
 
   renderPage = (isTestnet) => {
     return (
-      <View style={isTestnet? styles.testnet: styles.mainnet}>
+      <KeyboardAvoidingView style={isTestnet? styles.testnet: styles.mainnet} behavior="padding">
         <Text style={styles.text}>Lisk Vote</Text>
         <Text style={styles.text_small}>{isTestnet? "- Testnet -": "- Mainnet -"}</Text>
         <View style={styles.input_field}>
@@ -133,7 +133,7 @@ export default class Home extends React.Component {
           />
           <Button title={I18n.t('Home.Button1')} buttonStyle={styles.start_button} onPress={() => this.onPress_StartButton()} />
         </View>
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 
@@ -203,7 +203,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.35)',
     borderRadius: 10,
     padding: 10,
-    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 350: 280,
+    width: (Platform.isPad || Dimensions.get('window').width >= 750)? 350:
+           (Dimensions.get('window').width < 350)? 250: 280,
     marginTop: 30
   },
   input_item: {

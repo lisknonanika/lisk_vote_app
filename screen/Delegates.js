@@ -15,7 +15,7 @@ import Loading from '../parts/Loading';
 import MainButton from '../parts/MainButton';
 import ErrorModal from '../parts/ErrorModal';
 
-const LIST_ITEM_HEIGHT = 100;
+let LIST_ITEM_HEIGHT = (Dimensions.get('window').width >= 350)? 100: 80;
 const DELEGATES_NUM = 101;
 const MAX_VOTE_COUNT = 101;
 
@@ -278,7 +278,7 @@ export default class Delegates extends React.Component {
             leftIcon={<Icon name="search" size={20}/>}
             rightIcon={<MIcon name="clear" size={20} style={{color: "#999", marginRight: 15}} onPress={() => this.onChangeText_Search("")}/>}
             containerStyle={styles.input_item}
-            inputContainerStyle={{backgroundColor: "rgba(255,255,255,0.85)", padding:0, borderRadius: 30, borderBottomWidth: 0}} 
+            inputContainerStyle={{backgroundColor: "#fff", padding:0, borderRadius: 30, borderBottomWidth: 0}} 
             inputStyle={{color:'#000', padding:0, marginLeft: 10}}
             onChangeText={this.onChangeText_Search}
             returnKeyType="done"
@@ -343,7 +343,7 @@ export default class Delegates extends React.Component {
             <Text style={[styles.rank, this._getRankColor(item.publicKey)]}>{item.rank}</Text>
             <View style={{flexDirection:'column', marginLeft:20, width: this.isRefMode? '100%': '65%'}}>
               <Text style={[styles.username, this._getListItemColor(item.publicKey)]}>{item.username}</Text>
-              <View style={{flexDirection:'row', paddingTop: 5}}>
+              <View style={{flexDirection:'row', paddingTop: 5, display: (Dimensions.get('window').width >= 350)?"flex":"none"}}>
                 <Text style={[styles.userdata, {marginRight: 15, display: (Platform.isPad || Dimensions.get('window').width >= 750)?"flex":"none"}]}>produced Blocks: {item.producedBlocks}</Text>
                 <Text style={[styles.userdata, {marginRight: 15, display: (Platform.isPad || Dimensions.get('window').width >= 750)?"flex":"none"}]}>missed Blocks: {item.missedBlocks}</Text>
                 <Text style={styles.userdata}>productivity: {item.productivity} %</Text>
@@ -374,7 +374,7 @@ export default class Delegates extends React.Component {
             checkedColor: "rgba(45,140,115,1)",
             uncheckedIcon: "check-circle",
             uncheckedColor: "#ccc",
-            size: 50
+            size: (Dimensions.get('window').width >= 350)? "50": "40"
           }
         }
         onLongPress={() => this.props.navigation.navigate('DelegateDetail', {
@@ -553,15 +553,15 @@ const styles = StyleSheet.create({
   rank: {
     textAlign: 'center',
     textAlignVertical: 'center',
-    width: 85,
-    fontSize: 27,
+    width: (Dimensions.get('window').width < 350)? 65: 85,
+    fontSize: (Dimensions.get('window').width < 350)? 20: 27,
     fontFamily: 'Gilroy-ExtraBold',
     borderRadius: 20,
     paddingTop: 5,
     paddingBottom: 5
   },
   username: {
-    fontSize: 20,
+    fontSize: (Dimensions.get('window').width < 350)? 17: 20,
     fontFamily: 'Gilroy-ExtraBold'
   },
   userdata: {
